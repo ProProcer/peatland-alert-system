@@ -25,6 +25,8 @@ async function loadFeed(filename) {
 
 function render() {
   const horizon = Number(document.querySelector("#horizon").value);
+  document.querySelector("#summary-horizon").textContent = horizon;
+  document.querySelector("#priority-count").textContent = feeds.risk.data.filter(row => row.horizon_h === horizon && ["HIGH", "CRITICAL"].includes(row.risk_level)).length;
   const riskBody = document.querySelector("#risk");
   riskBody.replaceChildren();
   for (const row of feeds.risk.data.filter(record => record.horizon_h === horizon)) {
