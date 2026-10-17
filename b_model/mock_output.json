@@ -1,0 +1,209 @@
+[
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.35_114.05",
+    "ts": "2026-10-17T09:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.72,
+    "risk_level": "HIGH",
+    "top_factors": [
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.28
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.25
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.16
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.35_114.05",
+    "ts": "2026-10-17T09:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.87,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.31
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.22
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.18
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.35_114.05",
+    "ts": "2026-10-17T09:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.91,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.34
+      },
+      {
+        "feature": "sm_27_81_delta_7d",
+        "contribution": 0.24
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.19
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.45_114.15",
+    "ts": "2026-10-17T09:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.42,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "sm_27_81_delta_7d",
+        "contribution": 0.17
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": 0.14
+      },
+      {
+        "feature": "temp_c",
+        "contribution": 0.11
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.45_114.15",
+    "ts": "2026-10-17T09:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.52,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "sm_27_81_delta_7d",
+        "contribution": 0.19
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": 0.15
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.12
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.45_114.15",
+    "ts": "2026-10-17T09:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.65,
+    "risk_level": "HIGH",
+    "top_factors": [
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.22
+      },
+      {
+        "feature": "sm_27_81_delta_7d",
+        "contribution": 0.20
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": 0.16
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.55_114.25",
+    "ts": "2026-10-17T09:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.12,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.42
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": -0.25
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": -0.18
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.55_114.25",
+    "ts": "2026-10-17T09:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.18,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.40
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": -0.22
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": -0.15
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.55_114.25",
+    "ts": "2026-10-17T09:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.25,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_7d_mm",
+        "contribution": -0.35
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.31
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": -0.12
+      }
+    ],
+    "model_version": "v1"
+  }
+]
