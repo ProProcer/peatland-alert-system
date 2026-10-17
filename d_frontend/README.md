@@ -1,6 +1,34 @@
 # Role D — Frontend / alerts
 
+## Interface
+
+The app uses a left navigation rail, forecast-driven status cards, a large regional
+map, and separate cell-insight/response sections. Warm neutral surfaces, forest
+colors, ember accents and a custom SVG landscape provide the visual theme.
+SF Pro/San Francisco is preferred through Apple's system font stack and installed
+SF Pro fonts, with system fallbacks elsewhere. No remote fonts or image assets
+are required for the interface.
+
+Risk counts, the three highest-scoring cells, modeled rainfall/soil averages and
+the UTC snapshot time come from the selected feeds. The watchlist selects the
+matching center on the map. Missing values remain unavailable. The interface
+labels historical replay and synthetic data explicitly; it makes no current-fire
+claims. Keyboard focus, named navigation icons, reduced-motion settings and
+narrow-screen layouts are supported.
+
+Check the status cards and watchlist with `node d_frontend/test_status.cjs`.
+
 ## Use the datasets in data/demo
+
+The website is now fixed to the 33 spread-out cells in `data/demo/central_coverage/`.
+Other datasets remain on disk but are not offered by the interface, and missing
+data does not fall back to the older 9-cell or mock feeds. The top-right historical
+replay badge is removed; the feature timestamp and source notes remain visible.
+When the server lacks `/demo/catalog.json`, the website loads the same real data
+from `assets/coverage-snapshot.json`, so the original plain static server also
+shows the map and all 33 points. Regenerate this frontend copy after updating the
+source bundle with `python -m d_frontend.export_coverage`. This is real-source
+historical data, not a synthetic fallback.
 
 From PowerShell at the repository root:
 
@@ -17,8 +45,9 @@ or overwriting them:
 
 | Selection | Source | Behavior |
 | --- | --- | --- |
-| Real-data run | `data/demo/real/` | Default: nine cells with matching risk and dispatch feeds |
-| Real-data replay | `data/demo/role_a_replay/` | 33 real-data cells; missing risk/dispatch feeds are explicitly unavailable |
+| Central Kalimantan · 33 spread-out cells | `data/demo/central_coverage/` | Default when complete: geographically distributed real-source replay, with 99 matching predictions |
+| Real-data run | `data/demo/real/` | Nine cells with matching risk and dispatch feeds |
+| Real-data replay | `data/demo/role_a_replay/` | Original 33-cell replay; missing risk/dispatch feeds are explicitly unavailable |
 | Synthetic demo | `data/demo/` | Three synthetic fixture cells and simulated dispatch |
 
 The actual feature timestamps and cell counts appear below the controls. Changing
@@ -130,3 +159,41 @@ shading and risk colors are restricted to this mask. Gray outside the province
 means outside the selected scope, not absence of peat in other provinces.
 Raw sources, model outputs, thresholds, and shared contracts are unchanged.
 Boundary provenance is retained in Role A's cache/metadata and root dataset inventory.
+
+All selected-dataset cell centers now render in a separate, unclipped marker layer.
+The 33-cell replay opens by default when available. Blue centers indicate no
+prediction; centers with predictions use risk colors. Markers are grid centers,
+not ignition locations; click or press Enter/Space for measurements. Risk shading
+remains clipped to actual Central Kalimantan peat polygons.
+
+## Spread-out sampling with matching predictions
+
+The original 33 replay cells were clustered because they were the locations with
+completed long-term weather caches. `prepare_coverage.py` selects 33 existing
+peat-intersecting grid cells across Central Kalimantan using greedy maximum-distance
+sampling in a local metric projection. It preserves actual cell IDs/coordinates;
+it does not move measurements or invent risk values. Candidates have at least
+5% peat and centers within the province boundary. This is representative sampling,
+not complete coverage of all 394 candidate cells or every peat polygon.
+
+To rebuild from the repository root using the existing spatial/model environment:
+
+```powershell
+.venv312/Scripts/python.exe -m d_frontend.prepare_coverage --plan-only
+.venv312/Scripts/python.exe -m d_frontend.prepare_coverage
+# Repeat using downloaded weather only:
+.venv312/Scripts/python.exe -m d_frontend.prepare_coverage --offline
+```
+
+The builder reuses A's WeatherClient (including its shared API-budget ledger),
+weather parser and feature calculations, B's existing artifacts, and C's deterministic
+simulated policy. It fetches 31 days of warmup around the declared historical replay
+hour; it does not train or evaluate models. Source requests and spatial completeness
+limits are recorded in `source_manifest.json`. A single compute thread avoids
+oversubscribing OpenBLAS on a small batch. An empty water catalogue prevents
+synthetic canal coordinates from being attached to the real-source replay.
+
+The new bundle is served only after all four feeds validate and `build_status.json`
+says complete. Existing replay bundles and checked-in processed/model files are
+preserved. Restart `python -m d_frontend.serve_demo`, then refresh the page to see
+the new default dataset and its distributed center markers.

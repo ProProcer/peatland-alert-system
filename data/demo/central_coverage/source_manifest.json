@@ -1,0 +1,1747 @@
+{
+  "generated_at": "2026-10-17T08:07:14Z",
+  "mode": "historical_replay",
+  "is_mock": false,
+  "selection": "greedy maximum-distance sample of qualifying grid cells; no coordinates relocated",
+  "candidate_count": 394,
+  "cell_count": 33,
+  "snapshot": "2026-10-16T00:00:00Z",
+  "cell_ids": [
+    "-1.45_114.85",
+    "-1.55_114.45",
+    "-1.65_113.75",
+    "-1.85_113.35",
+    "-1.85_114.05",
+    "-1.95_114.65",
+    "-2.15_112.15",
+    "-2.15_113.15",
+    "-2.15_113.65",
+    "-2.25_114.35",
+    "-2.25_115.15",
+    "-2.35_112.85",
+    "-2.45_111.45",
+    "-2.45_113.95",
+    "-2.55_113.35",
+    "-2.65_113.05",
+    "-2.65_113.65",
+    "-2.65_114.75",
+    "-2.75_112.65",
+    "-2.75_114.25",
+    "-2.85_111.25",
+    "-2.85_112.25",
+    "-2.85_113.95",
+    "-2.95_110.85",
+    "-2.95_111.65",
+    "-2.95_113.35",
+    "-3.05_112.95",
+    "-3.05_113.65",
+    "-3.15_112.05",
+    "-3.25_114.25",
+    "-3.35_112.45",
+    "-3.35_113.85",
+    "-3.45_111.85"
+  ],
+  "max_candidate_distance_to_sample_km": 34.99982608239814,
+  "lon_range": [
+    110.85,
+    115.15
+  ],
+  "lat_range": [
+    -3.45,
+    -1.45
+  ],
+  "limitations": [
+    "33 samples do not cover every peat polygon or grid cell.",
+    "Weather/soil are modeled. Existing model evaluation is unverified.",
+    "Historical replay, not current fire monitoring. Notifications are simulated."
+  ],
+  "weather": [
+    {
+      "cell_id": "-1.45_114.85",
+      "retrieved_at": "2026-10-17T08:06:07Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -1.45,
+          "longitude": 114.85,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-1.45_114.85",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -1.5,
+        "weather_grid_lon": 114.875
+      }
+    },
+    {
+      "cell_id": "-1.55_114.45",
+      "retrieved_at": "2026-10-17T08:06:07Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -1.55,
+          "longitude": 114.45,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-1.55_114.45",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -1.5,
+        "weather_grid_lon": 114.5
+      }
+    },
+    {
+      "cell_id": "-1.65_113.75",
+      "retrieved_at": "2026-10-17T08:06:08Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -1.65,
+          "longitude": 113.75,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-1.65_113.75",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -1.625,
+        "weather_grid_lon": 113.75
+      }
+    },
+    {
+      "cell_id": "-1.85_113.35",
+      "retrieved_at": "2026-10-17T08:06:08Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -1.85,
+          "longitude": 113.35,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-1.85_113.35",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -1.875,
+        "weather_grid_lon": 113.375
+      }
+    },
+    {
+      "cell_id": "-1.85_114.05",
+      "retrieved_at": "2026-10-17T08:06:08Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -1.85,
+          "longitude": 114.05,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-1.85_114.05",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -1.875,
+        "weather_grid_lon": 114.0
+      }
+    },
+    {
+      "cell_id": "-1.95_114.65",
+      "retrieved_at": "2026-10-17T08:06:09Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -1.95,
+          "longitude": 114.65,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-1.95_114.65",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.0,
+        "weather_grid_lon": 114.625
+      }
+    },
+    {
+      "cell_id": "-2.15_112.15",
+      "retrieved_at": "2026-10-17T08:06:09Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.15,
+          "longitude": 112.15,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.15_112.15",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.125,
+        "weather_grid_lon": 112.125
+      }
+    },
+    {
+      "cell_id": "-2.15_113.15",
+      "retrieved_at": "2026-10-17T08:06:09Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.15,
+          "longitude": 113.15,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.15_113.15",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.125,
+        "weather_grid_lon": 113.125
+      }
+    },
+    {
+      "cell_id": "-2.15_113.65",
+      "retrieved_at": "2026-10-17T08:06:10Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.15,
+          "longitude": 113.65,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.15_113.65",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.125,
+        "weather_grid_lon": 113.625
+      }
+    },
+    {
+      "cell_id": "-2.25_114.35",
+      "retrieved_at": "2026-10-17T08:06:10Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.25,
+          "longitude": 114.35,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.25_114.35",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.25,
+        "weather_grid_lon": 114.375
+      }
+    },
+    {
+      "cell_id": "-2.25_115.15",
+      "retrieved_at": "2026-10-17T08:06:10Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.25,
+          "longitude": 115.15,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.25_115.15",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.25,
+        "weather_grid_lon": 115.125
+      }
+    },
+    {
+      "cell_id": "-2.35_112.85",
+      "retrieved_at": "2026-10-17T08:06:11Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.35,
+          "longitude": 112.85,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.35_112.85",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.375,
+        "weather_grid_lon": 112.875
+      }
+    },
+    {
+      "cell_id": "-2.45_111.45",
+      "retrieved_at": "2026-10-17T08:06:11Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.45,
+          "longitude": 111.45,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.45_111.45",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.5,
+        "weather_grid_lon": 111.5
+      }
+    },
+    {
+      "cell_id": "-2.45_113.95",
+      "retrieved_at": "2026-10-17T08:06:11Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.45,
+          "longitude": 113.95,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.45_113.95",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.5,
+        "weather_grid_lon": 114.0
+      }
+    },
+    {
+      "cell_id": "-2.55_113.35",
+      "retrieved_at": "2026-10-17T08:06:11Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.55,
+          "longitude": 113.35,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.55_113.35",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.5,
+        "weather_grid_lon": 113.375
+      }
+    },
+    {
+      "cell_id": "-2.65_113.05",
+      "retrieved_at": "2026-10-17T08:06:12Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.65,
+          "longitude": 113.05,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.65_113.05",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.625,
+        "weather_grid_lon": 113.0
+      }
+    },
+    {
+      "cell_id": "-2.65_113.65",
+      "retrieved_at": "2026-10-17T08:06:12Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.65,
+          "longitude": 113.65,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.65_113.65",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.625,
+        "weather_grid_lon": 113.625
+      }
+    },
+    {
+      "cell_id": "-2.65_114.75",
+      "retrieved_at": "2026-10-17T08:06:12Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.65,
+          "longitude": 114.75,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.65_114.75",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.625,
+        "weather_grid_lon": 114.75
+      }
+    },
+    {
+      "cell_id": "-2.75_112.65",
+      "retrieved_at": "2026-10-17T08:06:13Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.75,
+          "longitude": 112.65,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.75_112.65",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.75,
+        "weather_grid_lon": 112.625
+      }
+    },
+    {
+      "cell_id": "-2.75_114.25",
+      "retrieved_at": "2026-10-17T08:06:13Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.75,
+          "longitude": 114.25,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.75_114.25",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.75,
+        "weather_grid_lon": 114.25
+      }
+    },
+    {
+      "cell_id": "-2.85_111.25",
+      "retrieved_at": "2026-10-17T08:06:13Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.85,
+          "longitude": 111.25,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.85_111.25",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.875,
+        "weather_grid_lon": 111.25
+      }
+    },
+    {
+      "cell_id": "-2.85_112.25",
+      "retrieved_at": "2026-10-17T08:06:13Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.85,
+          "longitude": 112.25,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.85_112.25",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.875,
+        "weather_grid_lon": 112.25
+      }
+    },
+    {
+      "cell_id": "-2.85_113.95",
+      "retrieved_at": "2026-10-17T08:06:14Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.85,
+          "longitude": 113.95,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.85_113.95",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.875,
+        "weather_grid_lon": 114.0
+      }
+    },
+    {
+      "cell_id": "-2.95_110.85",
+      "retrieved_at": "2026-10-17T08:06:14Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.95,
+          "longitude": 110.85,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.95_110.85",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -3.0,
+        "weather_grid_lon": 110.875
+      }
+    },
+    {
+      "cell_id": "-2.95_111.65",
+      "retrieved_at": "2026-10-17T08:06:14Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.95,
+          "longitude": 111.65,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.95_111.65",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -2.875,
+        "weather_grid_lon": 111.625
+      }
+    },
+    {
+      "cell_id": "-2.95_113.35",
+      "retrieved_at": "2026-10-17T08:06:14Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -2.95,
+          "longitude": 113.35,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-2.95_113.35",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -3.0,
+        "weather_grid_lon": 113.375
+      }
+    },
+    {
+      "cell_id": "-3.05_112.95",
+      "retrieved_at": "2026-10-17T08:06:15Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -3.05,
+          "longitude": 112.95,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-3.05_112.95",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -3.0,
+        "weather_grid_lon": 113.0
+      }
+    },
+    {
+      "cell_id": "-3.05_113.65",
+      "retrieved_at": "2026-10-17T08:06:15Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -3.05,
+          "longitude": 113.65,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-3.05_113.65",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -3.0,
+        "weather_grid_lon": 113.625
+      }
+    },
+    {
+      "cell_id": "-3.15_112.05",
+      "retrieved_at": "2026-10-17T08:06:15Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -3.15,
+          "longitude": 112.05,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-3.15_112.05",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -3.125,
+        "weather_grid_lon": 112.0
+      }
+    },
+    {
+      "cell_id": "-3.25_114.25",
+      "retrieved_at": "2026-10-17T08:06:16Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -3.25,
+          "longitude": 114.25,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-3.25_114.25",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -3.25,
+        "weather_grid_lon": 114.25
+      }
+    },
+    {
+      "cell_id": "-3.35_112.45",
+      "retrieved_at": "2026-10-17T08:06:16Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -3.35,
+          "longitude": 112.45,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-3.35_112.45",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -3.375,
+        "weather_grid_lon": 112.5
+      }
+    },
+    {
+      "cell_id": "-3.35_113.85",
+      "retrieved_at": "2026-10-17T08:06:16Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -3.35,
+          "longitude": 113.85,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-3.35_113.85",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -3.375,
+        "weather_grid_lon": 113.875
+      }
+    },
+    {
+      "cell_id": "-3.45_111.85",
+      "retrieved_at": "2026-10-17T08:06:16Z",
+      "request": {
+        "endpoint": "https://historical-forecast-api.open-meteo.com/v1/forecast",
+        "params": {
+          "latitude": -3.45,
+          "longitude": 111.85,
+          "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,vapour_pressure_deficit,soil_temperature_0cm,soil_temperature_18cm,evapotranspiration,et0_fao_evapotranspiration",
+          "timezone": "GMT",
+          "models": "icon_global",
+          "temperature_unit": "celsius",
+          "wind_speed_unit": "kmh",
+          "precipitation_unit": "mm",
+          "start_date": "2026-09-15",
+          "end_date": "2026-10-16"
+        }
+      },
+      "quality": {
+        "cell_id": "-3.45_111.85",
+        "rows": 768,
+        "first_hour": "2026-09-15T00:00:00+00:00",
+        "last_hour": "2026-10-16T23:00:00+00:00",
+        "missing_values": {
+          "temp_c": 0,
+          "precip_mm": 0,
+          "wind_kmh": 0,
+          "wind_dir_deg": 0,
+          "sm_0_1": 0,
+          "sm_1_3": 0,
+          "sm_3_9": 0,
+          "sm_9_27": 0,
+          "sm_27_81": 0,
+          "vpd_kpa": 0,
+          "soil_temp_0_c": 0,
+          "soil_temp_18_c": 0,
+          "et_mm": 0,
+          "et0_mm": 0
+        },
+        "constant_columns": [],
+        "all_null_weather_hours": 0,
+        "hourly_gap_count": 0,
+        "weather_grid_lat": -3.5,
+        "weather_grid_lon": 111.875
+      }
+    }
+  ],
+  "spatial_coverage": [
+    {
+      "cell_id": "-1.45_114.85",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 155.49974944984044
+    },
+    {
+      "cell_id": "-1.55_114.45",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 197.36209899657575
+    },
+    {
+      "cell_id": "-1.65_113.75",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 165.87368646555018
+    },
+    {
+      "cell_id": "-1.85_113.35",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 128.7258619628656
+    },
+    {
+      "cell_id": "-1.85_114.05",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 151.85152962659143
+    },
+    {
+      "cell_id": "-1.95_114.65",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 163.21803604589505
+    },
+    {
+      "cell_id": "-2.15_112.15",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 91.68247725427497
+    },
+    {
+      "cell_id": "-2.15_113.15",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 91.78003165039141
+    },
+    {
+      "cell_id": "-2.15_113.65",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 109.79191081797234
+    },
+    {
+      "cell_id": "-2.25_114.35",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 122.36964364528876
+    },
+    {
+      "cell_id": "-2.25_115.15",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 125.16955273277692
+    },
+    {
+      "cell_id": "-2.35_112.85",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 72.02017571064628
+    },
+    {
+      "cell_id": "-2.45_111.45",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 50.69296167538858
+    },
+    {
+      "cell_id": "-2.45_113.95",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 86.55401049056047
+    },
+    {
+      "cell_id": "-2.55_113.35",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 57.73177001846027
+    },
+    {
+      "cell_id": "-2.65_113.05",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 35.781621958941415
+    },
+    {
+      "cell_id": "-2.65_113.65",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 54.790966279091734
+    },
+    {
+      "cell_id": "-2.65_114.75",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 96.55791735416533
+    },
+    {
+      "cell_id": "-2.75_112.65",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 49.36298629683285
+    },
+    {
+      "cell_id": "-2.75_114.25",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 66.28245361270513
+    },
+    {
+      "cell_id": "-2.85_111.25",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 10.17787846552122
+    },
+    {
+      "cell_id": "-2.85_112.25",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 51.1653931423395
+    },
+    {
+      "cell_id": "-2.85_113.95",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 51.84642825813191
+    },
+    {
+      "cell_id": "-2.95_110.85",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 5.534415547248237
+    },
+    {
+      "cell_id": "-2.95_111.65",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 0.30600339442491103
+    },
+    {
+      "cell_id": "-2.95_113.35",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 23.226184905533124
+    },
+    {
+      "cell_id": "-3.05_112.95",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 3.0543084546360353
+    },
+    {
+      "cell_id": "-3.05_113.65",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 12.442209815307928
+    },
+    {
+      "cell_id": "-3.15_112.05",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 25.86663478481533
+    },
+    {
+      "cell_id": "-3.25_114.25",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 13.125526302162513
+    },
+    {
+      "cell_id": "-3.35_112.45",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 2.2933789970987633
+    },
+    {
+      "cell_id": "-3.35_113.85",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 7.886308579528391
+    },
+    {
+      "cell_id": "-3.45_111.85",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 5.057542042601341
+    }
+  ],
+  "grid_sha256": "842546a07116c607649acc202d68dfdb271e5e6cdfb62df6e99c8522d4a2a86d",
+  "firms_sha256": "465bcee73b373f7fca6cebdd61bc489e0e8c9af534974066f5f77653e413b5cb"
+}
