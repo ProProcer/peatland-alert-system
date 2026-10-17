@@ -25,3 +25,19 @@ The current page is an integration handoff viewer with a horizon selector, risk 
 5. Keep fallback behavior visible. A water source may be null; do not render a fabricated route. State that weather/soil inputs are modeled and thermal hotspots describe surface emergence.
 
 Done when the full three-minute flow, including surge and all audience views, runs from static mock files. Record any new open-source dependency with E in the root README.
+
+## Regional map
+
+The map uses native SVG (no additional JavaScript libraries) and displays supplied
+GeoJSON cells inside the Kalimantan regional bounding box: 108–119.5° E,
+4.5° S–4.5° N. This is a regional viewport, not an administrative boundary mask;
+neighboring land can appear. Current mock coverage remains Central Kalimantan.
+Selecting a cell exposes its risk, contributing signals, and UTC timestamp.
+The shared forecast selector updates the colors and detail text. Use “Focus
+monitored cells” to inspect the small fixture grid; “Whole region” resets the view.
+
+Basemap dataset: [OpenStreetMap contributors](https://www.openstreetmap.org/copyright),
+using [standard raster tiles](https://tile.openstreetmap.org/) at zoom 6.
+Tiles require internet access; cell geometry and selection work without tiles.
+The map preserves visible attribution and does not prefetch or bulk-download tiles.
+Role E should include this dataset in the root dependency/source inventory.
