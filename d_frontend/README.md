@@ -1,5 +1,47 @@
 # Role D — Frontend / alerts
 
+## Use the datasets in data/demo
+
+From PowerShell at the repository root:
+
+```powershell
+python -m d_frontend.serve_demo
+```
+
+Open **http://127.0.0.1:8001**. Stop any older server on that port with Ctrl+C
+before starting this one, or add `--port 8002`. This server uses only Python's
+standard library; no dependency installation is needed.
+
+The Dataset selector reads these existing directories directly, without copying
+or overwriting them:
+
+| Selection | Source | Behavior |
+| --- | --- | --- |
+| Real-data run | `data/demo/real/` | Default: nine cells with matching risk and dispatch feeds |
+| Real-data replay | `data/demo/role_a_replay/` | 33 real-data cells; missing risk/dispatch feeds are explicitly unavailable |
+| Synthetic demo | `data/demo/` | Three synthetic fixture cells and simulated dispatch |
+
+The actual feature timestamps and cell counts appear below the controls. Changing
+datasets loads its own features, geometry, predictions and dispatches together;
+missing predictions never fall back to another dataset or a static mock. A
+failed request or mismatched cell/timestamp clears the previous display and
+shows an error. On a successful dataset change, the map focuses its monitored
+cells. Selecting a cell shows its measurements, units and UTC timestamp; null
+measurements display as unavailable. Files added by their owners become visible
+after reloading the page. Peat masks and basemap behavior are unchanged.
+
+Only the four handoff filenames per selected directory are exposed. Raw inputs,
+Parquet training data, caches and other repository folders are not served.
+The original `e_platform.serve` and standalone mock workflow remain supported.
+
+Verification:
+
+```powershell
+python -m unittest d_frontend.test_serve_demo -v
+node d_frontend/test_data.cjs
+python -m contracts.validate
+```
+
 Read `TEAM_PLAYBOOK.md` and `contracts/CONTRACTS.md`. Own this folder. The starter uses browser-native HTML, CSS and JavaScript; no Node build is required. Choose and document your app framework / map library here when needed, preserving the static mock flow.
 
 ```bash

@@ -1,0 +1,623 @@
+[
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.35_113.75",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.037722534826807146,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "sm_0_1",
+        "contribution": 1.4803557053598113
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.26020605632684296
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.10283198919893526
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.05_115.05",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.0007834813570212385,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.24199902508054996
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": 0.15276305098515466
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.14505186609812618
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.75_113.35",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.05363078903609155,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "sm_0_1",
+        "contribution": 1.0361611706254337
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.24339512575456004
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.21049267529187204
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.55_113.05",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.0007466079222885715,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "sm_0_1",
+        "contribution": 0.28252774652553475
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.2538811539118815
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.2400465891213057
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.45_114.45",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.00040909029715450345,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.19993770606707437
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.029819505183722
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": -0.023096950694959838
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.25_113.15",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.0007466079222885715,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.23371360758642706
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": 0.12780830184277414
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.09614208000671698
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.15_114.55",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.0007466079222885715,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.3788786304414578
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.2400465891213057
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": 0.22762729841229704
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-1.85_113.75",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.00041182684149162807,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "sm_0_1",
+        "contribution": 0.8115684283440069
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.4189306052665359
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.26537851526082024
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-1.45_114.85",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.00041182684149162807,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.40445982843199135
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": -0.26647673460684196
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.26115652757090113
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.35_113.75",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.012464525493658356,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "sm_0_1",
+        "contribution": 0.8157953803274793
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.7588070985258996
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.07316133802456634
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.05_115.05",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.000685196344860309,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.7057121600460039
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.10319929322935847
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.0975529157387911
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.75_113.35",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.024185541095599176,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.7097834376966862
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": 0.5710083686038733
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.14975812379678624
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.55_113.05",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.0002637001624290638,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.7403625591569623
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.17078469244014075
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": 0.15569557343236184
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.45_114.45",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 6.533718831471995e-05,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.14224863499558824
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.08695897600291126
+      },
+      {
+        "feature": "temp_c",
+        "contribution": -0.07069729801562892
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.25_113.15",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.0002637001624290638,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.28036738962180685
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.16627899915942196
+      },
+      {
+        "feature": "temp_c",
+        "contribution": -0.09332702469085005
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.15_114.55",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.0002637001624290638,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": 1.1048774126057532
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.17078469244014075
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": 0.12544099894966892
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-1.85_113.75",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.008169705108651554,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -1.2216760883793683
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": 0.4472396548110388
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.18880746556301603
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-1.45_114.85",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.00020580913591065387,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -1.1794767316916668
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.1858036700425368
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": -0.146850171394567
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.35_113.75",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.46593465733713985,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -1.052207605050807
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": 0.5173250131973841
+      },
+      {
+        "feature": "rain_7d_mm",
+        "contribution": 0.13677987059871186
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.05_115.05",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.0019151436544419076,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.978582966896023
+      },
+      {
+        "feature": "rain_7d_mm",
+        "contribution": 0.22128201099401773
+      },
+      {
+        "feature": "temp_c",
+        "contribution": -0.104474580170553
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.75_113.35",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.027257899538311595,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.984228445588359
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": 0.3620968185738393
+      },
+      {
+        "feature": "temp_c",
+        "contribution": -0.1948724850880387
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.55_113.05",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.016406467705091094,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": 1.0266312963508002
+      },
+      {
+        "feature": "temp_c",
+        "contribution": -0.21747196131741017
+      },
+      {
+        "feature": "rain_7d_mm",
+        "contribution": 0.161605358172474
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.45_114.45",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.0007780126416815015,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_7d_mm",
+        "contribution": 0.17449551518192744
+      },
+      {
+        "feature": "temp_c",
+        "contribution": -0.16473985011554357
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.12058255129063057
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.25_113.15",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.0024842962425332903,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.3887743013229584
+      },
+      {
+        "feature": "temp_c",
+        "contribution": -0.21747196131741017
+      },
+      {
+        "feature": "rain_7d_mm",
+        "contribution": 0.17067620940134867
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.15_114.55",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.016406467705091094,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": 1.5320895369206295
+      },
+      {
+        "feature": "temp_c",
+        "contribution": -0.23253827880365777
+      },
+      {
+        "feature": "rain_7d_mm",
+        "contribution": 0.14919261438559292
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-1.85_113.75",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.033380213363796415,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -1.6940496123437594
+      },
+      {
+        "feature": "temp_c",
+        "contribution": -0.3003367074917722
+      },
+      {
+        "feature": "sm_0_1",
+        "contribution": 0.28361065275294584
+      }
+    ],
+    "model_version": "v1"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-1.45_114.85",
+    "ts": "2026-10-16T23:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.0014616491287874653,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -1.635533443845455
+      },
+      {
+        "feature": "temp_c",
+        "contribution": -0.29280354874864833
+      },
+      {
+        "feature": "rain_7d_mm",
+        "contribution": 0.15969570528218463
+      }
+    ],
+    "model_version": "v1"
+  }
+]

@@ -3,6 +3,9 @@
 const files = { features: "features.json", cells: "cells.geojson", risk: "risk.json", dispatch: "dispatch.json" };
 let feeds = {};
 let loadVersion = 0;
+let demoDatasets = [];
+let activeDataset = null;
+let focusedDataset = null;
 const mapBounds = { west: 108, east: 119.5, south: -4.5, north: 4.5 };
 const mapColors = { LOW: "#32945b", MODERATE: "#e9c643", HIGH: "#e78b38", CRITICAL: "#d64b57" };
 let mapView;
@@ -118,7 +121,10 @@ function renderMap(horizon) {
   for (const feature of regionalCells()) {
     const id = feature.properties.cell_id;
     const risk = risks.get(id);
-    const description = risk ? `${id}: ${risk.risk_level}, score ${risk.risk_score.toFixed(2)}, ${horizon}h. ${risk.top_factors.map(f => `${f.feature}: ${f.contribution}`).join(", ")}. Timestamp: ${risk.ts}.` : `${id}: no prediction for ${horizon}h.`;
+    const featureRow = feeds.features.data.find(row => row.cell_id === id);
+    const reading = (value, unit) => value == null ? 'unavailable' : `${Number(value).toFixed(2)} ${unit}`;
+    const measurements = featureRow ? ` Feature time: ${featureRow.ts}. Peat coverage: ${(featureRow.peat.peat_fraction * 100).toFixed(1)}%. Temperature: ${reading(featureRow.weather.temp_c, '°C')}. Deep soil moisture: ${reading(featureRow.weather.sm_27_81, 'm³/m³')}. Rain in 24h: ${reading(featureRow.derived.rain_24h_mm, 'mm')}.` : '';
+    const description = (risk ? `${id}: ${risk.risk_level}, score ${risk.risk_score.toFixed(2)}, ${horizon}h. ${risk.top_factors.map(f => `${f.feature}: ${f.contribution}`).join(", ")}. Timestamp: ${risk.ts}.` : `${id}: no prediction for ${horizon}h.`) + measurements;
     const path = feature.geometry.coordinates.map(ring => ring.map((point, index) => `${index ? "L" : "M"}${project(point).join(",")}`).join(" ") + " Z").join(" ");
     const cell = svgElement("path", { d: path, fill: mapColors[risk?.risk_level] || "#bdcdb8", "fill-rule": "evenodd", class: "map-cell", tabindex: 0, role: "button", "aria-label": description, "aria-pressed": selectedCell === id });
     const title = svgElement("title", {});
@@ -224,7 +230,17 @@ function element(tag, text, className) {
   return node;
 }
 
-async function loadFeed(filename) {
+async function loadFeed(filename, dataset) {
+  if (dataset) {
+    const url = dataset.base + filename;
+    if (!dataset.files.includes(filename)) {
+      if (filename === 'risk.json' || filename === 'dispatch.json') return { data: [], label: 'not supplied for selected dataset', url: null };
+      throw new Error(`${filename} is missing from the selected dataset`);
+    }
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`${filename}: HTTP ${response.status}`);
+    return { data: await response.json(), label: dataset.label, url };
+  }
   for (const [base, label] of [["/data/", "served handoff"], ["mocks/", "static mock"]]) {
     try {
       const response = await fetch(base + filename, { cache: "no-store" });
@@ -236,11 +252,46 @@ async function loadFeed(filename) {
   }
 }
 
+function validateFeedSet(entries) {
+  const data = Object.fromEntries(entries.map(([kind, feed]) => [kind, feed.data]));
+  const times = new Map(data.features.map(row => [row.cell_id, row.ts]));
+  const cells = new Set(data.cells.features.map(row => row.properties.cell_id));
+  if (times.size !== cells.size || [...times.keys()].some(id => !cells.has(id))) throw new Error('Features and geometry refer to different cells');
+  for (const row of data.risk) {
+    if (times.get(row.cell_id) !== row.ts) throw new Error(`Risk does not match the selected feature snapshot: ${row.cell_id}`);
+  }
+  for (const row of data.dispatch) {
+    if (!cells.has(row.cell_id)) throw new Error(`Dispatch refers to a different dataset: ${row.cell_id}`);
+  }
+}
+
+async function discoverDatasets() {
+  const response = await fetch('/demo/catalog.json', { cache: 'no-store' });
+  const select = document.querySelector('#dataset');
+  select.replaceChildren();
+  if (response.status === 404) {
+    select.append(element('option', 'Served feeds / static mocks'));
+    select.disabled = true;
+    document.querySelector('#dataset-info').textContent = 'Using the existing feed server or bundled synthetic mocks. Run python -m d_frontend.serve_demo to choose data/demo datasets.';
+    return;
+  }
+  if (!response.ok) throw new Error(`Dataset catalogue: HTTP ${response.status}`);
+  demoDatasets = (await response.json()).datasets;
+  if (!demoDatasets.length) throw new Error('No datasets with features and geometry found in data/demo');
+  for (const dataset of demoDatasets) {
+    const option = element('option', dataset.label);
+    option.value = dataset.id;
+    select.append(option);
+  }
+  activeDataset = demoDatasets[0];
+  select.value = activeDataset.id;
+}
+
 function render() {
   const horizon = Number(document.querySelector("#horizon").value);
   renderMap(horizon);
   document.querySelector("#summary-horizon").textContent = horizon;
-  document.querySelector("#priority-count").textContent = feeds.risk.data.filter(row => row.horizon_h === horizon && ["HIGH", "CRITICAL"].includes(row.risk_level)).length;
+  document.querySelector("#priority-count").textContent = feeds.risk.data.some(row => row.horizon_h === horizon) ? feeds.risk.data.filter(row => row.horizon_h === horizon && ["HIGH", "CRITICAL"].includes(row.risk_level)).length : '—';
   const riskBody = document.querySelector("#risk");
   riskBody.replaceChildren();
   for (const row of feeds.risk.data.filter(record => record.horizon_h === horizon)) {
@@ -251,9 +302,16 @@ function render() {
     tr.append(level, element("td", row.risk_score.toFixed(2)), element("td", row.top_factors.map(f => `${f.feature}: ${f.contribution}`).join(", ")));
     riskBody.append(tr);
   }
+  if (!riskBody.children.length) {
+    const tr = element('tr');
+    const td = element('td', `No ${horizon}-hour predictions supplied for this dataset. Peat coverage and measurements remain available on the map.`);
+    td.colSpan = 4;
+    tr.append(td);
+    riskBody.append(tr);
+  }
   const dispatch = document.querySelector("#dispatch");
   dispatch.replaceChildren();
-  if (feeds.dispatch.data.length === 0) dispatch.append(element("p", "No active simulated dispatches."));
+  if (feeds.dispatch.data.length === 0) dispatch.append(element("p", feeds.dispatch.url ? "No active simulated dispatches." : "Dispatch output has not been supplied for this dataset."));
   for (const row of feeds.dispatch.data) {
     const article = element("article");
     article.append(element("strong", `${row.action} · ${row.cell_id} · ${row.status}`));
@@ -269,29 +327,54 @@ function render() {
 async function reload() {
   const version = ++loadVersion;
   const status = document.querySelector("#status");
+  const dataset = activeDataset;
   status.textContent = "Loading handoffs…";
   try {
-    const entries = await Promise.all(Object.entries(files).map(async ([kind, filename]) => [kind, await loadFeed(filename)]));
+    const entries = await Promise.all(Object.entries(files).map(async ([kind, filename]) => [kind, await loadFeed(filename, dataset)]));
     if (version !== loadVersion) return;
+    validateFeedSet(entries);
     feeds = Object.fromEntries(entries);
     const sources = document.querySelector("#sources");
     sources.replaceChildren();
     for (const [kind, feed] of entries) {
       const item = element("li");
-      const link = element("a", `${kind}: ${feed.label}`);
-      link.href = feed.url;
+      const link = element(feed.url ? "a" : "span", `${kind}: ${feed.label}`);
+      if (feed.url) link.href = feed.url;
       item.append(link);
       sources.append(item);
     }
     render();
+    if (dataset) {
+      const times = [...new Set(feeds.features.data.map(row => row.ts))].sort();
+      document.querySelector('#dataset-info').textContent = `${dataset.description} Feature time: ${times.join(', ')}. ${feeds.cells.data.features.length} monitored cells. Weather and soil moisture are modeled; all notifications are simulated.`;
+      if (focusedDataset !== dataset.id) {
+        focusedDataset = dataset.id;
+        document.querySelector('#map-cells').click();
+      }
+    }
     status.textContent = `${feeds.cells.data.features.length} cells · ${feeds.features.data.length} feature records · ${feeds.risk.data.length} predictions · ${feeds.dispatch.data.length} simulated dispatches`;
   } catch (error) {
-    if (version === loadVersion) status.textContent = `Could not load handoffs: ${error.message}`;
+    if (version === loadVersion) {
+      status.textContent = `Could not load handoffs: ${error.message}`;
+      document.querySelector('#dataset-info').textContent = status.textContent;
+      document.querySelector('#risk').replaceChildren();
+      document.querySelector('#dispatch').replaceChildren();
+      document.querySelector('#map').replaceChildren();
+      document.querySelector('#sources').replaceChildren();
+      document.querySelector('#priority-count').textContent = '—';
+      document.querySelector('#map-detail').textContent = 'Dataset unavailable. Retry Refresh feeds.';
+      feeds = {};
+    }
   }
 }
 
 document.querySelector("#horizon").addEventListener("change", () => { if (feeds.risk) render(); });
 document.querySelector("#reload").addEventListener("click", reload);
+document.querySelector('#dataset').addEventListener('change', event => {
+  activeDataset = demoDatasets.find(dataset => dataset.id === event.target.value);
+  selectedCell = null;
+  reload();
+});
 document.querySelector("#map-in").addEventListener("click", () => zoomMap(.5));
 document.querySelector("#map-out").addEventListener("click", () => zoomMap(2));
 document.querySelector("#map-reset").addEventListener("click", () => setMapView(regionView.slice()));
@@ -305,4 +388,6 @@ document.querySelector("#map-cells").addEventListener("click", () => {
   setMapView([(Math.min(...xs) + Math.max(...xs) - width) / 2, (Math.min(...ys) + Math.max(...ys) - height) / 2, width, height]);
 });
 loadPeatland();
-reload();
+discoverDatasets().then(reload).catch(error => {
+  document.querySelector('#status').textContent = `Could not discover datasets: ${error.message}`;
+});

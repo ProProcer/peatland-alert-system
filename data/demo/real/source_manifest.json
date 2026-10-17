@@ -1,0 +1,85 @@
+{
+  "generated_at": "2026-10-17T07:01:04Z",
+  "feature_time": "2026-10-16T23:00:00Z",
+  "mode": "real-source-development",
+  "region": {
+    "province": "Central Kalimantan",
+    "bbox": {
+      "south": -3.5,
+      "west": 113.0,
+      "north": -1.0,
+      "east": 115.5
+    },
+    "grid_size_deg": 0.1,
+    "minimum_peat_fraction": 0.05,
+    "max_cells": 300,
+    "schema_version": "1.0",
+    "horizons_h": [
+      24,
+      48,
+      72
+    ],
+    "water_source_mode": "unavailable",
+    "alerts_mode": "simulated"
+  },
+  "selected_cells": 9,
+  "area_crs": "EPSG:6933",
+  "peat_source": "D:\\Felix\\University\\Github-Repo\\peatland-alert-system\\data\\raw\\Indonesia_Peat_Lands.geojson",
+  "peat_sha256": "3fb39a1effc393abec92081db89bb2d87f7917ba4c1b08861a1f0a31e3315bf2",
+  "weather": [
+    {
+      "cache": "D:\\Felix\\University\\Github-Repo\\peatland-alert-system\\data\\demo\\real\\cache\\weather\\97356440167884dac044642fcb68630e8ddcfaae09d253b8b50e24eec8268847.json",
+      "url": "https://api.open-meteo.com/v1/forecast?latitude=-3.35%2C-3.05%2C-2.75%2C-2.55%2C-2.45%2C-2.25%2C-2.15%2C-1.85%2C-1.45&longitude=113.75%2C115.05%2C113.35%2C113.05%2C114.45%2C113.15%2C114.55%2C113.75%2C114.85&hourly=temperature_2m%2Cprecipitation%2Cwind_speed_10m%2Cwind_direction_10m%2Csoil_moisture_0_to_1cm%2Csoil_moisture_1_to_3cm%2Csoil_moisture_3_to_9cm%2Csoil_moisture_9_to_27cm%2Csoil_moisture_27_to_81cm%2Cvapour_pressure_deficit%2Csoil_temperature_0cm%2Csoil_temperature_18cm%2Cevapotranspiration%2Cet0_fao_evapotranspiration&timezone=GMT&wind_speed_unit=kmh&start_date=2026-09-16&end_date=2026-10-16",
+      "retrieved_at": "2026-10-17T07:00:34Z"
+    }
+  ],
+  "firms": {
+    "sources": [
+      {
+        "path": "D:\\Felix\\University\\Github-Repo\\peatland-alert-system\\data\\raw\\DL_FIRE_J1V-C2_824564\\fire_archive_J1V-C2_824564.csv",
+        "bytes": 108926923,
+        "rows": 1342756,
+        "first_date": "2018-04-01",
+        "last_date": "2026-06-30"
+      },
+      {
+        "path": "D:\\Felix\\University\\Github-Repo\\peatland-alert-system\\data\\raw\\DL_FIRE_J1V-C2_824564\\fire_nrt_J1V-C2_824564.csv",
+        "bytes": 43837672,
+        "rows": 520571,
+        "first_date": "2026-07-01",
+        "last_date": "2026-10-16"
+      },
+      {
+        "path": "D:\\Felix\\University\\Github-Repo\\peatland-alert-system\\data\\raw\\DL_FIRE_J2V-C2_824565\\fire_archive_J2V-C2_824565.csv",
+        "bytes": 39686332,
+        "rows": 489095,
+        "first_date": "2023-03-01",
+        "last_date": "2026-06-30"
+      },
+      {
+        "path": "D:\\Felix\\University\\Github-Repo\\peatland-alert-system\\data\\raw\\DL_FIRE_J2V-C2_824565\\fire_nrt_J2V-C2_824565.csv",
+        "bytes": 43469189,
+        "rows": 515983,
+        "first_date": "2026-07-01",
+        "last_date": "2026-10-16"
+      }
+    ],
+    "selected_detections": 24310,
+    "confidence": "n/h only",
+    "warning": "Detection dates do not prove continuous satellite observation coverage; counts stay null unless coverage is explicitly attested."
+  },
+  "coverage_attestation": {
+    "start": null,
+    "end": null
+  },
+  "unagreed_fields_left_null": [
+    "soil_air_temp_gap_c",
+    "nearest_hotspot_km"
+  ],
+  "limitations": [
+    "Weather and soil moisture are modeled, not sensors.",
+    "Existing model evaluation provenance is unverified.",
+    "Historical weather replay is not a hindsight-free performance evaluation.",
+    "OSM PBF is not a weather or fire input; water sources remain null."
+  ]
+}
