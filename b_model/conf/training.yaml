@@ -20,6 +20,7 @@ baseline:
   features: [peat_fraction, peat_area_km2, temp_c, precip_mm]
   max_iter: 500
   c: 1.0
+  z_score_clip: 3.0
 calibration:
   method: sigmoid
 

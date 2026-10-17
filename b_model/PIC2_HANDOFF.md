@@ -24,11 +24,11 @@ Existing artifact keys and model input ordering are retained:
 - `signed_feature_weights`: saved per-horizon weights that existing inference already uses.
 - `feature_weights`, `model`: compatibility aliases retained for existing consumers.
 
-New internal metadata keys are `training_config`, `dryness_config`, `baseline_feature_columns`, `explanation_config` and `training_data`. These do not add fields to `risk.json`.
+New internal metadata keys are `training_config`, `dryness_config`, `baseline_feature_columns`, `baseline_config`, `explanation_config` and `training_data`. Training also exports `artifact_manifest.json` declaring all three bundles and their feature order, model version, format and positive class. These do not add fields to `risk.json`.
 
-Training-side feature priorities and permutation settings are configurable and feed the saved signed weights immediately. The output method remains a directional standardized heuristic, not SHAP. PIC 1's current positive/negative selection and fallback factors are documented in the model card.
+Training-side feature priorities and permutation settings are configurable and feed the saved signed weights immediately. The output method remains a directional standardized heuristic, not SHAP. PIC 1 now ranks exact, unclipped signed standardized contributions by absolute magnitude and preserves both positive and negative factors without fabricating fallback values.
 
-The current consumer hard-codes three factors and clipping bounds. Training validation therefore rejects incompatible `top_k`, `z_score_clip` and `contribution_clip` overrides. To make those tunable later, PIC 1 must read `artifact['explanation_config']` and apply the corresponding values in its preprocessing/attribution calls, while retaining compatibility defaults for older artifacts. No such consumer change is required to use the new artifacts with the current settings.
+The current consumer emits three factors without clipping, so training validation requires `top_k=3` and null explanation clipping settings. The baseline has its own configurable `baseline.z_score_clip`, saved in `baseline_config`; that applies only when reconstructing baseline inputs. To make explanation factor count or clipping tunable later, PIC 1 must read the artifact's `explanation_config` and agree on that behavior. No consumer change is required for the current settings.
 
 ## Run a trained artifact
 

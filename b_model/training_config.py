@@ -32,6 +32,7 @@ class BaselineSettings:
     features: List[str] = field(default_factory=lambda: ["peat_fraction", "peat_area_km2", "temp_c", "precip_mm"])
     max_iter: int = 500
     c: float = 1.0
+    z_score_clip: float = 3.0
 
 
 @dataclass
@@ -76,8 +77,8 @@ class ExplanationSettings:
     priority_multipliers: Dict[str, float] = field(default_factory=default_priorities)
     # PIC 1's current inference hard-codes these. Reject incompatible overrides.
     top_k: int = 3
-    z_score_clip: float = 3.0
-    contribution_clip: float = 0.60
+    z_score_clip: Optional[float] = None
+    contribution_clip: Optional[float] = None
 
 
 @dataclass
@@ -149,8 +150,8 @@ def validate_training_config(config) -> TrainingConfig:
     if (not baseline.features or len(set(baseline.features)) != len(baseline.features)
             or set(baseline.features) - set(FEATURE_COLUMNS)):
         raise ValueError("baseline.features must contain unique canonical feature names")
-    if baseline.max_iter <= 0 or baseline.c <= 0:
-        raise ValueError("Baseline max_iter and c must be positive")
+    if baseline.max_iter <= 0 or baseline.c <= 0 or baseline.z_score_clip <= 0:
+        raise ValueError("Baseline max_iter, c and z_score_clip must be positive")
     dry = result.dryness
     weights = (dry.rain_weight, dry.soil_weight, dry.air_weight)
     if any(weight < 0 for weight in weights) or not math.isclose(sum(weights), 1.0, abs_tol=1e-8):
@@ -168,8 +169,8 @@ def validate_training_config(config) -> TrainingConfig:
     if (set(explain.priority_multipliers) - set(FEATURE_COLUMNS)
             or any(value <= 0 for value in explain.priority_multipliers.values())):
         raise ValueError("Explanation multipliers need canonical features and positive weights")
-    if explain.top_k != 3 or explain.z_score_clip != 3.0 or explain.contribution_clip != 0.60:
-        raise ValueError("PIC 1 inference currently requires top_k=3, z_score_clip=3 and contribution_clip=0.60")
+    if explain.top_k != 3 or explain.z_score_clip is not None or explain.contribution_clip is not None:
+        raise ValueError("PIC 1 inference requires top_k=3 and unclipped standardized contributions (both explanation clips null)")
     if result.calibration.method not in {"sigmoid", "isotonic", "legacy_guarded"}:
         raise ValueError("Calibration method must be sigmoid, isotonic or legacy_guarded")
     if not result.paths.history.strip() or not result.paths.model_dir.strip():

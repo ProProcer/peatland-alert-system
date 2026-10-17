@@ -1,6 +1,7 @@
 """PIC 2 acceptance checks: config overrides reach fitting and survive inference."""
 
 import hashlib
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -40,6 +41,7 @@ def test_composes_model_choices_with_typed_defaults(backend):
     "split.train_ratio=0.9", "split.embargo_hours=24", "split.strict_embargo=false",
     "dryness.rain_weight=0.9", "dryness.vpd_reference_kpa=0",
     "explanation.top_k=5", "explanation.importance_split=validation",
+    "explanation.z_score_clip=3", "explanation.contribution_clip=0.6",
     "model.class_weight=unknown", "horizons=[24]", "seed=-1", "+unknown_setting=1",
     "+model.unknown_setting=1", "dryness.rain_weight=nan",
 ])
@@ -102,6 +104,9 @@ def test_training_overrides_are_saved_and_existing_inference_consumes_artifacts(
     assert metrics["model_backend"] == backend
     assert metrics["training_config"]["split"]["strict_embargo"] is True
     assert set(metrics["horizons"]) == {"24", "48", "72"}
+    manifest = json.loads((model_dir / "artifact_manifest.json").read_text())
+    assert set(manifest["models"]) == {"24", "48", "72"}
+    assert manifest["models"]["24"]["feature_order"] == FEATURE_COLUMNS
     for horizon in HORIZONS:
         artifact = joblib.load(model_dir / f"model_{horizon}h.joblib")
         assert artifact["feature_columns"] == FEATURE_COLUMNS

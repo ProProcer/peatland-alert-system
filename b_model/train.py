@@ -470,7 +470,7 @@ def train_pipeline(
     scaler = StandardScaler()
 
     X_train_imp = imputer.fit_transform(X_train_raw)
-    clip = settings.explanation.z_score_clip
+    clip = settings.baseline.z_score_clip
     X_train_scaled = np.clip(scaler.fit_transform(X_train_imp), -clip, clip)
 
     X_calib_imp = imputer.transform(X_calib_raw)
@@ -655,6 +655,7 @@ def train_pipeline(
             "training_config": asdict(settings),
             "dryness_config": asdict(settings.dryness),
             "baseline_feature_columns": ["dryness_index", *settings.baseline.features],
+            "baseline_config": asdict(settings.baseline),
             "explanation_config": asdict(settings.explanation),
             "training_data": all_metrics["training_data"],
         }
@@ -671,6 +672,20 @@ def train_pipeline(
     with open(metrics_path, "w", encoding="utf-8") as f:
         json.dump(all_metrics, f, indent=2, allow_nan=False)
     logger.info("Saved validation metrics to %s", metrics_path)
+
+    # Publish the PIC 1 handoff only after all three bundles are available.
+    manifest = {"schema_version": SCHEMA_VERSION, "models": {
+        str(horizon): {"filename": f"model_{horizon}h.joblib", "format": "joblib",
+                       "model_version": MODEL_VERSION, "feature_order": list(FEATURE_COLUMNS),
+                       "positive_class": 1}
+        for horizon in HORIZONS}}
+    manifest_path = model_dir / "artifact_manifest.json"
+    temporary = manifest_path.with_suffix(".json.tmp")
+    try:
+        temporary.write_text(json.dumps(manifest, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+        temporary.replace(manifest_path)
+    finally:
+        temporary.unlink(missing_ok=True)
 
     return all_metrics
 

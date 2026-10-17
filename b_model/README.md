@@ -122,9 +122,9 @@ uses the model's binary `classes_`, allowing reversed class order.
 
 Bundles contain `horizon_h`, `schema_version`, `model_version`, `feature_columns`,
 a fitted median `imputer`, fitted `scaler`, `primary_model` (or `model`), and
-`signed_feature_weights` (or `feature_weights`) in the declared order. PIC 2 must
-publish the manifest with newly trained bundles; `train.py` is unchanged by this
-PIC 1 update. Only load trusted training artifacts: both pickle and Joblib execute
+`signed_feature_weights` (or `feature_weights`) in the declared order. PIC 2's
+`train.py` now publishes this manifest after exporting all three bundles. Only
+load trusted training artifacts: both pickle and Joblib execute
 deserialization code, and a manifest is not a security sandbox.
 
 `max_seconds` defaults to 60 and rejects an over-budget result before publishing.

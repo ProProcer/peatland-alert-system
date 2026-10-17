@@ -4,8 +4,8 @@ importance_split: calibration
 permutation_repeats: 5
 # Locked to PIC 1's current implementation until that consumer is updated.
 top_k: 3
-z_score_clip: 3.0
-contribution_clip: 0.60
+z_score_clip: null
+contribution_clip: null
 priority_multipliers:
   days_since_rain: 3.0
   sm_27_81: 3.0
