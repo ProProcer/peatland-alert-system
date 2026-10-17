@@ -1,0 +1,72 @@
+[
+  {
+    "case_id": "cell_1_nearest",
+    "is_mock": true,
+    "cell_id": "-2.35_114.05",
+    "ts": "2026-10-17T09:00:00Z",
+    "target": {"lat": -2.35, "lon": 114.05},
+    "candidate_source_ids": ["mock_canal_001", "mock_river_001", "mock_pond_001"],
+    "expected_source_id": "mock_canal_001",
+    "water_source": {
+      "lat": -2.33,
+      "lon": 114.02,
+      "distance_km": 4.007,
+      "kind": "canal"
+    }
+  },
+  {
+    "case_id": "cell_2_nearest",
+    "is_mock": true,
+    "cell_id": "-2.45_114.15",
+    "ts": "2026-10-17T09:00:00Z",
+    "target": {"lat": -2.45, "lon": 114.15},
+    "candidate_source_ids": ["mock_canal_001", "mock_river_001", "mock_pond_001"],
+    "expected_source_id": "mock_river_001",
+    "water_source": {
+      "lat": -2.43,
+      "lon": 114.13,
+      "distance_km": 3.144,
+      "kind": "river"
+    }
+  },
+  {
+    "case_id": "cell_3_nearest",
+    "is_mock": true,
+    "cell_id": "-2.55_114.25",
+    "ts": "2026-10-17T09:00:00Z",
+    "target": {"lat": -2.55, "lon": 114.25},
+    "candidate_source_ids": ["mock_canal_001", "mock_river_001", "mock_pond_001"],
+    "expected_source_id": "mock_pond_001",
+    "water_source": {
+      "lat": -2.54,
+      "lon": 114.27,
+      "distance_km": 2.484,
+      "kind": "pond"
+    }
+  },
+  {
+    "case_id": "incident_target_differs_from_cell_center",
+    "is_mock": true,
+    "cell_id": "-2.35_114.05",
+    "ts": "2026-10-17T09:00:00Z",
+    "target": {"lat": -2.42, "lon": 114.12},
+    "candidate_source_ids": ["mock_canal_001", "mock_river_001", "mock_pond_001"],
+    "expected_source_id": "mock_river_001",
+    "water_source": {
+      "lat": -2.43,
+      "lon": 114.13,
+      "distance_km": 1.572,
+      "kind": "river"
+    }
+  },
+  {
+    "case_id": "empty_candidate_list",
+    "is_mock": true,
+    "cell_id": "-2.55_114.25",
+    "ts": "2026-10-17T09:00:00Z",
+    "target": {"lat": -2.55, "lon": 114.25},
+    "candidate_source_ids": [],
+    "expected_source_id": null,
+    "water_source": null
+  }
+]

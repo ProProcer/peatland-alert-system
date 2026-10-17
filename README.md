@@ -82,7 +82,7 @@ data/demo/           Separate mock pipeline outputs
 - Grid: 0.1° squares; `cell_id = "{lat_center:.2f}_{lon_center:.2f}"`; peat fraction at least 0.05; at most 300 demo cells.
 - UTC timestamps end in `Z`. JSON has `lat`/`lon`; GeoJSON positions use `[lon, lat]`. Missing measurements are `null`.
 - Schema version `1.0`; horizons 24/48/72; risk thresholds: LOW < 0.35, MODERATE < 0.60, HIGH < 0.80, otherwise CRITICAL.
-- Water sources are `null` in mocks. C decides whether to add OSM data or a documented handmade fixture.
+- C's dispatch mock uses `water_source: null`. A supplies a separate [synthetic water-source catalogue](a_data/WATER_HANDOFF.md) for integration; extraction from the downloaded Kalimantan OSM PBF is pending.
 - Alerts are simulated. Open-Meteo soil moisture is modeled data. FIRMS detects surface anomalies, not underground smoldering. Peat depth is absent from the supplied source format.
 - Treat the checked-in history, metrics and model artifacts as development inputs until B verifies their provenance and reproduces evaluation. Mock fixtures are synthetic and are not performance evidence.
 
@@ -113,6 +113,7 @@ Keep this inventory current as dependencies or datasets are added. Suggested rol
 | Open-Meteo | Modeled hourly weather / soil moisture and historical data | [Forecast API](https://open-meteo.com/en/docs), [historical API](https://open-meteo.com/en/docs/historical-weather-api) |
 | Global Forest Watch | Indonesian peat polygon source described in the playbook | [GFW data](https://www.globalforestwatch.org/) — A records the exact layer URL and license when downloaded |
 | NASA FIRMS | VIIRS thermal surface hotspots | [FIRMS](https://firms.modaps.eosdis.nasa.gov/), [API](https://firms.modaps.eosdis.nasa.gov/api/) |
+| OpenStreetMap / Geofabrik | Kalimantan water-feature source; raw PBF available, extraction pending | [Kalimantan extract](https://download.geofabrik.de/asia/indonesia/kalimantan.html), [OpenStreetMap attribution and licence](https://www.openstreetmap.org/copyright) |
 
 Store download timestamps, exact source URLs and licenses beside cached datasets. Do not commit a FIRMS MAP_KEY; copy `.env.example` to `.env` locally. The setup script creates that file if absent, but does not load credentials or contact a data provider. Live adapter configuration and authentication belong to A.
 
