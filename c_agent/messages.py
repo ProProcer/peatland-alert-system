@@ -13,6 +13,11 @@ def _fmt_num(value: Any, digits: int = 2) -> str:
     return f"{float(value):.{digits}f}"
 
 
+def _fmt_drop(value: Any) -> str:
+    """Magnitude of a decline, so "fell" is never followed by a minus sign."""
+    return "n/a" if value is None else _fmt_num(abs(float(value)))
+
+
 def _coord(lat: float, lon: float) -> str:
     return f"{_fmt_num(lat)}, {_fmt_num(lon)}"
 
@@ -89,7 +94,7 @@ def brief_messages(ctx: dict[str, Any]) -> dict[str, dict[str, str]]:
 def sms_warn_messages(ctx: dict[str, Any]) -> dict[str, dict[str, str]]:
     where = _coord(ctx["lat"], ctx["lon"])
     score = _fmt_num(ctx["risk_score"])
-    delta = _fmt_num(ctx.get("sm_27_81_delta_7d"))
+    delta = _fmt_drop(ctx.get("sm_27_81_delta_7d"))
     return {
         "mpa": {
             "id": (

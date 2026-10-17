@@ -9,9 +9,10 @@ from pathlib import Path
 
 from contracts.validate import ROOT, validate_file, validate_payload
 
+from c_agent import llm
 from c_agent.policy import decide, dispatch_timestamp
 from c_agent.state_store import StateStore, format_ts
-from c_agent.water import load_water_catalogue, resolve_water_catalogue_path
+from c_agent.water import DEFAULT_MAX_WATER_KM, load_water_catalogue, resolve_water_catalogue_path
 
 PACKAGE = Path(__file__).resolve().parent
 
@@ -37,7 +38,18 @@ def _append_log(log_path: Path, records: list[dict]) -> None:
             )
 
 
+def _require_inputs(data_dir: Path, names: tuple[str, ...]) -> None:
+    missing = [name for name in names if not (data_dir / name).exists()]
+    if missing:
+        raise SystemExit(
+            f"C: missing input file(s) in {data_dir}: {', '.join(missing)}. "
+            "Run the upstream stage first (A writes features.json/cells.geojson, B writes risk.json); "
+            "C does not substitute mocks for live inputs."
+        )
+
+
 def dispatch_mock(data_dir: Path, output: Path) -> None:
+    _require_inputs(data_dir, ("features.json", "risk.json", "cells.geojson"))
     features = validate_file("features", data_dir / "features.json")
     validate_file("risk", data_dir / "risk.json")
     validate_file("cells", data_dir / "cells.geojson")
@@ -57,7 +69,10 @@ def dispatch_live(
     water_sources: Path | None = None,
     cooldown_hours: float = 6.0,
     now: datetime | None = None,
+    use_llm: bool = False,
+    max_water_km: float | None = DEFAULT_MAX_WATER_KM,
 ) -> list:
+    _require_inputs(data_dir, ("features.json", "risk.json", "cells.geojson"))
     features = validate_file("features", data_dir / "features.json")
     risk_rows = validate_file("risk", data_dir / "risk.json")
     validate_file("cells", data_dir / "cells.geojson")
@@ -74,7 +89,21 @@ def dispatch_live(
         latest_risk_ts = max(row["ts"] for row in risk_rows)
         now = dispatch_timestamp(latest_risk_ts)
 
-    payload, created = decide(features, risk_rows, store, now=now, water_candidates=water_candidates)
+    rewriter = None
+    if use_llm:
+        rewriter = llm.make_rewriter()
+        if rewriter is None:
+            print("C: --llm requested but ANTHROPIC_API_KEY is not set; using templates")
+
+    payload, created = decide(
+        features,
+        risk_rows,
+        store,
+        now=now,
+        water_candidates=water_candidates,
+        max_water_km=max_water_km,
+        rewriter=rewriter,
+    )
     validate_payload("dispatch", payload)
     store.save()
     _atomic_write(output, payload)
@@ -97,6 +126,17 @@ def main() -> None:
         help="Role A water catalogue JSON (default: data-dir/water_sources.json or a_data/mock_water_sources.json)",
     )
     parser.add_argument("--cooldown-hours", type=float, default=6.0)
+    parser.add_argument(
+        "--max-water-km",
+        type=float,
+        default=DEFAULT_MAX_WATER_KM,
+        help="Attach a water source only if the nearest is within this distance (default 15); 0 disables the cutoff",
+    )
+    parser.add_argument(
+        "--llm",
+        action="store_true",
+        help="Let an LLM rephrase messages (needs ANTHROPIC_API_KEY); output is validated, templates are the fallback",
+    )
     args = parser.parse_args()
     output = args.output or args.data_dir / "dispatch.json"
     if args.mock:
@@ -109,6 +149,8 @@ def main() -> None:
         log_path=args.log_path,
         water_sources=args.water_sources,
         cooldown_hours=args.cooldown_hours,
+        use_llm=args.llm,
+        max_water_km=args.max_water_km or None,
     )
 
 

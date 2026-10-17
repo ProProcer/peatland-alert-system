@@ -12,6 +12,8 @@ from contracts.validate import ROOT
 # Mean Earth radius from a_data/WATER_HANDOFF.md
 EARTH_RADIUS_KM = 6371.0088
 DEFAULT_WATER_CATALOGUE = ROOT / "a_data" / "mock_water_sources.json"
+# A source farther than this from the target is not useful to a field team: report null.
+DEFAULT_MAX_WATER_KM = 15.0
 
 
 def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
@@ -48,11 +50,13 @@ def resolve_water_catalogue_path(explicit: Path | None, data_dir: Path | None = 
 def nearest_water_source(
     target: dict[str, float],
     candidates: list[dict[str, Any]],
+    max_km: float | None = None,
 ) -> dict[str, Any] | None:
     """Return contract water_source {lat, lon, distance_km, kind} or null.
 
     Distance is computed before rounding; output distance is rounded to 3 decimals
-    per Role A's WATER_HANDOFF.md.
+    per Role A's WATER_HANDOFF.md. If ``max_km`` is set and the nearest source is
+    farther than that, return ``None`` (never attach a distant source).
     """
     if not candidates:
         return None
@@ -63,7 +67,7 @@ def nearest_water_source(
         if distance < best_distance:
             best_distance = distance
             best = source
-    if best is None:
+    if best is None or (max_km is not None and best_distance > max_km):
         return None
     return {
         "lat": float(best["lat"]),
