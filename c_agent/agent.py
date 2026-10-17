@@ -93,7 +93,7 @@ def dispatch_live(
     if use_llm:
         rewriter = llm.make_rewriter()
         if rewriter is None:
-            print("C: --llm requested but ANTHROPIC_API_KEY is not set; using templates")
+            print("C: --llm requested but no GEMINI_API_KEY (or ANTHROPIC_API_KEY) is set; using templates")
 
     payload, created = decide(
         features,
@@ -135,7 +135,7 @@ def main() -> None:
     parser.add_argument(
         "--llm",
         action="store_true",
-        help="Let an LLM rephrase messages (needs ANTHROPIC_API_KEY); output is validated, templates are the fallback",
+        help="Let an LLM rephrase messages (needs GEMINI_API_KEY or ANTHROPIC_API_KEY); output is validated, templates are the fallback",
     )
     args = parser.parse_args()
     output = args.output or args.data_dir / "dispatch.json"

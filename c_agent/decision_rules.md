@@ -31,7 +31,7 @@ The nearest catalogue source is attached only if it is within 15 km of the dispa
 
 Templates in `messages.py` are the source of truth. Every message starts with `Simulasi` / `Simulation`. The `mpa` message is an SMS (≤160 characters, tested). A decline is written as a magnitude ("fell 0.06"), never "fell -0.06".
 
-Optional LLM phrasing (`--llm`, `llm.py`) may only rephrase. It is rejected, with the template used instead, if it changes the audience set, drops the simulation label, introduces any number not present in the facts or template, exceeds SMS length, or the call fails. It runs only when a new dispatch is minted.
+Optional LLM phrasing (`--llm`, `llm.py`; Gemini by default, Anthropic supported) may only rephrase. It is rejected, with the template used instead, if it changes the audience set, drops the simulation label, introduces any number not present in the facts or template, exceeds SMS length, or the call fails. It runs only when a new dispatch is minted.
 
 ## Dedupe, cooldown, escalation
 

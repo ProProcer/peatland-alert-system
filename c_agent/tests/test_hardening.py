@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import tempfile
@@ -42,7 +43,7 @@ def _run(rewriter=None, water=NEAR, state=None, now=NOW):
 def _fake_post(transform):
     """Fake LLM transport: reads TEMPLATE from the request, returns transform(template)."""
     def post(payload):
-        request = json.loads(payload["messages"][0]["content"])
+        request = json.loads(payload["user"])
         return json.dumps(transform(request["TEMPLATE"]), ensure_ascii=False)
     return post
 
@@ -95,6 +96,47 @@ class RewriterTests(unittest.TestCase):
         with mock.patch.dict(os.environ, {}, clear=True):
             self.assertIsNone(llm.make_rewriter())
 
+    def test_provider_choice_from_environment(self) -> None:
+        with mock.patch.dict(os.environ, {"GEMINI_API_KEY": "g", "ANTHROPIC_API_KEY": "a"}, clear=True):
+            self.assertEqual(llm._pick_provider(None), ("gemini", "g"))
+        with mock.patch.dict(os.environ, {"ANTHROPIC_API_KEY": "a"}, clear=True):
+            self.assertEqual(llm._pick_provider(None), ("anthropic", "a"))
+        with mock.patch.dict(os.environ, {"GOOGLE_API_KEY": "k"}, clear=True):
+            self.assertEqual(llm._pick_provider(None), ("gemini", "k"))
+        with mock.patch.dict(os.environ, {"GEMINI_API_KEY": "g", "LLM_PROVIDER": "anthropic"}, clear=True):
+            self.assertIsNone(llm._pick_provider(None))
+
+    def test_gemini_request_shape_and_response_parsing(self) -> None:
+        seen = {}
+
+        class Reply(io.BytesIO):
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *exc):
+                return False
+
+        def fake_urlopen(request, timeout=None):
+            seen["url"] = request.full_url
+            seen["key"] = request.get_header("X-goog-api-key")
+            seen["body"] = json.loads(request.data)
+            reply = {"candidates": [{"content": {"parts": [
+                {"text": "ignored reasoning", "thought": True},
+                {"text": '{"ok": 1}'},
+            ]}}]}
+            return Reply(json.dumps(reply).encode())
+
+        post = llm._gemini_post("secret", "gemini-test", 5.0)
+        with mock.patch("c_agent.llm.urllib.request.urlopen", fake_urlopen):
+            text = post({"system": "S", "user": "U"})
+        self.assertEqual(text, '{"ok": 1}')
+        self.assertIn("models/gemini-test:generateContent", seen["url"])
+        self.assertNotIn("secret", seen["url"])  # key goes in a header, never the URL
+        self.assertEqual(seen["key"], "secret")
+        self.assertEqual(seen["body"]["systemInstruction"]["parts"][0]["text"], "S")
+        self.assertEqual(seen["body"]["contents"][0]["parts"][0]["text"], "U")
+        self.assertEqual(seen["body"]["generationConfig"]["responseMimeType"], "application/json")
+
     def test_accepts_valid_rewrite(self) -> None:
         logs: list[str] = []
         rewriter = llm.make_rewriter(post=_fake_post(_suffix), log=logs.append)
@@ -105,7 +147,7 @@ class RewriterTests(unittest.TestCase):
 
     def test_accepts_fenced_json(self) -> None:
         def post(payload):
-            template = json.loads(payload["messages"][0]["content"])["TEMPLATE"]
+            template = json.loads(payload["user"])["TEMPLATE"]
             return "```json\n" + json.dumps(_suffix(template)) + "\n```"
         payload, _ = _run(llm.make_rewriter(post=post))
         self.assertTrue(payload[0]["messages"]["bpbd"]["en"].endswith("Stay safe."))
