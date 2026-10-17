@@ -1,0 +1,6 @@
+# PIC 2's environment includes PIC 1's shared requirements and artifact constraint.
+-c ../constraints.txt
+-r requirements.txt
+# PIC 1's current Arrow string alignment expects pandas 2 object-string dtypes.
+# Re-evaluate this bound with PIC 1 before moving to pandas 3.
+pandas>=2.1,<3

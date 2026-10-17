@@ -1,0 +1,10 @@
+# Select Snap ML only when installed; otherwise use sklearn histogram boosting.
+backend: auto
+class_weight: balanced
+max_iter: 150
+learning_rate: 0.05
+max_depth: 4
+min_samples_leaf: 25
+l2_regularization: 2.0
+logistic_max_iter: 500
+logistic_c: 1.0

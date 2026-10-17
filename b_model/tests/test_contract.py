@@ -92,8 +92,82 @@ def _validate_single_risk_record(rec: dict):
         assert factor["feature"] in FEATURE_COLUMNS, f"Unknown feature in factor: {factor['feature']}"
 
 
+class ConstantProbabilityModel:
+    """Deterministic test double; not an evaluated forecasting model."""
+    def __init__(self, probability, reverse_classes=False):
+        self.probability = probability
+        self.classes_ = np.array([1, 0] if reverse_classes else [0, 1])
+
+    def predict_proba(self, values):
+        probabilities = [self.probability if c == 1 else 1 - self.probability for c in self.classes_]
+        return np.tile(probabilities, (len(values), 1))
+
+
+def write_test_artifacts(model_dir, probability=0.5, serialization="joblib", reverse_order=False,
+                         reverse_classes=False):
+    """Create a minimal manifest-backed handoff without retraining or touching saved models."""
+    import pickle
+    from sklearn.impute import SimpleImputer
+    from sklearn.preprocessing import StandardScaler
+    model_dir.mkdir(parents=True, exist_ok=True)
+    order = list(reversed(FEATURE_COLUMNS)) if reverse_order else list(FEATURE_COLUMNS)
+    imputer = SimpleImputer(strategy="median").fit(pd.DataFrame(np.zeros((2, len(order))), columns=order))
+    scaler = StandardScaler().fit(np.zeros((2, len(order))))
+    manifest = {"schema_version": "1.0", "models": {}}
+    for horizon in HORIZONS:
+        filename = f"custom-{horizon}.{'pkl' if serialization == 'pickle' else 'joblib'}"
+        manifest["models"][str(horizon)] = {
+            "filename": filename, "format": serialization, "model_version": "test-v2",
+            "feature_order": order, "positive_class": 1,
+        }
+        bundle = {
+            "horizon_h": horizon, "schema_version": "1.0", "model_version": "test-v2",
+            "feature_columns": order, "imputer": imputer, "scaler": scaler,
+            "primary_model": ConstantProbabilityModel(probability, reverse_classes),
+            "signed_feature_weights": np.ones(len(order)) * 0.1,
+        }
+        if serialization == "pickle":
+            with (model_dir / filename).open("wb") as handle:
+                pickle.dump(bundle, handle)
+        else:
+            joblib.dump(bundle, model_dir / filename)
+    (model_dir / "artifact_manifest.json").write_text(json.dumps(manifest))
+    return manifest
+
+
 class TestRiskContract:
     """Tests validating Contract 3.2 on mock_output.json and live risk.json."""
+
+    @pytest.mark.parametrize("field,value", [
+        ("ts", "2026-02-30T09:00:00Z"),
+        ("ts", "2026-10-17T09:00:00+00:00"),
+        ("cell_id", "114.05_-2.35"),
+        ("risk_score", float("nan")),
+        ("risk_score", True),
+        ("risk_score", -999),
+        ("horizon_h", 24.0),
+        ("risk_level", "LOW"),
+    ])
+    def test_reject_invalid_risk(self, field, value):
+        records = json.loads(DEFAULT_MOCK_OUTPUT_PATH.read_text())
+        records[0][field] = value
+        with pytest.raises(ValueError):
+            validate_risk_contract(records)
+
+    def test_reject_nonfinite_and_sentinel_factors(self):
+        for value in (-999, float("inf"), float("nan"), True):
+            records = json.loads(DEFAULT_MOCK_OUTPUT_PATH.read_text())
+            records[0]["top_factors"][0]["contribution"] = value
+            with pytest.raises(ValueError):
+                validate_risk_contract(records)
+
+    def test_reject_duplicate_risks_and_extra_fields(self):
+        records = json.loads(DEFAULT_MOCK_OUTPUT_PATH.read_text())
+        with pytest.raises(ValueError):
+            validate_risk_contract(records + [records[0]])
+        records[0]["scores"] = {}
+        with pytest.raises(ValueError):
+            validate_risk_contract(records)
 
     def test_risk_level_boundaries(self):
         """Tests exact threshold definitions: LOW < 0.35 <= MODERATE < 0.60 <= HIGH < 0.80 <= CRITICAL."""
@@ -147,24 +221,9 @@ class TestRiskContract:
 
         for rec in data:
             _validate_single_risk_record(rec)
-            # Defect 1 & 4 assertions:
-            score = rec["risk_score"]
-            assert 0.01 <= score <= 0.99, f"risk_score {score} must be in [0.01, 0.99] and not equal 0.0 or 1.0"
-            level = rec["risk_level"]
-            factors = rec["top_factors"]
-            assert len(factors) >= 2, f"Expected at least 2 top factors, got {len(factors)}"
-            if level in ("CRITICAL", "HIGH", "MODERATE"):
-                for factor in factors:
-                    assert factor["contribution"] > 0.0, (
-                        f"Elevated cell {rec['cell_id']} ({level}) factor {factor['feature']} "
-                        f"contribution {factor['contribution']} must be strictly positive (> 0)"
-                    )
-            elif level == "LOW":
-                for factor in factors:
-                    assert factor["contribution"] < 0.0, (
-                        f"Low risk cell {rec['cell_id']} ({level}) factor {factor['feature']} "
-                        f"contribution {factor['contribution']} must be strictly negative (< 0)"
-                    )
+            assert 1 <= len(rec["top_factors"]) <= 3
+            assert all(np.isfinite(factor["contribution"]) for factor in rec["top_factors"])
+
 
 
 class TestFeatureContract:
@@ -250,6 +309,15 @@ class TestFeatureContract:
         json_file = tmp_path / "multihour.json"
         with open(json_file, "w") as f:
             json.dump(multi_records, f)
+
+        # Supply the complete frozen structure; absent measurements are explicit nulls.
+        from b_model.config import FEATURE_GROUPS
+        for record in multi_records:
+            record["peat"]["polygon_ids"] = []
+            for group, columns in FEATURE_GROUPS.items():
+                for column in columns:
+                    record[group].setdefault(column, None)
+        json_file.write_text(json.dumps(multi_records))
 
         # 6 records in, exactly 2 unique cells out with timestamp 10:00:00Z
         df_dedup = flatten_features_json(json_file, latest_only=True)
@@ -462,7 +530,7 @@ class TestMLCorrectnessAndCalibration:
     def test_multicell_surge_elevates_both_cells(self, tmp_path):
         """Verifies comma-separated cell IDs elevate all designated cells to CRITICAL."""
         features_file = tmp_path / "multi_feat.json"
-        risk_file = tmp_path / "multi_risk.json"
+        risk_file = tmp_path / "risk.json"
         generate_mock_data_if_missing(features_path=features_file)
 
         results = run_predictions(
@@ -485,7 +553,7 @@ class TestMLCorrectnessAndCalibration:
         """Verifies --write-surged-features persists updated values to features.json for Role C consistency."""
         features_file = tmp_path / "feat_in.json"
         surged_features_file = tmp_path / "feat_out.json"
-        risk_file = tmp_path / "risk_out.json"
+        risk_file = tmp_path / "risk.json"
         generate_mock_data_if_missing(features_path=features_file)
 
         run_predictions(
@@ -606,6 +674,310 @@ class TestMLCorrectnessAndCalibration:
         )
 
 
+class TestHydraInference:
+    """Inference acceptance checks independent of claimed training quality."""
+
+    @pytest.fixture
+    def inputs(self, tmp_path):
+        source = tmp_path / "features.json"
+        history = tmp_path / "history.parquet"
+        generate_mock_data_if_missing(features_path=source, history_path=history,
+                                      num_cells=3, days_history=2)
+        return source, history
+
+    def test_latest_null_is_not_backfilled_from_an_older_hour(self, inputs):
+        source, _ = inputs
+        records = json.loads(source.read_text())
+        newer = json.loads(json.dumps(records[0]))
+        newer["ts"] = "2026-10-17T10:00:00Z"
+        newer["weather"]["sm_27_81"] = None
+        source.write_text(json.dumps(records + [newer]))
+        df = flatten_features_json(source)
+        latest = df.loc[df.cell_id == newer["cell_id"]].iloc[0]
+        assert latest.ts == newer["ts"]
+        assert pd.isna(latest.sm_27_81)
+
+    def test_history_predictor_columns_and_dtypes(self, inputs):
+        source, history = inputs
+        reference = pd.read_parquet(history).drop(columns=["target_24h", "target_48h", "target_72h"])
+        actual = flatten_features_json(source, history_path=history)
+        assert actual.columns.tolist() == reference.columns.tolist()
+        assert actual.dtypes.equals(reference.dtypes)
+
+    @pytest.mark.parametrize("bad_value", [-999, float("nan"), float("inf"), "bad", True])
+    def test_reject_bad_measurements(self, inputs, bad_value):
+        source, _ = inputs
+        records = json.loads(source.read_text())
+        records[0]["weather"]["temp_c"] = bad_value
+        source.write_text(json.dumps(records))
+        with pytest.raises(ValueError):
+            flatten_features_json(source)
+
+    def test_missing_input_does_not_create_mock_files(self, tmp_path):
+        source = tmp_path / "absent.json"
+        with pytest.raises(FileNotFoundError):
+            flatten_features_json(source)
+        assert not source.exists()
+
+    def test_structured_config_validation(self):
+        from omegaconf import OmegaConf
+        from omegaconf.errors import OmegaConfBaseException
+        from b_model.config import validate_config
+        for invalid in ({"horizons": [24]}, {"paths": {"output": "other.json"}},
+                        {"max_seconds": 61}, {"imputation": {"continuous": "zero"}}):
+            with pytest.raises(ValueError):
+                validate_config(OmegaConf.create(invalid))
+        for invalid in ({"typo": 1}, {"max_seconds": "invalid"}):
+            with pytest.raises(OmegaConfBaseException):
+                validate_config(OmegaConf.create(invalid))
+
+    def test_nullable_counts_are_imputed_without_modifying_json(self, inputs, tmp_path):
+        source, history = inputs
+        from b_model.predict import run_configured
+        from omegaconf import OmegaConf
+        records = json.loads(source.read_text())
+        records[0]["fire"]["hotspots_in_cell_24h"] = None
+        records[0]["weather"]["sm_27_81"] = None
+        source.write_text(json.dumps(records))
+        before = source.read_bytes()
+        for strategy in ("artifact_median", "zero"):
+            output = tmp_path / strategy / "risk.json"
+            summary = run_configured(OmegaConf.create({
+                "paths": {"features": str(source), "history": str(history),
+                          "model_dir": str(DEFAULT_MODEL_DIR), "output": str(output)},
+                "imputation": {"hotspot_counts": strategy},
+            }))
+            validate_risk_contract(json.loads(output.read_text()))
+            assert set(summary[records[0]["cell_id"]]["scores"]) == set(HORIZONS)
+        assert source.read_bytes() == before
+
+    def test_hydra_cli_300_cells_under_60_seconds(self, inputs, tmp_path):
+        import os
+        import subprocess
+        source, history = inputs
+        template = json.loads(source.read_text())[0]
+        records = []
+        for index in range(300):
+            record = json.loads(json.dumps(template))
+            record["lat"] = round(-2.35 - (index // 30) * 0.1, 2)
+            record["lon"] = round(114.05 + (index % 30) * 0.1, 2)
+            record["cell_id"] = f'{record["lat"]:.2f}_{record["lon"]:.2f}'
+            records.append(record)
+        source.write_text(json.dumps(records))
+        output = tmp_path / "risk.json"
+        env = dict(os.environ, OMP_NUM_THREADS="2", OPENBLAS_NUM_THREADS="2")
+        start = time.perf_counter()
+        result = subprocess.run([
+            sys.executable, "-m", "b_model.predict", f"paths.features={source.as_posix()}",
+            f"paths.history={history.as_posix()}", f"paths.output={output.as_posix()}",
+        ], cwd=PROJECT_ROOT, env=env, capture_output=True, text=True, timeout=60)
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert time.perf_counter() - start < 60
+        payload = json.loads(output.read_text())
+        assert len(payload) == 900
+        validate_risk_contract(payload)
+        assert {r["cell_id"] for r in payload} == {r["cell_id"] for r in records}
+
+    @pytest.mark.parametrize("group,key", [("fire", "temp_c"), ("weather", "cell_id"), ("peat", "ts")])
+    def test_reject_cross_group_overwrite(self, inputs, group, key):
+        source, _ = inputs
+        records = json.loads(source.read_text())
+        records[0][group][key] = -999
+        source.write_text(json.dumps(records))
+        with pytest.raises(ValueError, match=rf"record\[0\].{group}.{key}: unexpected"):
+            flatten_features_json(source)
+        with pytest.raises(ValueError):
+            flatten_feature_record(records[0])
+
+    @pytest.mark.parametrize("replacement", [None, [], "invalid", 12])
+    def test_nested_types_have_context(self, inputs, replacement):
+        source, _ = inputs
+        records = json.loads(source.read_text())
+        records[1]["fire"] = replacement
+        source.write_text(json.dumps(records))
+        with pytest.raises(ValueError, match=r"record\[1\].fire: expected an object"):
+            flatten_features_json(source)
+
+    def test_missing_fields_and_nonobject_rows_have_context(self, inputs):
+        source, _ = inputs
+        records = json.loads(source.read_text())
+        del records[0]["weather"]["temp_c"]
+        source.write_text(json.dumps(records))
+        with pytest.raises(ValueError, match=r"record\[0\].weather.temp_c: required"):
+            flatten_features_json(source)
+        source.write_text("[null]")
+        with pytest.raises(ValueError, match=r"record\[0\]"):
+            flatten_features_json(source)
+
+    @pytest.mark.parametrize("field,value", [("peat_fraction", 0.01), ("peat_fraction", None)])
+    def test_reject_invalid_peat_metadata(self, inputs, field, value):
+        source, _ = inputs
+        records = json.loads(source.read_text())
+        records[0]["peat"][field] = value
+        source.write_text(json.dumps(records))
+        with pytest.raises(ValueError, match="peat.peat_fraction"):
+            flatten_features_json(source)
+
+    @pytest.mark.parametrize("dtype,value", [("int8", 200), ("uint8", -1), ("uint8", 256), ("int64", float(2**63))])
+    def test_integer_overflow_rejected(self, inputs, tmp_path, dtype, value):
+        from b_model.features import align_history_schema
+        source, _ = inputs
+        frame = flatten_features_json(source).drop(columns="schema_version")
+        reference = frame.copy()
+        reference["hotspots_in_cell_24h"] = 0
+        reference["hotspots_in_cell_24h"] = reference["hotspots_in_cell_24h"].astype(dtype)
+        history = tmp_path / "typed.parquet"
+        reference.to_parquet(history, index=False)
+        frame.loc[0, "hotspots_in_cell_24h"] = value
+        with pytest.raises(ValueError, match="integer exceeds"):
+            align_history_schema(frame, history)
+
+    def test_nullable_unsigned_integer_and_float_overflow(self, inputs, tmp_path):
+        from b_model.features import align_history_schema
+        source, _ = inputs
+        frame = flatten_features_json(source).drop(columns="schema_version")
+        reference = frame.copy()
+        reference["hotspots_in_cell_24h"] = reference["hotspots_in_cell_24h"].astype("uint8")
+        reference["temp_c"] = reference["temp_c"].astype("float32")
+        history = tmp_path / "typed.parquet"
+        reference.to_parquet(history, index=False)
+        frame.loc[0, "hotspots_in_cell_24h"] = np.nan
+        assert str(align_history_schema(frame, history)["hotspots_in_cell_24h"].dtype) == "UInt8"
+        frame.loc[0, "temp_c"] = 1e40
+        with pytest.raises(ValueError, match="floating-point overflow"):
+            align_history_schema(frame, history)
+
+    def test_attribution_is_exact_and_not_sign_filtered(self):
+        values = np.zeros((1, len(FEATURE_COLUMNS)))
+        weights = np.zeros(len(FEATURE_COLUMNS))
+        factors = compute_local_attributions(None, values, values, weights, FEATURE_COLUMNS)
+        assert all(f["contribution"] == 0 for f in factors[0])
+        values[0, :3] = [5, -4, 0.0001]
+        weights[:3] = [0.3, 0.2, 0.7]
+        for risk in (0.1, 0.9):
+            factors = compute_local_attributions(None, values, values, weights, FEATURE_COLUMNS,
+                                                 risk_scores=np.array([risk]))[0]
+            assert [f["feature"] for f in factors] == FEATURE_COLUMNS[:3]
+            assert [f["contribution"] for f in factors] == list(values[0, :3] * weights[:3])
+
+    @pytest.mark.parametrize("probability,level", [
+        (0.0, "LOW"), (0.349, "LOW"), (0.35, "MODERATE"), (0.599, "MODERATE"),
+        (0.60, "HIGH"), (0.799, "HIGH"), (0.80, "CRITICAL"), (1.0, "CRITICAL"),
+    ])
+    def test_unrounded_probability_handoff(self, inputs, tmp_path, probability, level):
+        source, history = inputs
+        models = tmp_path / "models"
+        write_test_artifacts(models, probability)
+        output = tmp_path / "risk.json"
+        results = run_predictions(source, models, output, history_path=history)
+        saved = json.loads(output.read_text())
+        assert saved == results
+        assert all(r["risk_score"] == probability and r["risk_level"] == level for r in saved)
+        assert all(r["model_version"] == "test-v2" for r in saved)
+        validate_risk_contract(saved)
+
+    @pytest.mark.parametrize("serialization", ["pickle", "joblib"])
+    def test_manifest_formats_feature_order_and_positive_class(self, inputs, tmp_path, serialization):
+        source, history = inputs
+        models = tmp_path / "models"
+        write_test_artifacts(models, 0.7, serialization, reverse_order=True, reverse_classes=True)
+        results = run_predictions(source, models, tmp_path / "risk.json", history_path=history)
+        assert all(r["risk_score"] == 0.7 and r["risk_level"] == "HIGH" for r in results)
+
+    @pytest.mark.parametrize("field,value", [
+        ("filename", "../outside.pkl"), ("format", "unknown"),
+        ("feature_order", FEATURE_COLUMNS[:-1]), ("model_version", ""),
+    ])
+    def test_reject_bad_manifest(self, inputs, tmp_path, field, value):
+        from b_model.predict import load_artifact_manifest
+        models = tmp_path / "models"
+        manifest = write_test_artifacts(models)
+        manifest["models"]["24"][field] = value
+        (models / "artifact_manifest.json").write_text(json.dumps(manifest))
+        with pytest.raises(ValueError):
+            load_artifact_manifest(models)
+
+    def test_model_metadata_mismatch_does_not_publish(self, inputs, tmp_path):
+        source, history = inputs
+        models = tmp_path / "models"
+        manifest = write_test_artifacts(models)
+        manifest["models"]["24"]["model_version"] = "wrong"
+        (models / "artifact_manifest.json").write_text(json.dumps(manifest))
+        output = tmp_path / "risk.json"
+        with pytest.raises(ValueError, match="model_version"):
+            run_predictions(source, models, output, history_path=history)
+        assert not output.exists()
+
+    def test_serialization_failure_preserves_outputs_and_inputs(self, inputs, tmp_path, monkeypatch):
+        import b_model.predict as inference
+        source, history = inputs
+        models = tmp_path / "models"
+        write_test_artifacts(models)
+        output = tmp_path / "risk.json"
+        output.write_text('["previous complete output"]')
+        before = source.read_bytes(), output.read_bytes(), history.read_bytes()
+        def partial_write(*args, **kwargs):
+            args[1].write('[{"partial":')
+            raise TypeError("serialization failed")
+        monkeypatch.setattr(inference.json, "dump", partial_write)
+        with pytest.raises(TypeError, match="serialization failed"):
+            run_predictions(source, models, output, history_path=history)
+        assert (source.read_bytes(), output.read_bytes(), history.read_bytes()) == before
+        assert not list(tmp_path.glob(".risk-*.tmp"))
+
+    def test_missing_models_cannot_mutate_surged_input(self, inputs, tmp_path):
+        source, history = inputs
+        before = source.read_bytes()
+        demo = tmp_path / "demo-features.json"
+        with pytest.raises(FileNotFoundError):
+            run_predictions(source, tmp_path / "absent", tmp_path / "risk.json",
+                            surge_cell="-2.35_114.05", surge_output_features=demo, history_path=history)
+        assert source.read_bytes() == before
+        assert not demo.exists()
+
+    def test_input_collisions_and_unknown_surge_are_rejected(self, inputs, tmp_path):
+        source, history = inputs
+        before = source.read_bytes()
+        with pytest.raises(ValueError, match="overwrite inputs"):
+            run_predictions(source, DEFAULT_MODEL_DIR, tmp_path / "risk.json", history_path=history,
+                            surge_cell="-2.35_114.05", surge_output_features=source)
+        with pytest.raises(ValueError, match="separate"):
+            run_predictions(source, DEFAULT_MODEL_DIR, tmp_path / "risk.json", history_path=history,
+                            surge_cell="-2.35_114.05", write_surged_features=True)
+        with pytest.raises(ValueError, match="Unknown surge cell"):
+            run_predictions(source, DEFAULT_MODEL_DIR, tmp_path / "risk.json", history_path=history,
+                            surge_cell="-3.05_115.05")
+        assert source.read_bytes() == before
+
+    def test_demo_feed_matches_inference_transformation(self, inputs, tmp_path):
+        source, history = inputs
+        before = source.read_bytes()
+        demo = tmp_path / "demo-features.json"
+        run_predictions(source, DEFAULT_MODEL_DIR, tmp_path / "risk.json", history_path=history,
+                        surge_cell="-2.35_114.05", surge_output_features=demo)
+        expected = apply_surge_scenario(flatten_features_json(source), "-2.35_114.05")
+        actual = flatten_features_json(demo)
+        pd.testing.assert_frame_equal(actual, expected)
+        assert source.read_bytes() == before
+
+    def test_legacy_cli_uses_yaml_environment_and_shared_checks(self, inputs, tmp_path, monkeypatch):
+        from b_model.predict import main
+        source, history = inputs
+        output = tmp_path / "risk.json"
+        monkeypatch.setenv("PEAT_FEATURES", str(source))
+        monkeypatch.setenv("PEAT_HISTORY", str(history))
+        monkeypatch.setenv("PEAT_RISK", str(output))
+        main(["--model-dir", str(DEFAULT_MODEL_DIR)])
+        validate_risk_contract(json.loads(output.read_text()))
+        risk_source = tmp_path / "input" / "risk.json"
+        risk_source.parent.mkdir()
+        risk_source.write_bytes(source.read_bytes())
+        before = risk_source.read_bytes()
+        with pytest.raises(SystemExit):
+            main(["--input", str(risk_source), "--output", str(risk_source)])
+        assert risk_source.read_bytes() == before
+
+
 class TestEndToEndPipeline:
     """Verifies train.py and predict.py complete fast and correctly."""
 
@@ -614,7 +986,7 @@ class TestEndToEndPipeline:
         history_file = tmp_path / "mock_history.parquet"
         features_file = tmp_path / "mock_features.json"
         model_dir = tmp_path / "models"
-        risk_file = tmp_path / "mock_risk.json"
+        risk_file = tmp_path / "risk.json"
 
         generate_mock_data_if_missing(
             history_path=history_file,
@@ -639,6 +1011,10 @@ class TestEndToEndPipeline:
             assert "pr_auc" in m
             assert "roc_auc" in m
             assert "lead_time_hours" in m
+
+        # PIC 2 publishes a manifest alongside the newly trained bundles.
+        import shutil
+        shutil.copyfile(DEFAULT_MODEL_DIR / "artifact_manifest.json", model_dir / "artifact_manifest.json")
 
         # 2. Predict with surge cell
         results = run_predictions(

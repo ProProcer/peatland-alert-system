@@ -1,0 +1,32 @@
+defaults:
+  - training_schema
+  - model: auto
+  - dryness: default
+  - explanation: default
+  - _self_
+  - override hydra/job_logging: disabled
+
+paths:
+  history: ${oc.env:PEAT_HISTORY,data/processed/history.parquet}
+  model_dir: b_model/runs/${now:%Y%m%d_%H%M%S}
+horizons: [24, 48, 72]
+seed: 42
+split:
+  train_ratio: 0.55
+  calibration_ratio: 0.20
+  embargo_hours: 72
+  strict_embargo: true
+baseline:
+  features: [peat_fraction, peat_area_km2, temp_c, precip_mm]
+  max_iter: 500
+  c: 1.0
+  z_score_clip: 3.0
+calibration:
+  method: sigmoid
+
+hydra:
+  job:
+    chdir: false
+  output_subdir: null
+  run:
+    dir: .

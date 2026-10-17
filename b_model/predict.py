@@ -3,17 +3,19 @@ Live prediction engine for Role B (ML Lead).
 Consumes /data/processed/features.json (Contract 3.1).
 Outputs /data/processed/risk.json (Contract 3.2).
 Includes deduplication of multi-hour inputs, signed directional feature attribution,
-robust negative cell_id parsing, multi-cell surge injection, and optional features.json persistence.
-Designed for ultra-fast, zero-crash execution on IBM Z / LinuxONE (s390x) & standard architectures.
+robust negative cell_id parsing, multi-cell surge injection, and separate demo-feature output.
+Hardware compatibility and latency require verification on the deployment target.
 """
 
 import argparse
+import tempfile
+import pickle
+import copy
 import json
 import os
 import sys
 import time
 from pathlib import Path
-import sys
 
 # Ensure project root is in sys.path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -28,29 +30,22 @@ import pandas as pd
 from b_model.config import (
     CalibratedRiskModel,
     DEFAULT_FEATURES_PATH,
+    DEFAULT_HISTORY_PATH,
     DEFAULT_MODEL_DIR,
     DEFAULT_RISK_PATH,
     FEATURE_COLUMNS,
     HORIZONS,
-    MODEL_VERSION,
     SCHEMA_VERSION,
     get_risk_level,
     setup_logger,
 )
-from b_model.features import flatten_features_json
+from b_model.features import flatten_features_json, _unique_keys, _invalid_constant, validate_feature_record
 
 # Silence multiprocessing loky worker warnings on Windows / constrained containers
 os.environ.setdefault("LOKY_MAX_CPU_COUNT", "4")
 
 logger = setup_logger("b_model.predict")
 
-# Check for SHAP availability
-try:
-    import shap
-
-    SHAP_AVAILABLE = True
-except ImportError:
-    SHAP_AVAILABLE = False
 
 
 def compute_local_attributions(
@@ -62,121 +57,80 @@ def compute_local_attributions(
     risk_scores: Optional[np.ndarray] = None,
     top_k: int = 3,
 ) -> List[List[Dict[str, Any]]]:
+    """Rank exact signed weight * standardized feature values by absolute magnitude.
+
+    These are directional heuristic contributions, not SHAP or calibrated log odds.
+    No signs, magnitudes or extra factors are fabricated for any risk category.
     """
-    Computes local feature contributions for each prediction with sign-aligned filtering.
-    Uses signed feature weights (signed_weights = |weights| * feature_signs) so that:
-    - Low soil moisture (x_scaled < 0) yields positive contribution to risk (- * - = +).
-    - High rain (x_scaled > 0) yields negative contribution to risk (+ * - = -).
-    - Prolonged drought (x_scaled > 0) yields positive contribution to risk (+ * + = +).
-
-    Filtering rules (Contract 3.2):
-    - For elevated risk cells (risk_score >= 0.35: MODERATE, HIGH, CRITICAL):
-      Select top features with strictly positive contributions (contrib > 0), sorted descending.
-    - For safe cells (risk_score < 0.35: LOW):
-      Select top features with strictly negative contributions (contrib < 0) (risk suppressors),
-      sorted by magnitude (most negative first).
-    - Values are clipped to [-0.60, +0.60] and rounded to 2 decimal places.
-    """
-    n_samples = len(X_imp)
-    if risk_scores is None:
-        risk_scores = np.ones(n_samples) * 0.50
-
-    # Physical standardized attribution bounded to [-0.60, +0.60]
-    attributions = np.clip(X_scaled * signed_feature_weights, -0.60, 0.60)
-
-    all_factors: List[List[Dict[str, Any]]] = []
-
-    for row_idx in range(n_samples):
-        score = float(risk_scores[row_idx])
-        is_elevated = score >= 0.35
-        row_attr = attributions[row_idx]
-
-        candidates: List[Dict[str, Any]] = []
-        for idx, feat in enumerate(feature_names):
-            val = round(float(row_attr[idx]), 2)
-            if is_elevated and val > 0.0:
-                candidates.append({"feature": feat, "contribution": val})
-            elif not is_elevated and val < 0.0:
-                candidates.append({"feature": feat, "contribution": val})
-
-        if is_elevated:
-            # Sort descending: highest positive contribution first
-            candidates.sort(key=lambda x: x["contribution"], reverse=True)
-            # Fallback if fewer than 2 positive factors
-            if len(candidates) < 2:
-                for fallback_feat in ["days_since_rain", "sm_27_81", "vpd_mean_24h", "sm_27_81_delta_7d"]:
-                    if not any(c["feature"] == fallback_feat for c in candidates):
-                        f_idx = feature_names.index(fallback_feat)
-                        w = abs(signed_feature_weights[f_idx])
-                        val = round(float(np.clip(w * 3.0, 0.12, 0.45)), 2)
-                        candidates.append({"feature": fallback_feat, "contribution": val})
-                    if len(candidates) >= 2:
-                        break
-            selected = candidates[:top_k]
-        else:
-            # Sort by magnitude: most negative first (risk suppressors)
-            candidates.sort(key=lambda x: x["contribution"])
-            # Fallback if fewer than 2 negative factors
-            if len(candidates) < 2:
-                for fallback_feat in ["rain_24h_mm", "sm_0_1", "sm_27_81", "rain_7d_mm"]:
-                    if not any(c["feature"] == fallback_feat for c in candidates):
-                        f_idx = feature_names.index(fallback_feat)
-                        w = abs(signed_feature_weights[f_idx])
-                        val = -round(float(np.clip(w * 3.0, 0.12, 0.45)), 2)
-                        candidates.append({"feature": fallback_feat, "contribution": val})
-                    if len(candidates) >= 2:
-                        break
-            selected = candidates[:top_k]
-
-        all_factors.append(selected)
-
-    return all_factors
+    values = np.asarray(X_scaled, dtype=float)
+    weights = np.asarray(signed_feature_weights, dtype=float)
+    if values.ndim != 2 or values.shape[1] != len(feature_names) or weights.shape != (len(feature_names),):
+        raise ValueError("Attribution feature/weight dimensions do not match")
+    if not np.isfinite(values).all() or not np.isfinite(weights).all():
+        raise ValueError("Attribution inputs must be finite")
+    if type(top_k) is not int or not 1 <= top_k <= len(feature_names):
+        raise ValueError("Invalid top_k")
+    with np.errstate(over="raise", invalid="raise"):
+        contributions = values * weights
+    indices = np.argsort(-np.abs(contributions), axis=1, kind="stable")[:, :top_k]
+    return [[{"feature": feature_names[index], "contribution": float(row[index])}
+             for index in order] for row, order in zip(contributions, indices)]
 
 
 def validate_risk_contract(records: List[Dict[str, Any]]) -> None:
-    """
-    Validates the generated risk records against Contract 3.2 before persistence.
-    Raises ValueError on any violation.
-    """
-    if not isinstance(records, list) or len(records) == 0:
-        raise ValueError("Contract 3.2 Error: Output risk records must be a non-empty list.")
-
-    valid_horizons = {24, 48, 72}
-
-    for idx, r in enumerate(records):
-        for key in ["schema_version", "cell_id", "ts", "horizon_h", "risk_score", "risk_level", "top_factors", "model_version"]:
-            if key not in r:
-                raise ValueError(f"Contract 3.2 Error: Record #{idx} missing required key '{key}'")
-
-        if r["schema_version"] != SCHEMA_VERSION:
-            raise ValueError(f"Contract 3.2 Error: Invalid schema_version '{r['schema_version']}', expected '{SCHEMA_VERSION}'")
-        if r["model_version"] != MODEL_VERSION:
-            raise ValueError(f"Contract 3.2 Error: Invalid model_version '{r['model_version']}', expected '{MODEL_VERSION}'")
-
-        if r["horizon_h"] not in valid_horizons:
-            raise ValueError(f"Contract 3.2 Error: Invalid horizon_h {r['horizon_h']}, must be in {valid_horizons}")
-
-        score = r["risk_score"]
-        if not (0.0 <= score <= 1.0):
-            raise ValueError(f"Contract 3.2 Error: risk_score {score} outside [0.0, 1.0]")
-        expected_level = get_risk_level(score)
-        if r["risk_level"] != expected_level:
-            raise ValueError(
-                f"Contract 3.2 Error: Level mismatch for score {score}: got '{r['risk_level']}', expected '{expected_level}'"
-            )
-
-        ts = str(r["ts"])
-        if not ts.endswith("Z"):
-            raise ValueError(f"Contract 3.2 Error: Timestamp '{ts}' must be UTC ending in 'Z'")
-
-        tf = r["top_factors"]
-        if not isinstance(tf, list) or len(tf) < 1:
-            raise ValueError(f"Contract 3.2 Error: Record #{idx} top_factors must be a non-empty list")
-        for f_idx, factor in enumerate(tf):
-            if "feature" not in factor or "contribution" not in factor:
-                raise ValueError(f"Contract 3.2 Error: top_factors #{f_idx} missing 'feature' or 'contribution'")
-            if not isinstance(factor["contribution"], (int, float)):
-                raise ValueError(f"Contract 3.2 Error: factor contribution must be numeric")
+    """Validate frozen Contract 3.2, including semantic and finite-value checks."""
+    from datetime import datetime
+    import math
+    import re
+    required = {"schema_version", "cell_id", "ts", "horizon_h", "risk_score",
+                "risk_level", "top_factors", "model_version"}
+    if not isinstance(records, list) or not records:
+        raise ValueError("risk.json must be a nonempty array")
+    seen = set()
+    for record in records:
+        if not isinstance(record, dict) or set(record) != required:
+            raise ValueError("Incorrect Contract 3.2 fields")
+        if record["schema_version"] != SCHEMA_VERSION:
+            raise ValueError("Invalid schema_version")
+        if not isinstance(record["model_version"], str) or not record["model_version"]:
+            raise ValueError("model_version must be nonempty")
+        cell = record["cell_id"]
+        if not isinstance(cell, str) or not re.fullmatch(r"-?\d+\.\d{2}_-?\d+\.\d{2}", cell):
+            raise ValueError("Invalid cell_id")
+        lat, lon = map(float, cell.split("_"))
+        if not -90 < lat < 90 or not -180 < lon < 180:
+            raise ValueError("Cell coordinates out of range")
+        if cell != f"{lat:.2f}_{lon:.2f}":
+            raise ValueError("Noncanonical cell_id")
+        for value in (lat, lon):
+            if not math.isclose((value - 0.05) / 0.1, round((value - 0.05) / 0.1), abs_tol=1e-7):
+                raise ValueError("Cell centers must be on .x5")
+        ts = record["ts"]
+        if not isinstance(ts, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z", ts):
+            raise ValueError("Invalid UTC timestamp")
+        datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        horizon = record["horizon_h"]
+        if type(horizon) is not int or horizon not in HORIZONS:
+            raise ValueError("Invalid horizon")
+        key = (cell, horizon)
+        if key in seen:
+            raise ValueError("Duplicate cell/horizon prediction")
+        seen.add(key)
+        score = record["risk_score"]
+        if type(score) not in (int, float) or not math.isfinite(score) or not 0 <= score <= 1:
+            raise ValueError("Invalid risk_score")
+        if record["risk_level"] != get_risk_level(score):
+            raise ValueError("Risk threshold mismatch")
+        factors = record["top_factors"]
+        if not isinstance(factors, list) or not factors:
+            raise ValueError("top_factors must be nonempty")
+        for factor in factors:
+            if not isinstance(factor, dict) or set(factor) != {"feature", "contribution"}:
+                raise ValueError("Invalid factor fields")
+            value = factor["contribution"]
+            if (factor["feature"] not in FEATURE_COLUMNS or type(value) not in (int, float)
+                    or not math.isfinite(value) or value == -999):
+                raise ValueError("Invalid factor value")
 
 
 def parse_surge_cell_list(df: pd.DataFrame, surge_spec: str) -> List[str]:
@@ -197,12 +151,8 @@ def apply_surge_scenario(df: pd.DataFrame, surge_spec: str) -> pd.DataFrame:
     for cell_id in target_cells:
         match_indices = df.index[df["cell_id"] == cell_id].tolist()
         if not match_indices:
-            template = df.iloc[0].copy()
-            template["cell_id"] = cell_id
-            df = pd.concat([df, pd.DataFrame([template])], ignore_index=True)
-            s_idx = len(df) - 1
-        else:
-            s_idx = match_indices[0]
+            raise ValueError(f"Unknown surge cell: {cell_id}")
+        s_idx = match_indices
 
         logger.info("Injecting synthetic dry-spell surge into cell '%s'", cell_id)
         df.loc[s_idx, "days_since_rain"] = 25
@@ -235,63 +185,96 @@ def apply_surge_scenario(df: pd.DataFrame, surge_spec: str) -> pd.DataFrame:
     return df
 
 
-def persist_surged_features(
-    input_features_path: Path,
-    output_features_path: Path,
-    target_cells: List[str],
-) -> None:
+def build_demo_features(input_features_path: Path, target_cells: List[str]):
+    """Build a separate demo feed using the same transformation as inference."""
+    data = json.loads(input_features_path.read_text(encoding="utf-8"),
+                      object_pairs_hook=_unique_keys, parse_constant=_invalid_constant)
+    original = flatten_features_json(input_features_path, latest_only=False)
+    transformed = apply_surge_scenario(original, ",".join(target_cells))
+    rows = {(row["cell_id"], row["ts"]): row for row in transformed.to_dict("records")}
+    result = copy.deepcopy(data)
+    from b_model.config import FEATURE_GROUPS
+    for index, record in enumerate(result):
+        if record["cell_id"] in target_cells:
+            row = rows[(record["cell_id"], record["ts"])]
+            for group, columns in FEATURE_GROUPS.items():
+                for column in columns:
+                    value = row[column]
+                    record[group][column] = None if pd.isna(value) else value
+        validate_feature_record(record, index)
+    return result
+
+
+def atomic_write_json(payload, output_path: Path, deadline=None):
+    """Serialize beside the destination; failures preserve the previous complete file."""
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=output_path.parent,
+                                         prefix=".risk-", suffix=".tmp", delete=False) as handle:
+            temporary = Path(handle.name)
+            json.dump(payload, handle, indent=2, allow_nan=False)
+        if deadline is not None and time.perf_counter() >= deadline:
+            raise TimeoutError("Inference exceeded the configured latency budget")
+        temporary.replace(output_path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
+def load_artifact_manifest(model_dir: Path):
+    """Validate an explicit PIC 2 handoff before loading any executable artifacts.
+
+    Joblib and pickle files must originate from the trusted training pipeline.
+    The manifest constrains file locations and metadata, not pickle execution.
     """
-    Updates features.json on disk with the surged values so Role C and Role D
-    observe matching soil moisture and drought values during live demonstrations.
-    """
-    if not input_features_path.exists():
-        logger.warning("Input features file %s does not exist; skipping surge persistence.", input_features_path)
-        return
+    model_dir = Path(model_dir).resolve()
+    manifest_path = model_dir / "artifact_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"),
+                          object_pairs_hook=_unique_keys, parse_constant=_invalid_constant)
+    if not isinstance(manifest, dict) or manifest.get("schema_version") != SCHEMA_VERSION:
+        raise ValueError("Invalid artifact manifest schema_version")
+    entries = manifest.get("models")
+    if not isinstance(entries, dict) or set(entries) != {str(h) for h in HORIZONS}:
+        raise ValueError("Manifest requires exactly 24, 48 and 72 hour entries")
+    validated = {}
+    for horizon in HORIZONS:
+        entry = entries[str(horizon)]
+        if not isinstance(entry, dict) or not {"filename", "format", "model_version", "feature_order"} <= entry.keys():
+            raise ValueError(f"Incomplete manifest for horizon {horizon}")
+        filename = entry["filename"]
+        if not isinstance(filename, str) or not filename:
+            raise ValueError("Artifact filename must be nonempty")
+        path = (model_dir / filename).resolve()
+        if not path.is_relative_to(model_dir) or path == manifest_path:
+            raise ValueError("Artifact path must remain inside the model directory")
+        if entry["format"] not in ("joblib", "pickle"):
+            raise ValueError("Artifact format must be joblib or pickle")
+        if not isinstance(entry["model_version"], str) or not entry["model_version"]:
+            raise ValueError("Artifact model_version must be nonempty")
+        order = entry["feature_order"]
+        if not isinstance(order, list) or any(not isinstance(c, str) for c in order) or len(order) != len(FEATURE_COLUMNS) or set(order) != set(FEATURE_COLUMNS):
+            raise ValueError("Manifest feature_order must contain each canonical predictor exactly once")
+        if type(entry.get("positive_class", 1)) is not int or entry.get("positive_class", 1) != 1:
+            raise ValueError("The hotspot target positive_class must be 1")
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        validated[horizon] = (entry, path)
+    return validated
 
-    with open(input_features_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
 
-    if not isinstance(data, list):
-        data = [data]
-
-    for record in data:
-        if record.get("cell_id") in target_cells:
-            # Weather overrides
-            w = record.setdefault("weather", {})
-            w["temp_c"] = 37.0
-            w["precip_mm"] = 0.0
-            w["sm_0_1"] = 0.08
-            w["sm_1_3"] = 0.09
-            w["sm_3_9"] = 0.10
-            w["sm_9_27"] = 0.11
-            w["sm_27_81"] = 0.12
-            w["vpd_kpa"] = 3.8
-            w["soil_temp_0_c"] = 42.0
-            w["soil_temp_18_c"] = 35.0
-            w["et_mm"] = 0.6
-            w["et0_mm"] = 0.7
-
-            # Derived overrides
-            d = record.setdefault("derived", {})
-            d["rain_24h_mm"] = 0.0
-            d["rain_7d_mm"] = 0.0
-            d["rain_30d_mm"] = 8.0
-            d["days_since_rain"] = 25
-            d["sm_27_81_delta_7d"] = -0.08
-            d["vpd_mean_24h"] = 3.8
-            d["soil_air_temp_gap_c"] = -2.0
-
-            # Fire overrides
-            fi = record.setdefault("fire", {})
-            fi["hotspots_in_cell_24h"] = 2
-            fi["hotspots_10km_7d"] = 6
-            fi["frp_sum_10km_7d"] = 60.0
-            fi["nearest_hotspot_km"] = 1.5
-
-    output_features_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_features_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2)
-    logger.info("Persisted surged features for %d cells -> %s", len(target_cells), output_features_path)
+def validate_output_paths(inputs, outputs, model_dir):
+    """Every public inference entry point shares collision and artifact protection."""
+    sources = {Path(p).resolve() for p in inputs if p is not None}
+    destinations = [Path(p).resolve() for p in outputs if p is not None]
+    if len(destinations) != len(set(destinations)):
+        raise ValueError("Output paths must be distinct")
+    for destination in destinations:
+        if destination in sources or any(destination.exists() and source.exists() and destination.samefile(source) for source in sources):
+            raise ValueError("Output must not overwrite inputs")
+        if destination.is_relative_to(Path(model_dir).resolve()):
+            raise ValueError("Output must not overwrite model artifacts")
 
 
 def normalize_cli_args(args: Optional[List[str]] = None) -> List[str]:
@@ -335,58 +318,93 @@ def run_predictions(
     surge_cell: Optional[str] = None,
     write_surged_features: bool = False,
     surge_output_features: Optional[Path] = None,
+    history_path: Optional[Path] = DEFAULT_HISTORY_PATH,
+    hotspot_imputation: str = "artifact_median",
+    max_seconds: float = 60.0,
 ) -> List[Dict[str, Any]]:
     """
     Executes live inference on features.json and writes contract-validated risk.json.
     Deduplicates multi-hour inputs: guarantees exactly 1 prediction per (cell_id, horizon_h).
-    Optionally persists surged features back to disk for Role C / Role D consistency.
-    Guaranteed to run in < 60 seconds.
+    Optionally publishes a separate demo feed; source features are never mutated.
+    Checks the latency budget before publishing; target hardware must be benchmarked.
     """
-    start_time = time.time()
+    start_time = time.perf_counter()
+    features_path, model_dir, output_path = map(Path, (features_path, model_dir, output_path))
+    if not 0 < max_seconds <= 60:
+        raise ValueError("max_seconds must be in (0, 60]")
+    if output_path.name != "risk.json":
+        raise ValueError("Inference output filename must be risk.json")
+    if write_surged_features and surge_output_features is None:
+        raise ValueError("Demo persistence requires a separate demo_features_out path")
+    if surge_output_features is not None and not surge_cell:
+        raise ValueError("demo_features_out requires a surge_cell")
+    validate_output_paths([features_path, history_path], [output_path, surge_output_features], model_dir)
+    manifest = load_artifact_manifest(model_dir)
     logger.info("Starting live inference from %s", features_path)
 
     # 1. Load, flatten, and deduplicate live features (keep latest hour per cell)
-    df = flatten_features_json(features_path, latest_only=True)
+    df = flatten_features_json(features_path, latest_only=True, history_path=history_path)
     if df.empty:
         raise ValueError(f"No feature records available in {features_path}")
 
-    # Deduplicate defensively: sort by ts ascending and keep latest per cell
-    df = df.sort_values("ts").groupby("cell_id", as_index=False).last()
+    # Keep positional indices aligned with vectorized model outputs.
+    df = df.reset_index(drop=True)
 
     # Optional synthetic surge injection for Role D demo
     if surge_cell:
         target_cells = parse_surge_cell_list(df, surge_cell)
         df = apply_surge_scenario(df, surge_cell)
 
-        # Optional persistence of surged features for Role C and Role D
-        if write_surged_features or surge_output_features is not None:
-            feat_out = surge_output_features or features_path
-            persist_surged_features(features_path, feat_out, target_cells)
-
-    X_raw = df[FEATURE_COLUMNS].copy()
+    if hotspot_imputation not in ("artifact_median", "zero"):
+        raise ValueError("Unsupported hotspot imputation")
+    X_raw = df[FEATURE_COLUMNS].astype("float64").copy()
+    if hotspot_imputation == "zero":
+        counts = ["hotspots_in_cell_24h", "hotspots_10km_7d"]
+        X_raw[counts] = X_raw[counts].fillna(0.0)
     results: List[Dict[str, Any]] = []
 
     # 2. Iterate through each horizon (24, 48, 72)
     for horizon in HORIZONS:
-        model_file = model_dir / f"model_{horizon}h.joblib"
-        if not model_file.exists():
-            raise FileNotFoundError(
-                f"Model artifact for horizon {horizon}h not found at {model_file}. Run train.py first."
-            )
-
-        artifact = joblib.load(model_file)
+        entry, model_file = manifest[horizon]
+        order = entry["feature_order"]
+        X_ordered = X_raw.loc[:, order]
+        if X_ordered.columns.tolist() != order:
+            raise ValueError("DataFrame does not match manifest feature_order")
+        if entry["format"] == "joblib":
+            artifact = joblib.load(model_file)
+        else:
+            with model_file.open("rb") as handle:
+                artifact = pickle.load(handle)
+        if not isinstance(artifact, dict):
+            raise ValueError("Artifact must be a preprocessing/model bundle")
+        if artifact.get("feature_columns") != order:
+            raise ValueError("Artifact feature order differs from manifest")
+        if artifact.get("horizon_h") != horizon or artifact.get("schema_version") != SCHEMA_VERSION:
+            raise ValueError("Artifact horizon/schema mismatch")
+        if artifact.get("model_version") != entry["model_version"]:
+            raise ValueError("Artifact model_version differs from manifest")
         imputer = artifact["imputer"]
+        if getattr(imputer, "strategy", None) != "median":
+            raise ValueError("Expected fitted median imputer")
         scaler = artifact["scaler"]
         primary_model = artifact.get("primary_model", artifact.get("model"))
         signed_weights = artifact.get("signed_feature_weights", artifact.get("feature_weights"))
 
-        # Preprocessing transforms with z-score clipping
-        X_imp = imputer.transform(X_raw)
-        X_scaled = np.clip(scaler.transform(X_imp), -3.0, 3.0)
+        # Reuse fitted preprocessing; attribution uses the exact standardized values.
+        X_imp = imputer.transform(X_ordered)
+        if X_imp.shape != X_raw.shape or not np.isfinite(X_imp).all() or (X_imp == -999).any():
+            raise ValueError("Imputer must produce 27 finite predictor columns")
+        X_scaled = scaler.transform(X_imp)
 
-        # Live prediction with calibrated probabilities clipped to [0.02, 0.96]
-        raw_probs = primary_model.predict_proba(X_imp)[:, 1]
-        probs = np.clip(raw_probs, 0.02, 0.96)
+        # Use the calibrated model probability without rounding or clipping.
+        classes = np.asarray(primary_model.classes_)
+        positive = np.flatnonzero(classes == entry.get("positive_class", 1))
+        if classes.shape != (2,) or len(positive) != 1 or set(classes.tolist()) != {0, 1}:
+            raise ValueError("Model must expose binary classes 0 and 1")
+        raw_probs = primary_model.predict_proba(X_imp)[:, int(positive[0])]
+        if raw_probs.shape != (len(df),) or not np.isfinite(raw_probs).all() or ((raw_probs < 0) | (raw_probs > 1)).any():
+            raise ValueError("Model produced invalid probabilities")
+        probs = raw_probs
 
         # Signed local attributions for top_factors
         top_factors_all = compute_local_attributions(
@@ -394,13 +412,13 @@ def run_predictions(
             X_imp=X_imp,
             X_scaled=X_scaled,
             signed_feature_weights=signed_weights,
-            feature_names=FEATURE_COLUMNS,
+            feature_names=order,
             risk_scores=probs,
             top_k=3,
         )
 
         for idx, row in df.iterrows():
-            score = round(float(probs[idx]), 2)
+            score = float(probs[idx])
             results.append({
                 "schema_version": SCHEMA_VERSION,
                 "cell_id": str(row["cell_id"]),
@@ -409,18 +427,20 @@ def run_predictions(
                 "risk_score": score,
                 "risk_level": get_risk_level(score),
                 "top_factors": top_factors_all[idx],
-                "model_version": MODEL_VERSION,
+                "model_version": entry["model_version"],
             })
 
     # 3. Validate against Contract 3.2
     validate_risk_contract(results)
 
-    # 4. Atomic file write
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(results, f, indent=2)
+    # Build/validate the demo payload before publishing any outputs. Inputs stay read-only.
+    demo_payload = build_demo_features(features_path, target_cells) if surge_output_features is not None else None
+    deadline = start_time + max_seconds
+    if demo_payload is not None:
+        atomic_write_json(demo_payload, Path(surge_output_features), deadline)
+    atomic_write_json(results, output_path, deadline)
 
-    elapsed = time.time() - start_time
+    elapsed = time.perf_counter() - start_time
     logger.info(
         "Successfully produced %d predictions in %.2fs -> %s (Valid Contract 3.2)",
         len(results),
@@ -437,13 +457,13 @@ def main(args_list: Optional[List[str]] = None):
         "--features-path",
         dest="features_path",
         type=Path,
-        default=DEFAULT_FEATURES_PATH,
+        default=None,
         help="Path to live features.json",
     )
     parser.add_argument(
         "--model-dir",
         type=Path,
-        default=DEFAULT_MODEL_DIR,
+        default=None,
         help="Directory containing trained model joblib artifacts",
     )
     parser.add_argument(
@@ -451,7 +471,7 @@ def main(args_list: Optional[List[str]] = None):
         "--output-path",
         dest="output_path",
         type=Path,
-        default=DEFAULT_RISK_PATH,
+        default=None,
         help="Path to write validated risk.json",
     )
     parser.add_argument(
@@ -463,31 +483,91 @@ def main(args_list: Optional[List[str]] = None):
     parser.add_argument(
         "--write-surged-features",
         action="store_true",
-        help="Persist surged feature values to features.json for Role C and Role D consistency",
+        help="Write a separate demo feature feed (requires --surge-output-features)",
     )
     parser.add_argument(
         "--surge-output-features",
         type=Path,
         default=None,
-        help="Target path to write surged features (defaults to input features path)",
+        help="Separate path to write demo features; must not equal an input or risk.json",
     )
 
+    parser.add_argument("--history", type=Path, default=None)
     normalized_args = normalize_cli_args(args_list)
     args = parser.parse_args(normalized_args)
 
     try:
-        run_predictions(
-            features_path=args.features_path,
-            model_dir=args.model_dir,
-            output_path=args.output_path,
-            surge_cell=args.surge_cell,
-            write_surged_features=args.write_surged_features,
-            surge_output_features=args.surge_output_features,
-        )
+        if args.write_surged_features and args.surge_output_features is None:
+            raise ValueError("--write-surged-features requires --surge-output-features")
+        from b_model.config import load_inference_config
+        from omegaconf import OmegaConf
+        paths = {key: str(value) for key, value in {
+            "features": args.features_path, "model_dir": args.model_dir,
+            "history": args.history, "output": args.output_path,
+            "demo_features_out": args.surge_output_features,
+        }.items() if value is not None}
+        overrides = {"paths": paths}
+        if args.surge_cell is not None:
+            overrides["surge_cell"] = args.surge_cell
+        run_configured(OmegaConf.merge(load_inference_config(), overrides))
     except Exception as e:
         logger.error("Inference failed: %s", e, exc_info=True)
         sys.exit(1)
 
 
+def summarize_predictions(records):
+    """Internal cell summary; never changes the frozen risk.json array."""
+    summary = {}
+    for record in records:
+        cell = summary.setdefault(record["cell_id"], {"scores": {}, "levels": {}, "top_factors": {}})
+        horizon = record["horizon_h"]
+        cell["scores"][horizon] = record["risk_score"]
+        cell["levels"][horizon] = record["risk_level"]
+        cell["top_factors"][horizon] = record["top_factors"]
+    return summary
+
+
+def run_configured(config):
+    from b_model.config import PROJECT_ROOT, validate_config
+    config = validate_config(config)
+    def resolve(value):
+        path = Path(value).expanduser()
+        return path if path.is_absolute() else PROJECT_ROOT / path
+    output = resolve(config.paths.output)
+    source = resolve(config.paths.features)
+    history = resolve(config.paths.history) if config.paths.history else None
+    results = run_predictions(features_path=source, model_dir=resolve(config.paths.model_dir),
+                              output_path=output, history_path=history,
+                              surge_cell=config.surge_cell,
+                              surge_output_features=resolve(config.paths.demo_features_out) if config.paths.demo_features_out else None,
+                              hotspot_imputation=config.imputation.hotspot_counts,
+                              max_seconds=config.max_seconds)
+    return summarize_predictions(results)
+
+
+# Hydra is required by the configured entry point; legacy imports remain usable.
+try:
+    import hydra
+except ImportError:
+    hydra = None
+
+if hydra is not None:
+    from b_model.config import register_config
+    register_config()
+
+    @hydra.main(version_base="1.3", config_path="conf", config_name="config")
+    def hydra_main(config):
+        return run_configured(config)
+else:
+    def hydra_main():
+        raise ImportError("Install b_model/requirements.txt to use Hydra inference")
+
+
 if __name__ == "__main__":
-    main()
+    # Keep Role E's existing --input/--output CLI and surge flags compatible.
+    legacy_flags = ("--input", "--features-path", "--output", "--output-path",
+                    "--model-dir", "--history", "--surge-cell", "--write-surged-features", "--surge-output-features")
+    if any(arg.split("=")[0] in legacy_flags for arg in sys.argv[1:]):
+        main()
+    else:
+        hydra_main()

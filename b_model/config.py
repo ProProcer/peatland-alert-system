@@ -4,8 +4,10 @@ Strict adherence to Team Playbook Contracts 3.1 & 3.2.
 """
 
 from pathlib import Path
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 import logging
+import time
 import numpy as np
 
 # Contract 3.2 Metadata
@@ -111,6 +113,66 @@ DEFAULT_MODEL_DIR: Path = PACKAGE_DIR / "model"
 DEFAULT_MOCK_OUTPUT_PATH: Path = PACKAGE_DIR / "mock_output.json"
 
 
+@dataclass
+class PathsConfig:
+    features: str = str(DEFAULT_FEATURES_PATH)
+    history: Optional[str] = str(DEFAULT_HISTORY_PATH)
+    model_dir: str = str(DEFAULT_MODEL_DIR)
+    output: str = str(DEFAULT_RISK_PATH)
+    demo_features_out: Optional[str] = None
+
+
+@dataclass
+class ImputationConfig:
+    # Reuse training statistics; never estimate medians from the live batch.
+    continuous: str = "artifact_median"
+    hotspot_counts: str = "artifact_median"
+
+
+@dataclass
+class InferenceConfig:
+    paths: PathsConfig = field(default_factory=PathsConfig)
+    horizons: List[int] = field(default_factory=lambda: list(HORIZONS))
+    imputation: ImputationConfig = field(default_factory=ImputationConfig)
+    max_seconds: float = 60.0
+    surge_cell: Optional[str] = None
+
+
+def register_config() -> None:
+    from hydra.core.config_store import ConfigStore
+    ConfigStore.instance().store(name="inference_schema", node=InferenceConfig)
+
+
+def load_inference_config():
+    """Compose the same YAML/environment defaults for the legacy CLI."""
+    from hydra import compose, initialize_config_dir
+    from hydra.core.global_hydra import GlobalHydra
+    register_config()
+    if GlobalHydra.instance().is_initialized():
+        return compose(config_name="config")
+    with initialize_config_dir(version_base="1.3", config_dir=str(PACKAGE_DIR / "conf")):
+        return compose(config_name="config")
+
+
+def validate_config(config):
+    """Resolve interpolation and reject unknown keys/types before opening inputs."""
+    from omegaconf import OmegaConf
+    merged = OmegaConf.merge(OmegaConf.structured(InferenceConfig), config)
+    OmegaConf.resolve(merged)
+    result = OmegaConf.to_object(merged)
+    if result.horizons != HORIZONS:
+        raise ValueError("Live inference requires horizons [24, 48, 72]")
+    if result.imputation.continuous != "artifact_median":
+        raise ValueError("Continuous features must use the fitted artifact median imputer")
+    if result.imputation.hotspot_counts not in ("artifact_median", "zero"):
+        raise ValueError("hotspot_counts must be artifact_median or zero")
+    if not 0 < result.max_seconds <= 60:
+        raise ValueError("max_seconds must be in (0, 60]")
+    if Path(result.paths.output).name != "risk.json":
+        raise ValueError("Hydra output filename must be risk.json")
+    return result
+
+
 def get_risk_level(score: float) -> str:
     """
     Contract 3.2 risk classification.
@@ -141,9 +203,11 @@ def setup_logger(name: str = "b_model", level: int = logging.INFO) -> logging.Lo
             fmt="%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
             datefmt="%Y-%m-%dT%H:%M:%SZ",
         )
+        formatter.converter = time.gmtime
         handler.setFormatter(formatter)
         logger.addHandler(handler)
     logger.setLevel(level)
+    logger.propagate = False
     return logger
 
 
