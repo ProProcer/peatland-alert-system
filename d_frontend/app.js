@@ -7,6 +7,26 @@ const mapBounds = { west: 108, east: 119.5, south: -4.5, north: 4.5 };
 const mapColors = { LOW: "#32945b", MODERATE: "#e9c643", HIGH: "#e78b38", CRITICAL: "#d64b57" };
 let mapView;
 let selectedCell;
+let peatland;
+let peatlandPaths = [];
+function polygonPath(polygon) {
+  return polygon.map(ring => ring.map((point, index) => `${index ? "L" : "M"}${project(point).join(",")}`).join(" ") + " Z").join(" ");
+}
+async function loadPeatland() {
+  try {
+    const response = await fetch("assets/peatland.geojson");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    peatland = await response.json();
+    peatlandPaths = peatland.features.flatMap(feature => feature.geometry.coordinates.map(polygonPath));
+    document.querySelector("#peat-status").textContent = "Peatland boundaries: bundled Indonesian peatland dataset. Risk colors are restricted to mapped peatland.";
+    if (feeds.risk) renderMap(Number(document.querySelector("#horizon").value));
+  } catch (error) {
+    document.querySelector("#peat-status").textContent = `Peatland boundaries unavailable (${error.message}). Risk shading is hidden to avoid showing non-peat areas as peatland.`;
+  }
+}
+let tileTimer;
+let tileGeneration = 0;
+let tileSignature = "";
 const project = ([lon, lat]) => [256 * 64 * (lon + 180) / 360, 256 * 64 * (1 - Math.asinh(Math.tan(lat * Math.PI / 180)) / Math.PI) / 2];
 const mapNW = project([mapBounds.west, mapBounds.north]);
 const mapSE = project([mapBounds.east, mapBounds.south]);
@@ -16,6 +36,56 @@ function setMapView(view) {
   const height = width * regionView[3] / regionView[2];
   mapView = [Math.max(regionView[0], Math.min(view[0], mapSE[0] - width)), Math.max(regionView[1], Math.min(view[1], mapSE[1] - height)), width, height];
   document.querySelector("#map").setAttribute("viewBox", mapView.join(" "));
+  updateRiskLabels();
+  clearTimeout(tileTimer);
+  tileTimer = setTimeout(updateMapTiles, 160);
+}
+function mapPixelScale() {
+  const map = document.querySelector("#map");
+  return Math.min((map.clientWidth || 900) / mapView[2], (map.clientHeight || 650) / mapView[3]);
+}
+function updateRiskLabels() {
+  if (!mapView) return;
+  const scale = mapPixelScale();
+  for (const label of document.querySelectorAll(".risk-map-label")) {
+    label.setAttribute("font-size", 11 / scale);
+    label.setAttribute("display", Number(label.dataset.cellWidth) * scale >= 65 ? "block" : "none");
+  }
+  for (const marker of document.querySelectorAll(".risk-map-marker")) marker.setAttribute("r", 4 / scale);
+}
+function updateMapTiles() {
+  const map = document.querySelector("#map");
+  const layer = document.querySelector("#map-tiles");
+  if (!mapView || !layer) return;
+  const [left, top, width, height] = mapView;
+  const zoom = Math.max(6, Math.min(18, Math.ceil(6 + Math.log2(mapPixelScale() * Math.min(window.devicePixelRatio || 1, 2)))));
+  const size = 256 / 2 ** (zoom - 6);
+  const bounds = [Math.floor(left / size), Math.floor(top / size), Math.floor((left + width) / size), Math.floor((top + height) / size)];
+  const signature = [zoom, ...bounds].join(":");
+  if (signature === tileSignature) return;
+  tileSignature = signature;
+  const generation = ++tileGeneration;
+  const pending = svgElement("g", { "aria-hidden": "true" });
+  let remaining = (bounds[2] - bounds[0] + 1) * (bounds[3] - bounds[1] + 1);
+  let failures = 0;
+  const complete = failed => {
+    if (failed) failures++;
+    if (--remaining || generation !== tileGeneration) return;
+    for (const child of Array.from(layer.children)) if (child !== pending) child.remove();
+    document.querySelector("#map-tile-status").textContent = failures ? "Some background tiles are unavailable. Risk overlays remain available." : "";
+    if (failures) tileSignature = "";
+  };
+  for (let x = bounds[0]; x <= bounds[2]; x++) {
+    for (let y = bounds[1]; y <= bounds[3]; y++) {
+      const tile = svgElement("image", { x: x * size, y: y * size, width: size, height: size });
+      tile.addEventListener("load", () => complete(false), { once: true });
+      tile.addEventListener("error", () => complete(true), { once: true });
+      tile.setAttribute("href", `https://tile.openstreetmap.org/${zoom}/${x}/${y}.png`);
+      pending.append(tile);
+    }
+  }
+  // Keep the previous tiles underneath until the replacement tiles finish loading.
+  layer.append(pending);
 }
 function svgElement(tag, attributes) {
   const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
@@ -28,12 +98,21 @@ function regionalCells() {
 function renderMap(horizon) {
   const map = document.querySelector("#map");
   map.replaceChildren();
+  tileSignature = "";
+  tileGeneration++;
+  map.append(svgElement("g", { id: "map-tiles", "aria-hidden": "true" }));
   if (!mapView) setMapView(regionView.slice());
-  for (let x = Math.floor(mapNW[0] / 256); x <= Math.floor(mapSE[0] / 256); x++) {
-    for (let y = Math.floor(mapNW[1] / 256); y <= Math.floor(mapSE[1] / 256); y++) {
-      map.append(svgElement("image", { x: x * 256, y: y * 256, width: 256, height: 256, href: `https://tile.openstreetmap.org/6/${x}/${y}.png`, "aria-hidden": "true" }));
-    }
+  const definitions = svgElement("defs", {});
+  const clip = svgElement("clipPath", { id: "peatland-clip", clipPathUnits: "userSpaceOnUse" });
+  const peatLayer = svgElement("g", { class: "peatland-layer", "aria-hidden": "true" });
+  for (const d of peatlandPaths) {
+    clip.append(svgElement("path", { d, "clip-rule": "evenodd" }));
+    peatLayer.append(svgElement("path", { d, "fill-rule": "evenodd" }));
   }
+  definitions.append(clip);
+  map.append(definitions, peatLayer);
+  const riskLayer = svgElement("g", { "clip-path": "url(#peatland-clip)" });
+  map.append(riskLayer);
   const risks = new Map(feeds.risk.data.filter(row => row.horizon_h === horizon).map(row => [row.cell_id, row]));
   document.querySelector("#map-detail").textContent = "Select a colored cell for its prediction and contributing signals.";
   for (const feature of regionalCells()) {
@@ -41,7 +120,7 @@ function renderMap(horizon) {
     const risk = risks.get(id);
     const description = risk ? `${id}: ${risk.risk_level}, score ${risk.risk_score.toFixed(2)}, ${horizon}h. ${risk.top_factors.map(f => `${f.feature}: ${f.contribution}`).join(", ")}. Timestamp: ${risk.ts}.` : `${id}: no prediction for ${horizon}h.`;
     const path = feature.geometry.coordinates.map(ring => ring.map((point, index) => `${index ? "L" : "M"}${project(point).join(",")}`).join(" ") + " Z").join(" ");
-    const cell = svgElement("path", { d: path, fill: mapColors[risk?.risk_level] || "#879488", "fill-rule": "evenodd", class: "map-cell", tabindex: 0, role: "button", "aria-label": description, "aria-pressed": selectedCell === id });
+    const cell = svgElement("path", { d: path, fill: mapColors[risk?.risk_level] || "#bdcdb8", "fill-rule": "evenodd", class: "map-cell", tabindex: 0, role: "button", "aria-label": description, "aria-pressed": selectedCell === id });
     const title = svgElement("title", {});
     title.textContent = description;
     cell.append(title);
@@ -52,10 +131,20 @@ function renderMap(horizon) {
     };
     cell.addEventListener("click", select);
     cell.addEventListener("keydown", event => { if (["Enter", " "].includes(event.key)) { event.preventDefault(); select(); } });
-    map.append(cell);
+    riskLayer.append(cell);
+    const points = feature.geometry.coordinates[0].map(project);
+    const xs = points.map(point => point[0]), ys = points.map(point => point[1]);
+    const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+    const marker = svgElement("circle", { cx, cy, r: 1, fill: mapColors[risk?.risk_level] || "#bdcdb8", class: "risk-map-marker", "aria-hidden": "true" });
+    const label = svgElement("text", { x: cx, y: cy, "text-anchor": "middle", "dominant-baseline": "central", class: "risk-map-label", "data-cell-width": Math.max(...xs) - Math.min(...xs), "aria-hidden": "true" });
+    label.textContent = risk ? `${risk.risk_level} · ${risk.risk_score.toFixed(2)}` : "NO DATA";
+    riskLayer.append(marker, label);
     if (selectedCell === id) document.querySelector("#map-detail").textContent = description;
   }
   if (!regionalCells().length) document.querySelector("#map-detail").textContent = "No cell geometry is available within the Kalimantan regional bounds.";
+  updateRiskLabels();
+  clearTimeout(tileTimer);
+  updateMapTiles();
 }
 function zoomMap(factor, anchor) {
   const [x, y, width, height] = mapView || regionView;
@@ -66,6 +155,11 @@ function zoomMap(factor, anchor) {
 }
 
 const mapElement = document.querySelector("#map");
+window.addEventListener("resize", () => {
+  updateRiskLabels();
+  clearTimeout(tileTimer);
+  tileTimer = setTimeout(updateMapTiles, 160);
+});
 let mapDrag = null;
 let suppressMapClick = false;
 function pointerOnMap(event, inverse = mapElement.getScreenCTM()?.inverse()) {
@@ -210,4 +304,5 @@ document.querySelector("#map-cells").addEventListener("click", () => {
   const height = width * regionView[3] / regionView[2];
   setMapView([(Math.min(...xs) + Math.max(...xs) - width) / 2, (Math.min(...ys) + Math.max(...ys) - height) / 2, width, height]);
 });
+loadPeatland();
 reload();
