@@ -1013,14 +1013,14 @@ class TestEndToEndPipeline:
             assert "lead_time_hours" in m
 
         # PIC 2 publishes a manifest alongside the newly trained bundles.
-        import shutil
-        shutil.copyfile(DEFAULT_MODEL_DIR / "artifact_manifest.json", model_dir / "artifact_manifest.json")
+        assert (model_dir / "artifact_manifest.json").is_file()
 
         # 2. Predict with surge cell
         results = run_predictions(
             features_path=features_file,
             model_dir=model_dir,
             output_path=risk_file,
+            history_path=history_file,
             surge_cell="-2.35_114.05",
         )
 

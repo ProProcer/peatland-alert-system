@@ -253,8 +253,13 @@ def load_artifact_manifest(model_dir: Path):
             raise ValueError("Artifact format must be joblib or pickle")
         if not isinstance(entry["model_version"], str) or not entry["model_version"]:
             raise ValueError("Artifact model_version must be nonempty")
+        from b_model.leading_indicators import ENSEMBLE_FEATURES, PIPELINE_VERSION
+        pipeline = entry.get("feature_pipeline")
+        if pipeline not in (None, PIPELINE_VERSION):
+            raise ValueError("Unknown manifest feature_pipeline")
+        expected = ENSEMBLE_FEATURES if pipeline else FEATURE_COLUMNS
         order = entry["feature_order"]
-        if not isinstance(order, list) or any(not isinstance(c, str) for c in order) or len(order) != len(FEATURE_COLUMNS) or set(order) != set(FEATURE_COLUMNS):
+        if not isinstance(order, list) or any(not isinstance(c, str) for c in order) or len(order) != len(expected) or set(order) != set(expected):
             raise ValueError("Manifest feature_order must contain each canonical predictor exactly once")
         if type(entry.get("positive_class", 1)) is not int or entry.get("positive_class", 1) != 1:
             raise ValueError("The hotspot target positive_class must be 1")
@@ -357,7 +362,11 @@ def run_predictions(
 
     if hotspot_imputation not in ("artifact_median", "zero"):
         raise ValueError("Unsupported hotspot imputation")
-    X_raw = df[FEATURE_COLUMNS].astype("float64").copy()
+    from b_model.leading_indicators import ENSEMBLE_FEATURES, add_snapshot_indicators
+    engineered = any(entry.get("feature_pipeline") for entry, _ in manifest.values())
+    if engineered:
+        df = add_snapshot_indicators(df, history_path)
+    X_raw = df[ENSEMBLE_FEATURES if engineered else FEATURE_COLUMNS].astype("float64").copy()
     if hotspot_imputation == "zero":
         counts = ["hotspots_in_cell_24h", "hotspots_10km_7d"]
         X_raw[counts] = X_raw[counts].fillna(0.0)
@@ -379,6 +388,8 @@ def run_predictions(
             raise ValueError("Artifact must be a preprocessing/model bundle")
         if artifact.get("feature_columns") != order:
             raise ValueError("Artifact feature order differs from manifest")
+        if artifact.get("feature_pipeline") != entry.get("feature_pipeline"):
+            raise ValueError("Artifact feature pipeline differs from manifest")
         if artifact.get("horizon_h") != horizon or artifact.get("schema_version") != SCHEMA_VERSION:
             raise ValueError("Artifact horizon/schema mismatch")
         if artifact.get("model_version") != entry["model_version"]:
@@ -392,8 +403,8 @@ def run_predictions(
 
         # Reuse fitted preprocessing; attribution uses the exact standardized values.
         X_imp = imputer.transform(X_ordered)
-        if X_imp.shape != X_raw.shape or not np.isfinite(X_imp).all() or (X_imp == -999).any():
-            raise ValueError("Imputer must produce 27 finite predictor columns")
+        if X_imp.shape != X_ordered.shape or not np.isfinite(X_imp).all() or (X_imp == -999).any():
+            raise ValueError("Imputer must produce the declared finite predictor columns")
         X_scaled = scaler.transform(X_imp)
 
         # Use the calibrated model probability without rounding or clipping.
@@ -407,12 +418,15 @@ def run_predictions(
         probs = raw_probs
 
         # Signed local attributions for top_factors
+        # Contract 3.2 permits canonical feature names only. Internal indicator
+        # contributions stay out of this heuristic summary (not a full explanation).
+        canonical_indices = [i for i, name in enumerate(order) if name in FEATURE_COLUMNS]
         top_factors_all = compute_local_attributions(
             model=primary_model,
-            X_imp=X_imp,
-            X_scaled=X_scaled,
-            signed_feature_weights=signed_weights,
-            feature_names=order,
+            X_imp=X_imp[:, canonical_indices],
+            X_scaled=X_scaled[:, canonical_indices],
+            signed_feature_weights=np.asarray(signed_weights)[canonical_indices],
+            feature_names=[order[i] for i in canonical_indices],
             risk_scores=probs,
             top_k=3,
         )

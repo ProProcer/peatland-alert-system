@@ -1,0 +1,26 @@
+Act as a Senior ML Engineer and IBM Z Architect. We need to overhaul our peat fire prediction model (`b_model/train.py`) to improve the "early warning" 24-hour recall (currently at 30% for cells with no recent hotspots) and to maximize our technicality score for the IBM Z Datathon.
+
+I need you to refactor `train.py` to transition from Logistic Regression to a tree-based ensemble, specifically targeting IBM Snap ML with XGBoost as a fallback, and implement custom sample weighting for cold-start predictions.
+
+**Step 1: Feature Engineering (Leading Indicators)**
+Add a preprocessing step to calculate these rolling features from the historical weather/soil data before training:
+1. `cumulative_dry_days`: Count of consecutive days where precipitation < 1mm.
+2. `soil_moisture_momentum`: The rate of change in soil moisture (e.g., current day minus a 3-day or 7-day rolling average). A sharp drop indicates rapid drying.
+
+**Step 2: Custom Sample Weighting (Penalizing Cold-Start Misses)**
+Replace the standard `class_weight` parameter with a dynamically generated `sample_weight` array passed to the `.fit()` method:
+- Negative class (no fire) = 1.0
+- Positive class WITH recent history (tracker fires) = `base_positive_weight` (calculated via inverse class frequency).
+- Positive class WITHOUT recent history (NEW fires / early warnings) = `base_positive_weight * 5.0` (Massive penalty for missing a new fire).
+
+**Step 3: Model Architecture (Snap ML & XGBoost)**
+- Refactor the model initialization to attempt importing and using `snapml.BoostingMachineClassifier`. 
+- If `snapml` is not installed, gracefully fallback to `xgboost.XGBClassifier`.
+- Utilize tree-specific hyperparameters (e.g., `max_depth`, `learning_rate`) and ensure it accepts the custom `sample_weight` array during training.
+- Set `colsample_bytree` to a lower value (e.g., 0.7) to force the trees to split on weather/soil features rather than solely relying on historical hotspot counts.
+
+**Step 4: Persistence and Validation**
+- Ensure the chronological train/validation split (with the 72-hour gap) and PR-AUC metric tracking remain intact.
+- Crucially, update the `feature_order` in the generated `artifact_manifest.json` to include the newly engineered features (`cumulative_dry_days`, `soil_moisture_momentum`) so `predict.py` knows to expect them.
+
+Please output the modified sections of `train.py`.

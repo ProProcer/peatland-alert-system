@@ -1,7 +1,7 @@
 """
 Training pipeline for Role B (ML Lead).
 Predicts peat fire hotspot emergence for 24h, 48h, and 72h horizons.
-Supports IBM Snap ML on IBM Z / LinuxONE (s390x) with Scikit-Learn fallback.
+Supports IBM Snap ML on IBM Z / LinuxONE (s390x) with XGBoost fallback.
 Configured runs require producer-supplied future labels, strict chronological
 train/calibration/validation splits and held-out probability calibration.
 Strict adherence to Team Playbook Contracts 3.1 & 3.2.
@@ -56,6 +56,9 @@ from b_model.config import (
     setup_logger,
 )
 from b_model.features import generate_mock_data_if_missing
+from b_model.leading_indicators import (
+    ENSEMBLE_FEATURES, PIPELINE_VERSION, add_leading_indicators, cold_start_sample_weights,
+)
 from b_model.training_config import (
     TrainingConfig, compute_training_dryness, register_training_config,
     resolve_training_path, validate_training_config,
@@ -70,13 +73,12 @@ logger = setup_logger("b_model.train")
 # IBM Snap ML hardware-accelerated library check for LinuxONE (s390x)
 try:
     from snapml import BoostingMachineClassifier as SnapBoostingMachineClassifier
-    from snapml import LogisticRegression as SnapLogisticRegression
 
     SNAPML_AVAILABLE = True
     logger.info("IBM Snap ML is installed and available; verify hardware performance on the deployment target.")
 except ImportError:
     SNAPML_AVAILABLE = False
-    logger.info("IBM Snap ML is NOT installed. Falling back to Scikit-Learn gradient boosting.")
+    logger.info("IBM Snap ML is NOT installed. Auto selection will use XGBoost.")
 
 # Check for Scikit-Learn >= 1.6 FrozenEstimator (with fallback for sklearn < 1.6 on s390x)
 try:
@@ -425,9 +427,16 @@ def train_pipeline(
     settings.paths.model_dir = str(model_dir.resolve())
     backend = settings.model.backend
     if backend == "auto":
-        backend = "snapml" if SNAPML_AVAILABLE else "hist_gradient_boosting"
+        backend = "snapml" if SNAPML_AVAILABLE else "xgboost"
     if backend == "snapml" and not SNAPML_AVAILABLE:
-        raise ImportError("model=snapml requires the optional snapml package; select model=hist_gradient_boosting locally")
+        raise ImportError("model=snapml requires the optional snapml package; select model=xgboost locally")
+    ensemble = backend in {"snapml", "xgboost"}
+    feature_names = list(ENSEMBLE_FEATURES if ensemble else FEATURE_COLUMNS)
+    if backend == "xgboost":
+        try:
+            from xgboost import XGBClassifier
+        except ImportError as exc:
+            raise ImportError("Auto fallback requires xgboost; install b_model/requirements-training.txt") from exc
 
     # 1. Configured runs never silently substitute synthetic history.
     resolved_path = history_path
@@ -449,6 +458,10 @@ def train_pipeline(
 
     df_raw = pd.read_parquet(resolved_path)
     logger.info("Loaded training data: %d rows from %s", len(df_raw), resolved_path)
+    # Compute on all available predictor hours before incomplete labels are dropped.
+    # No future measurement is used; validation can use already-observed history.
+    if ensemble:
+        df_raw = add_leading_indicators(df_raw)
 
     if training_config is not None:
         required = {"cell_id", "ts", *FEATURE_COLUMNS, *(TARGET_COLS[h] for h in HORIZONS)}
@@ -488,9 +501,9 @@ def train_pipeline(
     )
 
     # 4. Fit Imputer and Scaler on train split only
-    X_train_raw = df_train[FEATURE_COLUMNS].copy()
-    X_calib_raw = df_calib[FEATURE_COLUMNS].copy()
-    X_val_raw = df_val[FEATURE_COLUMNS].copy()
+    X_train_raw = df_train[feature_names].copy()
+    X_calib_raw = df_calib[feature_names].copy()
+    X_val_raw = df_val[feature_names].copy()
 
     if X_train_raw.isna().all().any():
         raise ValueError("Every canonical feature needs at least one training value for median imputation")
@@ -518,8 +531,10 @@ def train_pipeline(
     feature_signs = compute_directional_feature_signs(
         X_train_imp,
         df_train[TARGET_COLS[24]].values if TARGET_COLS[24] in df_train.columns else np.zeros(len(df_train)),
-        FEATURE_COLUMNS,
+        feature_names,
     )
+    if ensemble:
+        feature_signs[-2:] = [1.0, -1.0]
 
     model_dir.mkdir(parents=True, exist_ok=True)
     all_metrics: Dict[str, Any] = {
@@ -528,6 +543,7 @@ def train_pipeline(
         "snapml_accelerated": backend == "snapml",
         "model_backend": backend,
         "primary_metric": "average_precision",
+        "feature_order": feature_names,
         "training_config": asdict(settings),
         "training_data": {"path": str(resolved_path.resolve()),
                           "sha256": hashlib.sha256(resolved_path.read_bytes()).hexdigest(),
@@ -561,9 +577,11 @@ def train_pipeline(
 
         if len(np.unique(y_train)) < 2:
             raise ValueError(f"Horizon {horizon}h needs both target classes in training")
-        baseline_model = LogisticRegression(class_weight=settings.model.class_weight, random_state=settings.seed,
+        sample_weight, weighting = cold_start_sample_weights(df_train, y_train, settings.model.cold_start_multiplier)
+        logger.info("Horizon %dh training sample weights: %s", horizon, weighting)
+        baseline_model = LogisticRegression(class_weight=None if ensemble else settings.model.class_weight, random_state=settings.seed,
                                             max_iter=settings.baseline.max_iter, C=settings.baseline.c)
-        baseline_model.fit(baseline_X_train, y_train)
+        baseline_model.fit(baseline_X_train, y_train, sample_weight=sample_weight if ensemble else None)
         baseline_probs_val = baseline_model.predict_proba(baseline_X_val)[:, 1]
 
         # Primary Model: IBM Snap ML Boosting or HistGradientBoosting
@@ -571,17 +589,32 @@ def train_pipeline(
             logger.info("Training IBM Snap ML BoostingMachineClassifier for horizon %dh", horizon)
             base_primary = SnapBoostingMachineClassifier(
                 random_state=settings.seed,
-                class_weight=settings.model.class_weight,
+                class_weight=None,
+                colsample_bytree=settings.model.colsample_bytree,
+                n_jobs=2,
                 num_round=settings.model.max_iter,
                 learning_rate=settings.model.learning_rate,
                 max_depth=settings.model.max_depth,
                 lambda_l2=settings.model.l2_regularization,
             )
-            base_primary.fit(X_train_imp, y_train)
+            base_primary.fit(X_train_imp, y_train, sample_weight=sample_weight)
             if hasattr(base_primary, "feature_importances_"):
                 raw_weights = np.array(base_primary.feature_importances_, dtype=float)
             else:
-                raw_weights = np.ones(len(FEATURE_COLUMNS)) / len(FEATURE_COLUMNS)
+                raw_weights = np.ones(len(feature_names)) / len(feature_names)
+        elif backend == "xgboost":
+            base_primary = XGBClassifier(
+                n_estimators=settings.model.max_iter,
+                max_depth=settings.model.max_depth,
+                learning_rate=settings.model.learning_rate,
+                colsample_bytree=settings.model.colsample_bytree,
+                reg_lambda=settings.model.l2_regularization,
+                objective="binary:logistic", eval_metric="aucpr",
+                tree_method="hist", random_state=settings.seed, n_jobs=2,
+                scale_pos_weight=1.0,  # imbalance is already in sample_weight
+            )
+            base_primary.fit(X_train_imp, y_train, sample_weight=sample_weight)
+            raw_weights = np.asarray(base_primary.feature_importances_, dtype=float)
         elif backend == "logistic_regression":
             # PIC 1 still supplies raw imputed predictors; scale inside the model.
             base_primary = make_pipeline(StandardScaler(), LogisticRegression(
@@ -627,15 +660,15 @@ def train_pipeline(
         )
 
         # Boost core peat hydrology features and down-weight auxiliary meteorological noise
-        priority_multipliers = np.ones(len(FEATURE_COLUMNS), dtype=float)
-        for i, col in enumerate(FEATURE_COLUMNS):
+        priority_multipliers = np.ones(len(feature_names), dtype=float)
+        for i, col in enumerate(feature_names):
             priority_multipliers[i] = settings.explanation.priority_multipliers.get(col, 1.0)
 
         raw_weights = raw_weights * priority_multipliers
 
         # Compute signed feature weights
         sum_w = float(np.sum(np.abs(raw_weights)))
-        norm_weights = (raw_weights / sum_w) if sum_w > 0 else (np.ones(len(FEATURE_COLUMNS)) / len(FEATURE_COLUMNS))
+        norm_weights = (raw_weights / sum_w) if sum_w > 0 else (np.ones(len(feature_names)) / len(feature_names))
         signed_feature_weights = norm_weights * feature_signs
 
         # Validation predictions & evaluation on final validation split
@@ -670,6 +703,17 @@ def train_pipeline(
             "lead_time_hours": lead_time,
             "baseline_pr_auc": baseline_pr,
             "baseline_roc_auc": round(baseline_roc, 3) if baseline_roc is not None else None,
+            "sample_weighting": weighting if ensemble else None,
+        }
+        quiet = df_val["hotspots_in_cell_24h"].eq(0).fillna(False).to_numpy(dtype=bool)
+        horizon_metrics["quiet_case"] = {
+            "rows": int(quiet.sum()), "positive_rows": int(y_val[quiet].sum()),
+            "pr_auc": float(average_precision_score(y_val[quiet], probs_val[quiet]))
+                if len(np.unique(y_val[quiet])) == 2 else None,
+            "recall_at_0_50": float(recall_score(y_val[quiet], preds_val[quiet], zero_division=0))
+                if y_val[quiet].sum() else None,
+            "precision_at_0_50": float(precision_score(y_val[quiet], preds_val[quiet], zero_division=0))
+                if quiet.any() else None,
         }
         all_metrics["horizons"][str(horizon)] = horizon_metrics
 
@@ -683,7 +727,9 @@ def train_pipeline(
             "horizon_h": horizon,
             "model_version": MODEL_VERSION,
             "schema_version": SCHEMA_VERSION,
-            "feature_columns": FEATURE_COLUMNS,
+            "feature_columns": feature_names,
+            "feature_pipeline": PIPELINE_VERSION if ensemble else None,
+            "sample_weighting": weighting if ensemble else None,
             "imputer": imputer,
             "scaler": scaler,
             "baseline_model": baseline_model,
@@ -720,8 +766,9 @@ def train_pipeline(
     # Publish the PIC 1 handoff only after all three bundles are available.
     manifest = {"schema_version": SCHEMA_VERSION, "models": {
         str(horizon): {"filename": f"model_{horizon}h.joblib", "format": "joblib",
-                       "model_version": MODEL_VERSION, "feature_order": list(FEATURE_COLUMNS),
-                       "positive_class": 1}
+                       "model_version": MODEL_VERSION, "feature_order": feature_names,
+                       "positive_class": 1,
+                       **({"feature_pipeline": PIPELINE_VERSION} if ensemble else {})}
         for horizon in HORIZONS}}
     manifest_path = model_dir / "artifact_manifest.json"
     temporary = manifest_path.with_suffix(".json.tmp")

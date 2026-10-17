@@ -1,0 +1,3 @@
+backend: xgboost
+colsample_bytree: 0.7
+cold_start_multiplier: 5.0

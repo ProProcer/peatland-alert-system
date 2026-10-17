@@ -1,5 +1,13 @@
 # Model card — Peat Fire Early-Warning Model
 
+The latest auto training path is an unevaluated Snap ML/XGBoost ensemble with
+two causal internal leading indicators and fivefold quiet-positive weighting.
+It preserves temporal embargoes, separately fitted calibration and frozen risk
+boundaries. Per-horizon quiet-case metrics are now recorded. Existing saved
+candidate metrics refer to earlier models and do not establish ensemble quality.
+See `README.md` and `leading_indicators.py` for the exact feature/weight definitions
+and history requirements. Original explicit legacy profiles remain available.
+
 Role B, PIC 2 · JSON schema `1.0` · horizons `24`, `48`, `72` hours.
 
 ## Prediction target and intended use
@@ -71,7 +79,8 @@ PIC 1 reads the saved weights and fitted scaler, computes exact standardized-val
 ## Evaluation and evidence status
 
 Average Precision (PR-AUC) is the primary metric and permutation-importance
-scorer. All supported base estimators require balanced class weights. Each
+scorer. Legacy explicit estimators use balanced class weights; the new auto
+ensemble uses the custom sample weights described in the README. Each
 horizon also records a diagnostic `optimal_threshold` maximizing validation F1
 over its precision-recall curve. Ties use the highest threshold; single-class
 validation records null. Threshold-tuned metrics reuse validation labels and
