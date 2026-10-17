@@ -1,5 +1,22 @@
 # PIC 2 → PIC 1: training and inference agreement
 
+## Leading-indicator ensemble extension
+
+The latest `train.py` auto backend selects Snap ML or XGBoost, with custom
+training-only cold-start sample weights. Its internal manifest includes all 27
+canonical inputs plus `cumulative_dry_days` and `soil_moisture_momentum`, and the
+explicit marker `feature_pipeline: leading_indicators_v1`. `predict.py` now
+supports this extension as well as the original 27-input artifacts. Both paths
+use `leading_indicators.py`; rolling inference requires `paths.history`, filters
+future rows per cell, and never reads labels. See the new README section for
+precise UTC-day, missingness and 72-hour lookback definitions.
+
+This extends internal model inputs only. Shared features/risk schema 1.0 and risk
+boundaries are unchanged. Engineered predictors are omitted from the canonical
+`top_factors` summary, which remains an incomplete directional heuristic. The
+earlier candidate described below has not been retrained or promoted by this
+change. Legacy explicit training profiles still export 27 predictors.
+
 ## Improved candidate available for replay integration
 
 The completed chronological experiment selected balanced Logistic Regression

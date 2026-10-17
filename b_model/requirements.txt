@@ -1,5 +1,5 @@
 # Role B (ML Lead) - Core Dependencies
-# Guaranteed 100% s390x (IBM Z / LinuxONE) compatible with prebuilt wheels or clean C/pure-Python builds
+# Verify installation and execution on s390x (IBM Z / LinuxONE); local wheels are not evidence.
 numpy>=1.26.0
 pandas>=2.1.0
 pyarrow>=14.0.0
@@ -8,6 +8,7 @@ joblib>=1.3.0
 pytest>=8.0.0
 hydra-core==1.3.2
 omegaconf==2.3.0
+xgboost>=2.1,<4
 
 # Optional hardware acceleration on LinuxONE s390x (installed in IBM Z environment):
 # snapml>=1.13.0

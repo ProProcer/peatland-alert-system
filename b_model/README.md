@@ -1,5 +1,60 @@
 # Role B — ML lead
 
+## Early-warning ensemble training
+
+`train.py` now defaults to Snap ML boosting when installed, otherwise XGBoost.
+Explicit `model=snapml` fails when Snap ML is absent; `model=xgboost` selects the
+fallback directly. Existing explicit Logistic Regression / histogram-boosting
+profiles and saved 27-predictor models remain supported for comparisons.
+
+```bash
+python -m pip install -r b_model/requirements-training.txt
+python -m b_model.train model=auto paths.model_dir=b_model/runs/early_warning
+# For the real source bundle, use the extended history explicitly:
+python -m b_model.train model=auto paths.history=data/demo/role_a_real/hackathon/history.parquet paths.model_dir=b_model/runs/early_warning_real
+python -m b_model.predict paths.model_dir=b_model/runs/early_warning_real paths.features=data/demo/role_a_real/hackathon/features.json paths.history=data/demo/role_a_real/hackathon/history.parquet paths.output=b_model/.test-output/early_warning/risk.json
+```
+
+Snap ML/XGBoost fit with custom training-only sample weights, without additional
+class balancing: negatives = 1; positives = training negatives / positives;
+positives with observed zero `hotspots_in_cell_24h` multiply this by 5 by default.
+Unknown recent-hotspot counts are not classified as quiet. Calibration and
+validation keep the observed distribution. `model.cold_start_multiplier` and
+`model.colsample_bytree` (default 0.7) are configurable. Column subsampling reduces
+feature availability per tree; it cannot guarantee weather/soil splits.
+
+Both tree backends add two internal predictors through `leading_indicators.py`:
+`cumulative_dry_days` counts consecutive observed complete UTC days with daily
+precipitation <1 mm; before 23:00, the current day is not yet counted. Missing
+hours/rain make the day unknown and break the streak, so streaks can be lower
+bounds at the beginning of history or after a gap. `soil_moisture_momentum` is
+current `sm_27_81` minus the preceding 72-hour mean, excluding the current hour.
+Incomplete soil context remains null and uses the fitted training median.
+These are observed drying signals, not direct measures of ignition.
+
+The extended artifact manifest declares 29 predictors and
+`feature_pipeline: leading_indicators_v1`; training and inference share the same
+causal transform. The inference path requires history, reads only four predictor
+columns, and excludes measurements at/after each snapshot before inserting the
+snapshot itself. Shared JSON schema 1.0 stays unchanged. `top_factors` continues
+to summarize only the 27 canonical predictors; internal-indicator contributions
+are omitted, making this an incomplete heuristic explanation, not SHAP.
+
+Metrics retain chronological gaps of at least 72 hours, Average Precision,
+diagnostic F1 thresholds, and now `quiet_case` precision/recall/AP and sample-weight
+metadata per horizon. No recall improvement or IBM hardware acceleration has
+been established by these code changes. Evaluate a new candidate on an untouched
+period before replacing the published models. Existing candidate reports describe
+earlier runs and do not evaluate this ensemble.
+
+Added library: [XGBoost](https://xgboost.readthedocs.io/en/stable/) (Apache-2.0),
+used for CPU histogram boosting fallback and loading its exported models.
+Snap API reference: [BoostingMachineClassifier](https://snapml.readthedocs.io/en/latest/boosting_machines.html).
+Role E should include XGBoost in the root dependency inventory and verify actual
+Snap ML/XGBoost dependency installation, inference and timing on LinuxONE/s390x.
+The local tests exercise XGBoost and a Snap-constructor stub; they do not prove
+Snap ML runtime or architecture compatibility. No new dataset is introduced.
+
 Read `TEAM_PLAYBOOK.md`, `contracts/CONTRACTS.md` and the existing `MODEL_CARD.md`. Own this folder and `data/processed/risk.json`. The repository setup preserves the pre-existing implementation, model artifacts and tests.
 
 ```bash
@@ -203,7 +258,8 @@ metrics retain measured lead times, including null when unobserved, without forc
 a minimum or an increasing sequence across horizons.
 
 Average Precision (PR-AUC) is the primary metric and the permutation-importance
-scorer. Balanced class weights are mandatory for every supported estimator.
+scorer. Legacy explicit estimators use balanced class weights; the new ensemble
+uses the custom sample weights described above, without double weighting.
 Each horizon logs and saves `optimal_threshold`, chosen by maximum F1 over the
 validation precision-recall curve (ties choose the highest threshold). The bundle
 also stores this value; its manifest and inference interface remain unchanged.

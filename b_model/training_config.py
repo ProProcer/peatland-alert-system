@@ -46,6 +46,8 @@ class ModelSettings:
     l2_regularization: float = 2.0
     logistic_max_iter: int = 500
     logistic_c: float = 1.0
+    colsample_bytree: float = 0.7
+    cold_start_multiplier: float = 5.0
 
 
 @dataclass
@@ -137,10 +139,12 @@ def validate_training_config(config) -> TrainingConfig:
         raise ValueError("Configured training requires strict_embargo=true; provide enough history for the full gap")
     if not 0 <= result.seed < 2 ** 32:
         raise ValueError("seed must be an unsigned 32-bit integer")
-    if result.model.backend not in {"auto", "hist_gradient_boosting", "snapml", "logistic_regression"}:
+    if result.model.backend not in {"auto", "hist_gradient_boosting", "snapml", "xgboost", "logistic_regression"}:
         raise ValueError("Unsupported model backend")
     if result.model.class_weight != "balanced":
         raise ValueError("class_weight must be balanced for rare-event training")
+    if not 0 < result.model.colsample_bytree <= 1 or result.model.cold_start_multiplier < 1:
+        raise ValueError("Use colsample_bytree in (0, 1] and cold_start_multiplier >= 1")
     for name in ("max_iter", "max_depth", "min_samples_leaf", "logistic_max_iter"):
         if getattr(result.model, name) <= 0:
             raise ValueError(f"model.{name} must be positive")

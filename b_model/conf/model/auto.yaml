@@ -1,4 +1,4 @@
-# Select Snap ML only when installed; otherwise use sklearn histogram boosting.
+# Select Snap ML only when installed; otherwise use XGBoost.
 backend: auto
 class_weight: balanced
 max_iter: 150
