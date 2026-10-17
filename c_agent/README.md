@@ -17,6 +17,11 @@ On Windows without activating the venv, call `.venv\Scripts\python.exe` instead 
 
 `--mock` validates the three inputs and replays `mock_output.json` (fixed CRITICAL fixture with all five bilingual messages and `water_source: null`). Live mode runs the deterministic policy in `policy.py`, persists dedupe/cooldown state under `state/` (gitignored), and appends simulated notification lines to `logs/`.
 
+Additional CLI options:
+- `--cluster-distance-km` (default 15): Cluster CRITICAL cells within this distance; 0 disables clustering
+- `--max-water-km` (default 15): Attach water source only if within this distance; 0 disables cutoff
+- `--cooldown-hours` (default 6): Cooldown period before re-notifying same cell
+
 ## Extended Features (Beyond Team Playbook)
 
 ### Social Media Post Generation
@@ -71,7 +76,7 @@ API endpoints:
 Policy summary (see `decision_rules.md`):
 
 1. Resolve each cell to one driving horizon (highest level, then score, then shortest horizon).
-2. CRITICAL → `DISPATCH` to all five audiences; edge-adjacent CRITICAL clusters also get `BRIEF` for leadership.
+2. CRITICAL → `DISPATCH` to all five audiences; CRITICAL cells within 15 km (configurable via `--cluster-distance-km`) also get `BRIEF` for leadership.
 3. HIGH with falling `sm_27_81_delta_7d` → `SMS_WARN` (MPA) and `REWET` (BRGM).
 4. One active incident per cell; escalate only when severity rises; default 6h cooldown.
 5. Message text is templated from structured fields only.

@@ -74,6 +74,7 @@ def dispatch_live(
     now: datetime | None = None,
     use_llm: bool = False,
     max_water_km: float | None = DEFAULT_MAX_WATER_KM,
+    cluster_distance_km: float = 15.0,
     export_social_media: Path | None = None,
     export_email: Path | None = None,
     export_summary: Path | None = None,
@@ -108,6 +109,7 @@ def dispatch_live(
         now=now,
         water_catalogue_path=catalogue_path,
         max_water_km=max_water_km,
+        cluster_distance_km=cluster_distance_km,
         rewriter=rewriter,
     )
     validate_payload("dispatch", payload)
@@ -160,6 +162,12 @@ def main() -> None:
         help="Attach a water source only if the nearest is within this distance (default 15); 0 disables the cutoff",
     )
     parser.add_argument(
+        "--cluster-distance-km",
+        type=float,
+        default=15.0,
+        help="Cluster CRITICAL cells within this distance (default 15 km); use 0 to disable clustering",
+    )
+    parser.add_argument(
         "--llm",
         action="store_true",
         help="Let an LLM rephrase messages (needs GEMINI_API_KEY or ANTHROPIC_API_KEY); output is validated, templates are the fallback",
@@ -202,6 +210,7 @@ def main() -> None:
         cooldown_hours=args.cooldown_hours,
         use_llm=args.llm,
         max_water_km=args.max_water_km or None,
+        cluster_distance_km=args.cluster_distance_km,
         export_social_media=args.export_social_media,
         export_email=args.export_email,
         export_summary=args.export_summary,

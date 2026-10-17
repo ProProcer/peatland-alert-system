@@ -7,7 +7,7 @@ from typing import Any, Callable
 
 from c_agent import messages
 from c_agent.state_store import LEVEL_RANK, StateStore, format_ts, parse_ts
-from c_agent.water import DEFAULT_MAX_WATER_KM, nearest_water_source
+from c_agent.water import DEFAULT_MAX_WATER_KM, haversine_km, nearest_water_source
 
 # rewriter(action, context, template_messages) -> messages; see c_agent/llm.py
 Rewriter = Callable[[str, dict[str, Any], dict[str, dict[str, str]]], dict[str, dict[str, str]]]
@@ -29,15 +29,20 @@ def parse_cell_id(cell_id: str) -> tuple[float, float]:
     return float(lat_s), float(lon_s)
 
 
-def cells_adjacent(a: str, b: str) -> bool:
+def cells_adjacent(a: str, b: str, max_km: float = 15.0) -> bool:
+    """Check if two cells are within clustering distance (default 15 km)."""
     lat1, lon1 = parse_cell_id(a)
     lat2, lon2 = parse_cell_id(b)
-    dlat = abs(lat1 - lat2)
-    dlon = abs(lon1 - lon2)
-    return (abs(dlat - 0.1) < 1e-9 and dlon < 1e-9) or (abs(dlon - 0.1) < 1e-9 and dlat < 1e-9)
+    
+    # Haversine distance
+    from c_agent.water import haversine_km
+    distance = haversine_km(lat1, lon1, lat2, lon2)
+    
+    return distance <= max_km
 
 
-def cluster_adjacent(cell_ids: list[str]) -> list[list[str]]:
+def cluster_adjacent(cell_ids: list[str], max_km: float = 15.0) -> list[list[str]]:
+    """Cluster cells within max_km distance of each other (default 15 km)."""
     remaining = set(cell_ids)
     clusters: list[list[str]] = []
     while remaining:
@@ -48,7 +53,7 @@ def cluster_adjacent(cell_ids: list[str]) -> list[list[str]]:
         while stack:
             current = stack.pop()
             component.append(current)
-            neighbors = [other for other in list(remaining) if cells_adjacent(current, other)]
+            neighbors = [other for other in list(remaining) if cells_adjacent(current, other, max_km)]
             for neighbor in neighbors:
                 remaining.remove(neighbor)
                 stack.append(neighbor)
@@ -251,6 +256,7 @@ def decide(
     now: datetime | None = None,
     water_catalogue_path: Path | None = None,
     max_water_km: float | None = DEFAULT_MAX_WATER_KM,
+    cluster_distance_km: float = 15.0,
     rewriter: Rewriter | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Produce (active dispatches, newly minted this run)."""
@@ -262,7 +268,7 @@ def decide(
     handled: set[str] = set()
 
     critical_ids = sorted(cid for cid, row in selected.items() if row["risk_level"] == "CRITICAL" and cid in features_by_cell)
-    for cluster in cluster_adjacent(critical_ids):
+    for cluster in cluster_adjacent(critical_ids, cluster_distance_km):
         decision, reused = state.should_emit(cluster, "CRITICAL", when)
         if decision == "reuse":
             output.extend(reused)

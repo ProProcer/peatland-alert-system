@@ -79,9 +79,13 @@ def _risk(cell_id: str, horizon_h: int, score: float, level: str) -> dict:
 
 class PolicyUnitTests(unittest.TestCase):
     def test_adjacency_and_clustering(self) -> None:
-        self.assertTrue(cells_adjacent("-2.35_114.05", "-2.35_114.15"))
-        self.assertFalse(cells_adjacent("-2.35_114.05", "-2.45_114.15"))
-        groups = cluster_adjacent(["-2.35_114.15", "-2.35_114.05", "-2.55_114.25"])
+        # 0.1° latitude difference ≈ 11 km, so these are within 15 km
+        self.assertTrue(cells_adjacent("-2.35_114.05", "-2.35_114.15", 15.0))
+        # 0.1° in both directions ≈ 15.5 km, just over 15 km
+        self.assertFalse(cells_adjacent("-2.35_114.05", "-2.45_114.15", 15.0))
+        # But within 20 km
+        self.assertTrue(cells_adjacent("-2.35_114.05", "-2.45_114.15", 20.0))
+        groups = cluster_adjacent(["-2.35_114.15", "-2.35_114.05", "-2.55_114.25"], 15.0)
         self.assertEqual(groups, [["-2.35_114.05", "-2.35_114.15"], ["-2.55_114.25"]])
 
     def test_horizon_prefers_highest_score_then_shortest(self) -> None:

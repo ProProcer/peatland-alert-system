@@ -27,7 +27,7 @@ For each `cell_id`, pick one driving risk row:
 | HIGH and `sm_27_81_delta_7d < 0` (not null) | `SMS_WARN` then `REWET` | 2 / 3 | `mpa` / `brgm` |
 | MODERATE or LOW, or HIGH without falling deep moisture | none | — | — |
 
-Edge-adjacent means centers differ by exactly `0.1°` on one axis and `0` on the other (4-connected on the peat grid). Cluster target is the mean of member cell centers (named `lat` / `lon`). Primary `cell_id` on the record is the member with the strongest driving risk.
+Edge-adjacent means cells are within 15 km of each other (configurable via `--cluster-distance-km`; 0 disables clustering). Distance is computed using Haversine formula. Cluster target is the mean of member cell centers (named `lat` / `lon`). Primary `cell_id` on the record is the member with the strongest driving risk.
 
 ## Water cutoff
 
