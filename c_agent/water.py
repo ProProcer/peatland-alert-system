@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import math
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -48,22 +49,21 @@ def load_water_catalogue(path: Path | None) -> list[dict[str, Any]]:
 
 
 def resolve_water_catalogue_path(explicit: Path | None, data_dir: Path | None = None) -> Path | None:
-    """Prefer CLI path, then data-dir export, then Role A's mock catalogue.
+    """Prefer explicit path, dataset catalogue, then its shared real-source catalogue.
 
     Checks for both GeoJSON (water_sources.geojson) and JSON array (water_sources.json).
     """
-    candidates = []
     if explicit is not None:
-        candidates.append(explicit)
+        if not explicit.is_file():
+            raise ValueError(f"Water catalogue not found: {explicit}")
+        return explicit
+    candidates = []
     if data_dir is not None:
-        # Prefer GeoJSON if available (Role A's WaterIndex format)
-        candidates.append(data_dir / "water_sources.geojson")
-        candidates.append(data_dir / "water_sources.json")
-    candidates.append(DEFAULT_WATER_CATALOGUE)
-    for path in candidates:
-        if path.exists():
-            return path
-    return None
+        candidates.extend([data_dir / 'water_sources.geojson', data_dir / 'water_sources.json'])
+        if data_dir.parent.name == 'role_a_real':
+            candidates.append(data_dir.parent / 'water_sources.geojson')
+    # Synthetic water sources must be requested explicitly, never inferred for real data.
+    return next((path for path in candidates if path.is_file()), None)
 
 
 def is_geojson_catalogue(path: Path) -> bool:
@@ -118,14 +118,20 @@ def nearest_water_source_from_index(
     Requires Role A's dependencies (osmium, shapely, pyproj). Falls back to None if unavailable.
     """
     if not _WATER_INDEX_AVAILABLE or WaterIndex is None:
-        return None
+        raise ValueError('Spatial water lookup requires osmium, shapely and pyproj. Start the server with .venv/Scripts/python.exe.')
+    path = geojson_path.resolve()
+    stat = path.stat()
     try:
-        index = WaterIndex(geojson_path)
-        result = index.nearest(target["lat"], target["lon"], max_distance_km=max_km)
-        return result.get("water_source")
-    except Exception:
-        # If WaterIndex fails (e.g., missing dependencies, file format issue), return None
-        return None
+        index = _cached_water_index(str(path), stat.st_mtime_ns, stat.st_size)
+        return index.nearest(target['lat'], target['lon'], max_distance_km=max_km).get('water_source')
+    except Exception as exc:
+        raise ValueError(f'Could not read or query spatial water catalogue: {path.name}') from exc
+
+
+@lru_cache(maxsize=2)
+def _cached_water_index(path, modified_ns, size):
+    """Build the large spatial index once per catalogue revision."""
+    return WaterIndex(Path(path))
 
 
 def nearest_water_source(
@@ -140,7 +146,7 @@ def nearest_water_source(
     - If list: uses simple Haversine distance
     """
     if isinstance(candidates_or_path, Path):
-        if is_geojson_catalogue(candidates_or_path):
+        if candidates_or_path.suffix.lower() == '.geojson' or is_geojson_catalogue(candidates_or_path):
             return nearest_water_source_from_index(target, candidates_or_path, max_km)
         # Not a GeoJSON, load as simple JSON array
         candidates = load_water_catalogue(candidates_or_path)

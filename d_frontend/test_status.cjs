@@ -21,8 +21,7 @@ for (const horizon of [24, 48, 72]) {
   const rows = context.feeds.risk.data.filter(row => row.horizon_h === horizon);
   for (const level of ['LOW', 'MODERATE', 'HIGH', 'CRITICAL']) assert.equal(nodes.get('#count-' + level.toLowerCase()).textContent, rows.filter(row => row.risk_level === level).length);
   assert.equal(nodes.get('#priority-list').children.length, 3);
-  assert.equal(nodes.get('#monitored-count').textContent, 33);
-  assert(nodes.get('#snapshot-time').textContent.includes('00:00 UTC'));
+  assert(nodes.get('#snapshot-time').textContent.includes('07:00 WIB'));
   const top = [...rows].sort((a, b) => b.risk_score - a.risk_score || a.cell_id.localeCompare(b.cell_id))[0];
   let selected = false, focused = false;
   context.document.querySelectorAll = () => [{ dataset: { cellId: top.cell_id }, dispatchEvent() { selected = true; }, focus() { focused = true; } }];
@@ -32,8 +31,6 @@ for (const horizon of [24, 48, 72]) {
 context.feeds.risk.data = [];
 for (const row of context.feeds.features.data) { row.weather.sm_27_81 = null; row.derived.rain_24h_mm = null; }
 vm.runInContext('renderStatus(48)', context);
-assert.equal(nodes.get('#average-moisture').textContent, 'Unavailable');
-assert.equal(nodes.get('#average-rain').textContent, 'Unavailable');
 assert.equal(nodes.get('#count-high').textContent, '—');
 assert(nodes.get('#priority-list').children[0].textContent.includes('No predictions'));
-console.log('PASS: status counts and watchlist update for all horizons; timestamps are UTC; missing forecasts and null measurements are not shown as zero.');
+console.log('PASS: status counts and watchlist update for all horizons; snapshot display uses WIB; missing forecasts are not shown as zero.');

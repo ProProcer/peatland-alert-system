@@ -151,7 +151,7 @@ class PolicyUnitTests(unittest.TestCase):
         self.assertEqual(len(payload), 1)
         self.assertEqual(payload[0]["water_source"]["kind"], "canal")
 
-    def test_high_falling_moisture_emits_sms_and_rewet(self) -> None:
+    def test_high_falling_moisture_dispatches(self) -> None:
         features = [_feature("-2.45_114.15", sm_delta=-0.05)]
         risk = [_risk("-2.45_114.15", 72, 0.65, "HIGH")]
         with tempfile.TemporaryDirectory() as tmp:
@@ -164,10 +164,10 @@ class PolicyUnitTests(unittest.TestCase):
                 water_catalogue_path=None,
             )
         validate_payload("dispatch", payload)
-        self.assertEqual([row["action"] for row in payload], ["SMS_WARN", "REWET"])
-        self.assertEqual(len(created), 2)
+        self.assertEqual([row["action"] for row in payload], ["DISPATCH"])
+        self.assertEqual(len(created), 1)
 
-    def test_high_without_falling_moisture_is_silent(self) -> None:
+    def test_high_without_falling_moisture_dispatches(self) -> None:
         features = [_feature("-2.45_114.15", sm_delta=0.02)]
         risk = [_risk("-2.45_114.15", 72, 0.65, "HIGH")]
         with tempfile.TemporaryDirectory() as tmp:
@@ -179,8 +179,9 @@ class PolicyUnitTests(unittest.TestCase):
                 now=datetime(2026, 10, 17, 9, 5, tzinfo=timezone.utc),
                 water_catalogue_path=None,
             )
-        self.assertEqual(payload, [])
-        self.assertEqual(created, [])
+        self.assertEqual([row["action"] for row in payload], ["DISPATCH"])
+        self.assertEqual(len(payload[0]["audiences"]), 5)
+        self.assertEqual(len(created), 1)
 
     def test_cluster_adds_brief(self) -> None:
         features = [
@@ -227,7 +228,7 @@ class PolicyUnitTests(unittest.TestCase):
             state = StateStore(Path(tmp) / "incidents.json", cooldown_hours=6)
             first, _ = decide(features, high, state, now=now, water_catalogue_path=None)
             second, created = decide(features, critical, state, now=now, water_catalogue_path=None)
-        self.assertEqual(first[0]["action"], "SMS_WARN")
+        self.assertEqual(first[0]["action"], "DISPATCH")
         self.assertEqual(second[0]["action"], "DISPATCH")
         self.assertEqual(len(created), 1)
         self.assertNotEqual(first[0]["dispatch_id"], second[0]["dispatch_id"])
@@ -245,6 +246,7 @@ class AgentIntegrationTests(unittest.TestCase):
                 state_path=folder / "state.json",
                 log_path=folder / "notifications.log",
                 cooldown_hours=6,
+                water_sources=A_WATER,
                 now=datetime(2026, 10, 17, 9, 5, tzinfo=timezone.utc),
             )
             self.assertTrue((folder / "dispatch.json").exists())
@@ -261,6 +263,7 @@ class AgentIntegrationTests(unittest.TestCase):
                 state_path=folder / "state.json",
                 log_path=folder / "notifications.log",
                 cooldown_hours=6,
+                water_sources=A_WATER,
                 now=datetime(2026, 10, 17, 9, 5, tzinfo=timezone.utc),
             )
             self.assertEqual(payload[0]["dispatch_id"], again[0]["dispatch_id"])

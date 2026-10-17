@@ -231,3 +231,65 @@ list to inspect all 27 canonical measurements. These are supplied heuristic fact
 not causal effects or exact calibrated-probability decompositions. Missing predictions
 and null measurements remain explicitly unavailable. Close with Escape or the close
 button; changing the forecast horizon updates an open explanation.
+
+
+## Historical data analytics page
+
+Open `analytics.html` (or choose **Data analytics** in the sidebar). This separate
+page contains no model predictions. It lists all 40 points with province search,
+sorting and full-history temperature/moisture averages. Selecting a point loads
+its daily measurements: interactive chart, date filters, 90-day/year shortcuts,
+chart hover tooltip with keyboard and touch support, paginated historical table, all measurement fields,
+and CSV exports. Every date and aggregation uses UTC.
+
+The source is A's unchanged `regional_40/history.parquet`: 656,640 hourly rows from
+2024-12-02 through 2026-10-16, exported to 40 lazily loaded frontend JSON assets.
+Regenerate after source updates with:
+
+```powershell
+.venv312/Scripts/python.exe -m d_frontend.analytics_data
+```
+
+The exporter reads only input measurements; it excludes risk feeds, model artifacts
+and target labels. Daily means use available samples; daily rain/ET totals require
+24 valid hours; rolling counts use daily maxima and must not be summed as unique
+fires. Rolling rainfall/derived summaries take the final hourly record. Wind
+directions use a circular mean. The inspector and CSV preserve valid-hour counts
+and missing values. Both the demo server and plain static hosting serve this page.
+The abandoned prediction-archive endpoint and artifacts were removed.
+
+Checks: `.venv312/Scripts/python.exe -m unittest d_frontend.test_analytics -v`
+and `node d_frontend/test_analytics.cjs`.
+
+
+Analytics now opens with a location-only list: cell ID, province, coordinates and
+peat coverage. Historical measurements are neither fetched nor displayed until
+a point is selected. The selected-point view includes an All monitoring points
+back button; returning hides historical details. Refresh resets to the list.
+
+Both pages share the Home/Analytics sidebar and `navigation.js` interactions, including hover descriptions, active-page state, sidebar toggle and animated flame.
+
+Analytics chart tooltips replace the Inspect a day slider. Hover/tap to inspect the orange marker; arrow keys move between days while the chart is focused, and Escape dismisses the tooltip.
+
+
+The response workspace uses the shared real OSM water catalogue for regional_40.
+Start with `.venv/Scripts/python.exe -m d_frontend.serve_demo` for spatial lookup.
+Mapped candidates do not establish current availability, operational suitability
+or field access. Catalogue and radius changes regenerate saved incident content.
+
+
+## Forest rescue Easter egg
+
+Activate the sidebar flame **five times** (mouse/touch, or Enter/Space while its
+button is focused; no more than two seconds between activations). Home and Analytics
+open the same isolated mini-game from `easter_egg.html`. Turn the valve on, drag the
+hose toward the tree, or use the labeled Hose aim control with keyboard arrows.
+Keep water on target to finish; Play Again resets it. Escape or Close returns to
+the page and restores focus to the flame. The game has reduced-motion styling,
+touch input, one timer, and unloads when closed. It never changes measurements,
+predictions or dispatches. The brand text remains the Home link.
+
+Browser checks covered the unlock threshold, valve pause/resume, winning, replay,
+Escape, focus restoration, both pages and a 390px mobile viewport.
+
+Analytics now also displays a latest-risk badge for each point and in its detail header. It uses the highest supplied 24/48/72-hour forecast at that point's latest timestamp. The timestamp is displayed separately from historical measurement dates; missing forecasts show Unavailable, never LOW. No historical risk is inferred.

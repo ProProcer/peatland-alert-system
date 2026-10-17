@@ -3,514 +3,1672 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peat Fire Simulator - Easter Egg</title>
+    <title>Peat Fire Simulator - Peatland Rescue Mini-Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --fire-core: #fff275;
+            --fire-mid: #ff6000;
+            --fire-dark: #d82b00;
+            --water-bright: #38bdf8;
+            --water-deep: #0284c7;
+            --peat-soil: #22120a;
+            --peat-soil-dark: #140a05;
+            --glass-bg: rgba(18, 26, 22, 0.78);
+            --glass-border: rgba(255, 255, 255, 0.14);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent-green: #22c55e;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 60%, #8B4513 60%, #8B4513 100%);
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #0f172a;
+            color: var(--text-main);
             min-height: 100vh;
             overflow: hidden;
         }
 
+        button, input {
+            font: inherit;
+        }
+
+        button:focus-visible, input:focus-visible {
+            outline: 3px solid var(--water-bright);
+            outline-offset: 3px;
+        }
+
+        /* ══════════════════════════════════════════
+           GAME CONTAINER & WORLD BACKDROP
+           ══════════════════════════════════════════ */
         .game-container {
             position: relative;
             width: 100%;
-            height: 100vh;
+            height: 100dvh;
+            min-height: 480px;
+            overflow: hidden;
+            background: #1e130c;
         }
 
-        /* Sky and ground */
+        /* Atmospheric Sky — Kalimantan Peatland Twilight with Fire Glow */
         .sky {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 60%;
-            background: linear-gradient(to bottom, #87CEEB, #E0F6FF);
+            height: 65%;
+            background: linear-gradient(180deg, 
+                #1e1b4b 0%, 
+                #311f38 25%, 
+                #5b242a 45%, 
+                #85341f 65%, 
+                #b44c18 85%, 
+                #d96b1e 100%
+            );
+            overflow: hidden;
         }
 
+        /* Drifting Haze and Cloud Layers */
+        .sky::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 70% 50% at 65% 55%, rgba(255, 120, 30, 0.35), transparent 75%),
+                        radial-gradient(ellipse 50% 40% at 30% 70%, rgba(234, 88, 12, 0.25), transparent 70%);
+            animation: skyGlow 6s ease-in-out infinite alternate;
+        }
+
+        @keyframes skyGlow {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* Distant peat swamp forest silhouette */
+        .distant-forest {
+            position: absolute;
+            bottom: 35%;
+            left: 0;
+            width: 100%;
+            height: 110px;
+            pointer-events: none;
+            background-repeat: repeat-x;
+            background-size: 400px 110px;
+            background-position: bottom;
+            opacity: 0.45;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 110' fill='%23140a05'%3E%3Cpath d='M0,110 L0,70 Q20,30 40,70 Q60,15 80,65 Q110,5 140,75 Q160,25 180,70 Q210,10 240,65 Q270,30 290,70 Q320,12 350,68 Q375,25 400,70 L400,110 Z'/%3E%3C/svg%3E");
+        }
+
+        /* Mid-ground trees */
+        .mid-forest {
+            position: absolute;
+            bottom: 35%;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            pointer-events: none;
+            background-repeat: repeat-x;
+            background-size: 320px 80px;
+            background-position: bottom;
+            opacity: 0.7;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 80' fill='%231a0e08'%3E%3Cpath d='M0,80 L0,50 Q25,10 50,55 Q75,20 100,50 Q130,5 160,52 Q190,15 220,50 Q250,8 280,55 Q300,20 320,50 L320,80 Z'/%3E%3C/svg%3E");
+        }
+
+        /* Peat Soil Ground */
         .ground {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 40%;
-            background: linear-gradient(to bottom, #8B4513, #654321);
+            height: 35%;
+            background: linear-gradient(180deg, 
+                #3a2215 0%, 
+                #28160c 30%, 
+                #1b0d06 70%, 
+                #100703 100%
+            );
+            border-top: 4px solid #4a2d1d;
+            box-shadow: inset 0 10px 25px rgba(0, 0, 0, 0.6);
         }
 
-        /* Tree */
+        /* Surface vegetation, roots, and subterranean peat layer indicator */
+        .ground::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 0;
+            width: 100%;
+            height: 18px;
+            background-repeat: repeat-x;
+            background-size: 60px 18px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 18' fill='%232e441e'%3E%3Cpath d='M0,18 Q8,0 15,12 Q22,2 30,14 Q38,1 45,13 Q52,3 60,18 Z'/%3E%3C/svg%3E");
+            opacity: 0.85;
+        }
+
+        .peat-layers {
+            position: absolute;
+            bottom: 12px;
+            left: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.45);
+            font-family: 'Chakra Petch', monospace;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        .peat-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .peat-indicator::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #f97316;
+            box-shadow: 0 0 8px #f97316;
+            animation: pulseSub 1.8s infinite;
+        }
+
+        @keyframes pulseSub {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        /* Floating embers in the air */
+        .ambient-embers {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .ember {
+            position: absolute;
+            bottom: 20%;
+            width: 4px;
+            height: 4px;
+            background: #ffaa33;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #ff7700;
+            animation: floatEmber linear infinite;
+        }
+
+        @keyframes floatEmber {
+            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+            15% { opacity: 0.9; }
+            80% { opacity: 0.7; }
+            100% { transform: translateY(-55vh) translateX(30px) scale(0.3); opacity: 0; }
+        }
+
+        /* ══════════════════════════════════════════
+           TOP HUD BAR
+           ══════════════════════════════════════════ */
+        .top-hud {
+            position: absolute;
+            top: 14px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .hud-badge {
+            pointer-events: auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .hud-badge-icon {
+            font-size: 18px;
+            animation: bounceIcon 2s ease infinite;
+        }
+
+        @keyframes bounceIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .hud-badge-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hud-title {
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #fdba74;
+            font-family: 'Chakra Petch', sans-serif;
+        }
+
+        .hud-sub {
+            font-size: 10px;
+            color: var(--text-sub);
+        }
+
+        .hud-actions {
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hud-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .hud-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* ══════════════════════════════════════════
+           BOSS FIRE PROGRESS BAR (TOP RIGHT / CENTER)
+           ══════════════════════════════════════════ */
+        .progress-container {
+            position: absolute;
+            top: 14px;
+            right: 20px;
+            width: 250px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            padding: 12px 16px;
+            border-radius: 18px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        .progress-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .threat-tag {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #f87171;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Chakra Petch', sans-serif;
+        }
+
+        .threat-tag::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ef4444;
+            box-shadow: 0 0 8px #ef4444;
+            animation: pulseRed 1s infinite alternate;
+        }
+
+        @keyframes pulseRed {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 16px;
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #22c55e 0%, #eab308 40%, #f97316 70%, #ef4444 100%);
+            border-radius: 20px;
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.6);
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+            animation: shineBar 2s infinite;
+        }
+
+        @keyframes shineBar {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-label {
+            margin-top: 6px;
+            text-align: right;
+            color: #fed7aa;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'Chakra Petch', monospace;
+            letter-spacing: 0.04em;
+        }
+
+        /* ══════════════════════════════════════════
+           TACTICAL INSTRUCTIONS & AIM CONTROL PANEL
+           ══════════════════════════════════════════ */
+        .instructions {
+            position: absolute;
+            top: 76px;
+            left: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 18px 20px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+            width: 290px;
+            z-index: 10;
+        }
+
+        .instructions-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .instructions h2 {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mission-status-pill {
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            margin-left: auto;
+        }
+
+        .instructions p.mission-desc {
+            font-size: 11px;
+            color: var(--text-sub);
+            line-height: 1.45;
+            margin-bottom: 12px;
+        }
+
+        /* Step cards */
+        .step-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 12px;
+        }
+
+        .step-num {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--water-deep);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            color: #cbd5e1;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .instructions label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #93c5fd;
+            margin-bottom: 6px;
+            font-family: 'Chakra Petch', sans-serif;
+        }
+
+        .slider-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        #hose-aim {
+            flex: 1;
+            height: 8px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            outline: none;
+            accent-color: var(--water-bright);
+            cursor: pointer;
+        }
+
+        .angle-readout {
+            font-family: 'Chakra Petch', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color: #38bdf8;
+            min-width: 44px;
+            text-align: right;
+        }
+
+        /* Radar Status Box */
+        .radar-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 6px;
+        }
+
+        .radar-light {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #64748b;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .radar-box.on-target .radar-light {
+            background: #22c55e;
+            box-shadow: 0 0 10px #22c55e;
+            animation: pulseGreen 0.6s infinite alternate;
+        }
+
+        .radar-box.water-off .radar-light {
+            background: #ef4444;
+            box-shadow: 0 0 6px #ef4444;
+        }
+
+        .radar-box.water-on .radar-light {
+            background: #f59e0b;
+            box-shadow: 0 0 8px #f59e0b;
+        }
+
+        @keyframes pulseGreen {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            100% { transform: scale(1.3); opacity: 1; }
+        }
+
+        #aim-status {
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.4;
+            color: #e2e8f0;
+            margin: 0;
+        }
+
+        /* ══════════════════════════════════════════
+           THE PEATLAND TREE & FOLIAGE
+           ══════════════════════════════════════════ */
         .tree {
             position: absolute;
             top: 25%;
-            left: 50%;
+            left: 62%;
             transform: translateX(-50%);
-            width: 200px;
-            height: 300px;
+            width: 240px;
+            height: 340px;
+            pointer-events: none;
+            z-index: 2;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
+        /* Detailed Illustrated Tree Trunk with Roots */
         .trunk {
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 40px;
-            height: 100px;
-            background: #8B4513;
-            border-radius: 5px;
+            width: 54px;
+            height: 130px;
+            background: linear-gradient(90deg, #382014 0%, #563321 40%, #442819 75%, #2a160d 100%);
+            border-radius: 12px 12px 24px 24px;
+            box-shadow: inset -6px 0 14px rgba(0, 0, 0, 0.6), inset 4px 0 8px rgba(255, 255, 255, 0.08);
         }
 
+        /* Tree Bark & Spreading Roots */
+        .trunk::before {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: -24px;
+            width: 102px;
+            height: 38px;
+            background: radial-gradient(ellipse at 50% 100%, #301b10 40%, transparent 70%);
+            border-radius: 50% 50% 0 0;
+            z-index: -1;
+        }
+
+        .trunk::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 12px;
+            width: 8px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 6px;
+            filter: blur(1px);
+        }
+
+        /* Foliage Canopy */
         .foliage {
             position: absolute;
-            bottom: 80px;
+            bottom: 90px;
             left: 50%;
             transform: translateX(-50%);
-            width: 180px;
-            height: 220px;
-            background: #228B22;
-            border-radius: 50% 50% 50% 50%;
-            transition: background 0.5s;
+            width: 210px;
+            height: 250px;
+            background: radial-gradient(ellipse at 35% 30%, #4ade80 0%, #16a34a 45%, #15803d 75%, #14532d 100%);
+            border-radius: 46% 54% 48% 52% / 55% 48% 52% 45%;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), inset -10px -15px 25px rgba(0, 0, 0, 0.45);
+            transition: all 0.4s ease-out;
+            pointer-events: auto;
         }
 
+        /* Organic layered canopy lumps */
+        .foliage::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: -15px;
+            width: 110px;
+            height: 120px;
+            background: radial-gradient(circle at 40% 35%, #4ade80, #15803d);
+            border-radius: 50%;
+            box-shadow: -4px 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .foliage::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            right: -15px;
+            width: 120px;
+            height: 130px;
+            background: radial-gradient(circle at 45% 35%, #22c55e, #14532d);
+            border-radius: 50%;
+            box-shadow: 4px 6px 14px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Burning state */
         .foliage.burning {
-            background: linear-gradient(45deg, #FF4500, #FF6347, #FFD700, #FF4500);
-            animation: burn 0.5s infinite;
+            background: radial-gradient(ellipse at 50% 60%, #ffd000 0%, #ff5500 40%, #d82b00 70%, #681504 100%);
+            box-shadow: 0 0 50px rgba(255, 77, 0, 0.8), 0 0 100px rgba(255, 140, 0, 0.45), inset 0 0 35px #ffe066;
+            animation: treeBlaze 0.45s infinite alternate ease-in-out;
         }
 
-        @keyframes burn {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
+        .foliage.burning::before {
+            background: radial-gradient(circle at 40% 50%, #ff7700, #b91c1c);
+            box-shadow: 0 0 30px rgba(255, 100, 0, 0.6);
         }
 
-        /* Flames */
+        .foliage.burning::after {
+            background: radial-gradient(circle at 50% 50%, #ff5500, #991b1b);
+            box-shadow: 0 0 30px rgba(255, 80, 0, 0.6);
+        }
+
+        @keyframes treeBlaze {
+            0% { transform: translateX(-50%) scale(1); filter: brightness(1); }
+            100% { transform: translateX(-50%) scale(1.02) rotate(0.5deg); filter: brightness(1.2); }
+        }
+
+        /* Wildlife Mascot (Orangutan) peeking out when saved! */
+        .tree-mascot {
+            position: absolute;
+            top: 45px;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            font-size: 38px;
+            z-index: 5;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+            pointer-events: none;
+        }
+
+        .foliage:not(.burning) + .tree-mascot,
+        .tree.saved .tree-mascot {
+            transform: translateX(-50%) scale(1);
+            animation: mascotWave 2s ease infinite;
+        }
+
+        @keyframes mascotWave {
+            0%, 100% { transform: translateX(-50%) rotate(0deg); }
+            25% { transform: translateX(-50%) rotate(-6deg); }
+            75% { transform: translateX(-50%) rotate(6deg); }
+        }
+
+        /* ══════════════════════════════════════════
+           FLAMES
+           ══════════════════════════════════════════ */
         .flames {
             position: absolute;
-            top: 30%;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            width: 200px;
-            height: 200px;
+            width: 220px;
+            height: 220px;
             pointer-events: none;
+            z-index: 4;
         }
 
         .flame {
             position: absolute;
-            bottom: 0;
-            width: 30px;
-            height: 60px;
-            background: linear-gradient(to top, #FF4500, #FFD700);
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            animation: flicker 0.3s infinite alternate;
+            bottom: 30px;
+            width: 44px;
+            height: 90px;
+            background: radial-gradient(ellipse at 50% 80%, #ffffff 0%, #ffe600 25%, #ff5500 65%, rgba(220, 38, 38, 0) 100%);
+            border-radius: 50% 50% 35% 35% / 60% 60% 40% 40%;
+            filter: drop-shadow(0 0 16px #ff4500);
             opacity: 0;
-            transition: opacity 0.5s;
+            transform-origin: bottom center;
+            transition: opacity 0.4s, transform 0.2s;
+            animation: realisticFlame 0.35s infinite alternate ease-in-out;
         }
 
         .flame.active {
             opacity: 1;
         }
 
-        @keyframes flicker {
-            0% { transform: scaleY(1) scaleX(1); }
-            100% { transform: scaleY(1.2) scaleX(0.9); }
+        .flame:nth-child(1) {
+            animation-duration: 0.3s;
+            animation-delay: 0.05s;
         }
 
-        /* Hose */
-        .hose-container {
+        .flame:nth-child(2) {
+            animation-duration: 0.4s;
+            animation-delay: 0.15s;
+            height: 110px;
+            width: 52px;
+        }
+
+        .flame:nth-child(3) {
+            animation-duration: 0.32s;
+            animation-delay: 0.1s;
+        }
+
+        @keyframes realisticFlame {
+            0% { transform: scaleY(1) scaleX(1) rotate(-2deg); }
+            50% { transform: scaleY(1.25) scaleX(0.85) rotate(2deg); }
+            100% { transform: scaleY(0.95) scaleX(1.1) rotate(-1deg); }
+        }
+
+        /* Sizzle Steam Effect when extinguishing */
+        .steam-puff {
             position: absolute;
-            bottom: 10%;
-            left: 10%;
-            width: 300px;
-            height: 100px;
-        }
-
-        .hose {
-            position: absolute;
-            bottom: 20px;
-            left: 0;
-            width: 200px;
-            height: 20px;
-            background: #4169E1;
-            border-radius: 10px;
-            transform-origin: left center;
-            transition: transform 0.1s;
-            cursor: grab;
-        }
-
-        .hose:active {
-            cursor: grabbing;
-        }
-
-        .nozzle {
-            position: absolute;
-            right: -20px;
-            top: -10px;
-            width: 30px;
-            height: 40px;
-            background: #2F4F4F;
-            border-radius: 5px;
-        }
-
-        /* Water spray */
-        .water-spray {
-            position: absolute;
-            right: -200px;
-            top: -50px;
-            width: 200px;
-            height: 100px;
+            top: 40px;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.7);
+            filter: blur(8px);
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.3s;
+            z-index: 6;
+        }
+
+        /* ══════════════════════════════════════════
+           FIREFIGHTER HOSE & PUMP RIG
+           ══════════════════════════════════════════ */
+        .hose-container {
+            position: absolute;
+            bottom: 12%;
+            left: 10%;
+            width: 320px;
+            height: 110px;
+            z-index: 5;
+        }
+
+        /* Firefighter Rig Base Cart */
+        .pump-station-base {
+            position: absolute;
+            bottom: 0;
+            left: -15px;
+            width: 140px;
+            height: 60px;
+            background: linear-gradient(180deg, #475569 0%, #334155 45%, #1e293b 100%);
+            border-radius: 12px;
+            border: 2px solid #64748b;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            z-index: 1;
+        }
+
+        .pump-station-base::before {
+            content: 'WATER PUMP';
+            position: absolute;
+            bottom: 6px;
+            left: 10px;
+            font-family: 'Chakra Petch', monospace;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #94a3b8;
+        }
+
+        .pressure-gauge {
+            position: absolute;
+            top: -24px;
+            left: 12px;
+            width: 28px;
+            height: 28px;
+            background: #f8fafc;
+            border-radius: 50%;
+            border: 3px solid #64748b;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pressure-needle {
+            width: 2px;
+            height: 10px;
+            background: #ef4444;
+            transform-origin: bottom center;
+            transform: rotate(-40deg);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .valve.on ~ .pressure-gauge .pressure-needle,
+        .hose-container.active-pressure .pressure-needle {
+            transform: rotate(50deg);
+            animation: jitterNeedle 0.1s infinite alternate;
+        }
+
+        @keyframes jitterNeedle {
+            0% { transform: rotate(48deg); }
+            100% { transform: rotate(53deg); }
+        }
+
+        /* The Hose Arm */
+        .hose {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            width: 220px;
+            height: 24px;
+            background: linear-gradient(180deg, #38bdf8 0%, #0284c7 45%, #0369a1 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transform-origin: left center;
+            transition: transform 0.08s ease-out;
+            cursor: grab;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+            z-index: 3;
+            touch-action: none;
+            user-select: none;
+        }
+
+        .hose:active, .hose.is-dragging {
+            cursor: grabbing;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Braided ribbed rings along the fire hose */
+        .hose::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-repeat: repeat-x;
+            background-size: 16px 24px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 24'%3E%3Cpath d='M14,0 L14,24' stroke='rgba(0,0,0,0.2)' stroke-width='3'/%3E%3Cpath d='M16,0 L16,24' stroke='rgba(255,255,255,0.25)' stroke-width='2'/%3E%3C/svg%3E");
+            border-radius: 12px;
+            opacity: 0.6;
+        }
+
+        /* Heavy Brass/Chrome Fire Nozzle */
+        .nozzle {
+            position: absolute;
+            right: -24px;
+            top: -9px;
+            width: 36px;
+            height: 42px;
+            background: linear-gradient(180deg, #f59e0b 0%, #d97706 35%, #b45309 70%, #78350f 100%);
+            border-radius: 6px 12px 12px 6px;
+            border: 1.5px solid #fbbf24;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), inset 0 1px 3px rgba(255, 255, 255, 0.4);
+        }
+
+        .nozzle::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 9px;
+            width: 8px;
+            height: 24px;
+            background: #475569;
+            border-radius: 0 4px 4px 0;
+            border: 1px solid #94a3b8;
+        }
+
+        /* Dynamic Aim Laser / Trajectory Guide */
+        .aim-guide-line {
+            position: absolute;
+            right: -380px;
+            top: 10px;
+            width: 380px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(56, 189, 248, 0.6), rgba(56, 189, 248, 0));
+            pointer-events: none;
+            opacity: 0.4;
+            transition: opacity 0.2s;
+        }
+
+        .hose:active .aim-guide-line,
+        .radar-box.on-target ~ * .aim-guide-line {
+            opacity: 0.8;
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.8), rgba(34, 197, 94, 0));
+        }
+
+        /* ══════════════════════════════════════════
+           WATER SPRAY STREAM
+           ══════════════════════════════════════════ */
+        .water-spray {
+            position: absolute;
+            right: -280px;
+            top: -65px;
+            width: 290px;
+            height: 150px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s ease-out;
+            z-index: 2;
         }
 
         .water-spray.active {
             opacity: 1;
         }
 
+        /* Main high-pressure water stream cone */
+        .water-spray::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 60px;
+            width: 260px;
+            height: 32px;
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(56, 189, 248, 0.85) 30%, 
+                rgba(14, 165, 233, 0.6) 70%, 
+                rgba(2, 132, 199, 0) 100%
+            );
+            clip-path: polygon(0 40%, 100% 0%, 100% 100%, 0 60%);
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.8));
+            animation: waterFlow 0.15s infinite alternate;
+        }
+
+        @keyframes waterFlow {
+            0% { transform: scaleY(0.9) skewY(-1deg); }
+            100% { transform: scaleY(1.1) skewY(1deg); }
+        }
+
+        /* Frothy Water Spray Droplets */
         .water-particle {
             position: absolute;
-            width: 8px;
-            height: 8px;
-            background: #00BFFF;
+            background: radial-gradient(circle, #ffffff 30%, #38bdf8 70%);
             border-radius: 50%;
-            animation: spray 0.5s infinite;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.9);
+            animation: sprayStream 0.45s infinite ease-out;
         }
 
-        @keyframes spray {
-            0% { transform: translateX(0) translateY(0); opacity: 1; }
-            100% { transform: translateX(150px) translateY(-50px); opacity: 0; }
+        .water-particle:nth-child(1) { width: 14px; height: 14px; top: 68px; animation-duration: 0.38s; }
+        .water-particle:nth-child(2) { width: 10px; height: 10px; top: 62px; animation-duration: 0.42s; }
+        .water-particle:nth-child(3) { width: 16px; height: 16px; top: 74px; animation-duration: 0.35s; }
+        .water-particle:nth-child(4) { width: 12px; height: 12px; top: 58px; animation-duration: 0.45s; }
+        .water-particle:nth-child(5) { width: 18px; height: 18px; top: 70px; animation-duration: 0.4s; }
+
+        @keyframes sprayStream {
+            0% {
+                transform: translate(0, 0) scale(0.6);
+                opacity: 1;
+            }
+            80% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translate(250px, -20px) scale(1.6);
+                opacity: 0;
+            }
         }
 
-        /* Valve */
-        .valve {
+        /* ══════════════════════════════════════════
+           INDUSTRIAL RED/GOLD VALVE BUTTON
+           ══════════════════════════════════════════ */
+        .valve-wrapper {
             position: absolute;
             bottom: 0;
-            left: 50px;
-            width: 60px;
-            height: 60px;
-            background: #2F4F4F;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 4;
+        }
+
+        .valve-label-tag {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            color: #fca5a5;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 3px 8px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-family: 'Chakra Petch', monospace;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .valve.on + .valve-label-tag,
+        .valve-wrapper.flowing .valve-label-tag {
+            color: #86efac;
+            border-color: rgba(34, 197, 94, 0.4);
+            background: rgba(20, 83, 45, 0.7);
+        }
+
+        .valve {
+            position: relative;
+            width: 66px;
+            height: 66px;
+            background: radial-gradient(circle, #dc2626 0%, #991b1b 60%, #450a0a 100%);
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 5px solid #1a1a1a;
-            transition: transform 0.3s;
+            border: 4px solid #fecaca;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 16px rgba(220, 38, 38, 0.4);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+            padding: 0;
+            outline: none;
         }
 
-        .valve-handle {
-            width: 40px;
-            height: 8px;
-            background: #FFD700;
-            border-radius: 4px;
+        .valve:hover {
+            transform: scale(1.08);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7), 0 0 24px rgba(239, 68, 68, 0.7);
+        }
+
+        .valve:active {
+            transform: scale(0.95);
         }
 
         .valve.on {
-            transform: rotate(90deg);
+            transform: rotate(90deg) scale(1.02);
+            background: radial-gradient(circle, #16a34a 0%, #15803d 60%, #052e16 100%);
+            border-color: #bbf7d0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 20px rgba(34, 197, 94, 0.6);
         }
 
-        /* Instructions */
-        .instructions {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            max-width: 300px;
+        /* Valve Wheel Spokes */
+        .valve-handle {
+            display: block;
+            position: relative;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 4px solid #fef08a;
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
         }
 
-        .instructions h2 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .instructions p {
-            margin-bottom: 10px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        /* Win message */
-        .win-message {
+        .valve-handle::before,
+        .valve-handle::after {
+            content: '';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 255, 0, 0.95);
-            padding: 40px;
-            border-radius: 20px;
+            background: #fef08a;
+            border-radius: 3px;
+        }
+
+        .valve-handle::before {
+            width: 42px;
+            height: 6px;
+        }
+
+        .valve-handle::after {
+            width: 6px;
+            height: 42px;
+        }
+
+        /* Glowing attention beacon when water is off */
+        .valve-beacon {
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 2px dashed rgba(239, 68, 68, 0.7);
+            animation: spinBeacon 4s linear infinite;
+            pointer-events: none;
+        }
+
+        .valve.on ~ .valve-beacon {
+            display: none;
+        }
+
+        @keyframes spinBeacon {
+            0% { transform: rotate(0deg); opacity: 0.4; }
+            50% { opacity: 0.9; }
+            100% { transform: rotate(360deg); opacity: 0.4; }
+        }
+
+        /* ══════════════════════════════════════════
+           CELEBRATION WIN MESSAGE MODAL
+           ══════════════════════════════════════════ */
+        .win-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: linear-gradient(145deg, rgba(16, 44, 30, 0.95), rgba(7, 26, 17, 0.98));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid #34d399;
+            padding: 36px 32px;
+            border-radius: 28px;
             text-align: center;
             display: none;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8), 0 0 50px rgba(52, 211, 153, 0.35);
+            z-index: 100;
+            width: min(440px, 92%);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .win-message.show {
             display: block;
-            animation: popIn 0.5s;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
         }
 
-        @keyframes popIn {
-            0% { transform: translate(-50%, -50%) scale(0); }
-            100% { transform: translate(-50%, -50%) scale(1); }
+        .win-stars {
+            font-size: 32px;
+            margin-bottom: 12px;
+            letter-spacing: 4px;
+            animation: starsPop 0.6s ease-out;
+        }
+
+        @keyframes starsPop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .win-message h1 {
-            color: white;
-            margin-bottom: 20px;
-            font-size: 36px;
+            color: #ffffff;
+            margin-bottom: 12px;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .win-badge-hero {
+            display: inline-block;
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            font-family: 'Chakra Petch', sans-serif;
         }
 
         .win-message p {
-            color: white;
-            margin-bottom: 20px;
-            font-size: 18px;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .win-eco-fact {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin: 16px 0 22px;
+            border-left: 3px solid #34d399;
+            text-align: left;
+        }
+
+        .win-eco-fact span {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            color: #a7f3d0;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .win-eco-fact p {
+            font-size: 12px;
+            color: #94a3b8;
+            margin: 0;
         }
 
         .reset-btn {
-            background: white;
-            color: #333;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: #ffffff;
             border: none;
-            padding: 15px 30px;
-            font-size: 16px;
-            border-radius: 10px;
+            padding: 14px 36px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 30px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.2s;
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .reset-btn:hover {
-            background: #f0f0f0;
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 12px 30px rgba(34, 197, 94, 0.6);
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
         }
 
-        /* Progress bar */
-        .progress-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 200px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        .reset-btn:active {
+            transform: translateY(1px);
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: #ddd;
-            border-radius: 10px;
-            overflow: hidden;
+        /* ══════════════════════════════════════════
+           RESPONSIVE MOBILE VIEW
+           ══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .instructions {
+                top: 64px;
+                left: 14px;
+                width: calc(100% - 28px);
+                max-width: none;
+                padding: 12px 16px;
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .instructions-header {
+                margin-bottom: 6px;
+                padding-bottom: 6px;
+            }
+
+            .step-cards, .mission-desc {
+                display: none;
+            }
+
+            .progress-container {
+                top: 14px;
+                right: 14px;
+                left: auto;
+                width: 170px;
+                padding: 8px 12px;
+            }
+
+            .tree {
+                top: 28%;
+                left: 65%;
+                transform: translateX(-50%) scale(0.75);
+                transform-origin: bottom center;
+            }
+
+            .hose-container {
+                left: 6%;
+                bottom: 8%;
+                width: 240px;
+            }
+
+            .hose {
+                width: 160px;
+            }
+
+            .peat-layers {
+                display: none;
+            }
         }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(to right, #FF4500, #FFD700);
-            width: 0%;
-            transition: width 0.3s;
-        }
-
-        .progress-label {
-            margin-top: 10px;
-            text-align: center;
-            color: #333;
-            font-size: 14px;
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation: none !important;
+                transition: none !important;
+            }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
+        <!-- Sky & Forest Atmospheric Backdrop -->
         <div class="sky"></div>
+        <div class="distant-forest"></div>
+        <div class="mid-forest"></div>
+        
+        <!-- Ground & Peat Layer -->
         <div class="ground"></div>
+        <div class="peat-layers">
+            <span class="peat-indicator">Deep Peat Carbon Reserve: 4.8m</span>
+            <span>Target: Shorea Peat Swamp Tree</span>
+        </div>
 
-        <!-- Tree -->
+        <!-- Ambient Floating Embers -->
+        <div class="ambient-embers" id="embersContainer"></div>
+
+        <!-- Top HUD Navigation -->
+        <div class="top-hud">
+            <div class="hud-badge">
+                <span class="hud-badge-icon">🚒</span>
+                <div class="hud-badge-text">
+                    <span class="hud-title">Peatland Quick Rescue</span>
+                    <span class="hud-sub">Central Kalimantan Fast Response</span>
+                </div>
+            </div>
+            <div class="hud-actions">
+                <button class="hud-btn" id="sfx-toggle" type="button" aria-label="Toggle Sound Effects">
+                    <span id="sfx-icon">🔊</span> SFX
+                </button>
+            </div>
+        </div>
+
+        <!-- Threat Intensity Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-header">
+                <span class="threat-tag">Fire Threat Level</span>
+            </div>
+            <div class="progress-bar" id="fire-meter" role="progressbar" aria-label="Game fire intensity" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-label" id="progressLabel">Game fire intensity: 100%</div>
+        </div>
+
+        <!-- Tactical Instructions & Aim Controls -->
+        <div class="instructions">
+            <div class="instructions-header">
+                <h2><span>🔥</span> Forest Rescue</h2>
+                <span class="mission-status-pill">Active Incident</span>
+            </div>
+            <p class="mission-desc">A subterranean fire is threatening this ancient peatland tree. Cool the canopy before it spreads deeper into the soil!</p>
+            
+            <div class="step-cards">
+                <div class="step-item">
+                    <span class="step-num">1</span>
+                    <span class="step-text">Click the red valve below to pump water.</span>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">2</span>
+                    <span class="step-text">Drag the blue hose or adjust the aim slider.</span>
+                </div>
+            </div>
+
+            <label for="hose-aim">Hose Aim Angle</label>
+            <div class="slider-wrapper">
+                <input id="hose-aim" type="range" min="-85" max="25" value="0" aria-label="Hose aim in degrees">
+                <span class="angle-readout" id="angle-display">0°</span>
+            </div>
+
+            <div class="radar-box" id="radar-indicator">
+                <div class="radar-light"></div>
+                <p id="aim-status" role="status">Water is off. Turn the valve to begin.</p>
+            </div>
+        </div>
+
+        <!-- The Peatland Tree -->
         <div class="tree">
             <div class="trunk"></div>
-            <div class="foliage" id="foliage"></div>
+            <div class="foliage burning" id="foliage"></div>
+            <div class="tree-mascot" id="treeMascot" aria-hidden="true">🦧</div>
         </div>
 
-        <!-- Flames -->
+        <!-- Flames (easter-game.js appends this inside .tree automatically) -->
         <div class="flames" id="flames">
-            <div class="flame active" style="left: 30%;"></div>
-            <div class="flame active" style="left: 50%;"></div>
-            <div class="flame active" style="left: 70%;"></div>
+            <div class="flame active" style="left: 22%;"></div>
+            <div class="flame active" style="left: 48%; bottom: 35px;"></div>
+            <div class="flame active" style="left: 72%;"></div>
         </div>
 
-        <!-- Hose -->
-        <div class="hose-container">
+        <!-- Firefighter Hose & Pump Cart -->
+        <div class="hose-container" id="hoseContainer">
+            <div class="pump-station-base">
+                <div class="pressure-gauge">
+                    <div class="pressure-needle"></div>
+                </div>
+            </div>
+
             <div class="hose" id="hose">
+                <div class="aim-guide-line"></div>
                 <div class="nozzle"></div>
                 <div class="water-spray" id="waterSpray">
                     <div class="water-particle" style="left: 0; animation-delay: 0s;"></div>
-                    <div class="water-particle" style="left: 20%; animation-delay: 0.1s;"></div>
-                    <div class="water-particle" style="left: 40%; animation-delay: 0.2s;"></div>
-                    <div class="water-particle" style="left: 60%; animation-delay: 0.3s;"></div>
-                    <div class="water-particle" style="left: 80%; animation-delay: 0.4s;"></div>
+                    <div class="water-particle" style="left: 20%; animation-delay: 0.08s;"></div>
+                    <div class="water-particle" style="left: 40%; animation-delay: 0.16s;"></div>
+                    <div class="water-particle" style="left: 60%; animation-delay: 0.24s;"></div>
+                    <div class="water-particle" style="left: 80%; animation-delay: 0.32s;"></div>
                 </div>
             </div>
-            <div class="valve" id="valve">
-                <div class="valve-handle"></div>
+
+            <div class="valve-wrapper">
+                <button class="valve" id="valve" type="button" aria-label="Turn water on" aria-pressed="false">
+                    <span class="valve-handle" aria-hidden="true"></span>
+                </button>
+                <div class="valve-beacon"></div>
+                <span class="valve-label-tag">VALVE: OFF</span>
             </div>
         </div>
 
-        <!-- Instructions -->
-        <div class="instructions">
-            <h2>🔥 Peat Fire Simulator</h2>
-            <p>1. Click the valve to turn on water</p>
-            <p>2. Drag the hose to aim at the fire</p>
-            <p>3. Extinguish the fire to save the tree!</p>
-        </div>
-
-        <!-- Progress -->
-        <div class="progress-container">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
+        <!-- Celebration Win Modal -->
+        <div class="win-message" id="winMessage" role="status">
+            <div class="win-stars">⭐⭐⭐</div>
+            <h1>🌍 PEATLAND SAVED! 🌍</h1>
+            <span class="win-badge-hero">Guardian of Kalimantan</span>
+            <p>You extinguished the fire and protected the forest canopy!</p>
+            <div class="win-eco-fact">
+                <span>Did you know?</span>
+                <p>Preventing crown fires prevents heat from penetrating into the underground peat layer, preserving tonnes of sequestered carbon.</p>
             </div>
-            <div class="progress-label" id="progressLabel">Fire Intensity: 100%</div>
-        </div>
-
-        <!-- Win Message -->
-        <div class="win-message" id="winMessage">
-            <h1>🌍 Good for Earth! 🌍</h1>
-            <p>You saved the peatland forest!</p>
-            <p>Every tree protected helps fight climate change.</p>
-            <button class="reset-btn" onclick="resetGame()">Play Again</button>
+            <button class="reset-btn" id="reset-game">Play Again 🔄</button>
         </div>
     </div>
 
+    <!-- Core Game Logic -->
+    <script src="easter-game.js?v=1"></script>
+
+    <!-- Visual Polish & Web Audio Synthesizer Companion -->
     <script>
+    (() => {
+        'use strict';
+        // Spawn decorative ambient embers
+        const container = document.getElementById('embersContainer');
+        if (container) {
+            for (let i = 0; i < 18; i++) {
+                const ember = document.createElement('div');
+                ember.className = 'ember';
+                ember.style.left = `${Math.random() * 95}%`;
+                ember.style.bottom = `${15 + Math.random() * 40}%`;
+                ember.style.animationDuration = `${3 + Math.random() * 5}s`;
+                ember.style.animationDelay = `${Math.random() * 5}s`;
+                ember.style.width = `${2 + Math.random() * 3}px`;
+                ember.style.height = ember.style.width;
+                container.appendChild(ember);
+            }
+        }
+
+        // Web Audio Synthesizer (No external assets required!)
+        let audioCtx = null;
+        let sfxEnabled = true;
+        let waterNoiseNode = null;
+        let waterGainNode = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        const sfxBtn = document.getElementById('sfx-toggle');
+        const sfxIcon = document.getElementById('sfx-icon');
+        if (sfxBtn) {
+            sfxBtn.addEventListener('click', () => {
+                sfxEnabled = !sfxEnabled;
+                sfxIcon.textContent = sfxEnabled ? '🔊' : '🔇';
+                if (!sfxEnabled && waterGainNode) {
+                    waterGainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                }
+            });
+        }
+
+        // Sound: Valve mechanical clink
+        function playValveSound(isOn) {
+            if (!sfxEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(isOn ? 380 : 240, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(isOn ? 600 : 180, ctx.currentTime + 0.12);
+            gain.gain.setValueAtTime(0.25, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.14);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.15);
+        }
+
+        // Sound: Pressurized water spray loop
+        function startWaterAudio() {
+            if (!sfxEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+            if (waterNoiseNode) return;
+
+            // Generate pink/white noise buffer for rushing water
+            const bufferSize = ctx.sampleRate * 2;
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            waterNoiseNode = ctx.createBufferSource();
+            waterNoiseNode.buffer = buffer;
+            waterNoiseNode.loop = true;
+
+            const bandpass = ctx.createBiquadFilter();
+            bandpass.type = 'bandpass';
+            bandpass.frequency.value = 900;
+            bandpass.Q.value = 1.2;
+
+            waterGainNode = ctx.createGain();
+            waterGainNode.gain.setValueAtTime(0.12, ctx.currentTime);
+
+            waterNoiseNode.connect(bandpass);
+            bandpass.connect(waterGainNode);
+            waterGainNode.connect(ctx.destination);
+            waterNoiseNode.start();
+        }
+
+        function stopWaterAudio() {
+            if (waterGainNode && audioCtx) {
+                waterGainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            }
+            if (waterNoiseNode) {
+                try { waterNoiseNode.stop(); } catch(e) {}
+                waterNoiseNode.disconnect();
+                waterNoiseNode = null;
+            }
+        }
+
+        // Sound: Victory fanfare arpeggio
+        function playVictorySound() {
+            if (!sfxEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+            const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99]; // C, E, G, C5, E5, G5
+            notes.forEach((freq, idx) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.1);
+                gain.gain.setValueAtTime(0, ctx.currentTime + idx * 0.1);
+                gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + idx * 0.1 + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 0.4);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(ctx.currentTime + idx * 0.1);
+                osc.stop(ctx.currentTime + idx * 0.1 + 0.45);
+            });
+        }
+
+        // UI Companion Listeners
         const valve = document.getElementById('valve');
-        const hose = document.getElementById('hose');
-        const waterSpray = document.getElementById('waterSpray');
-        const foliage = document.getElementById('foliage');
-        const flames = document.querySelectorAll('.flame');
-        const progressFill = document.getElementById('progressFill');
-        const progressLabel = document.getElementById('progressLabel');
+        const valveTag = document.querySelector('.valve-label-tag');
+        const radarBox = document.getElementById('radar-indicator');
+        const aimStatus = document.getElementById('aim-status');
+        const inputAim = document.getElementById('hose-aim');
+        const angleDisplay = document.getElementById('angle-display');
         const winMessage = document.getElementById('winMessage');
+        const treeElem = document.querySelector('.tree');
 
-        let isValveOn = false;
-        let hoseAngle = 0;
-        let fireIntensity = 100;
-        let isExtinguishing = false;
-        let gameWon = false;
-
-        // Valve click handler
-        valve.addEventListener('click', () => {
-            if (gameWon) return;
-            isValveOn = !isValveOn;
-            valve.classList.toggle('on', isValveOn);
-            
-            if (isValveOn) {
-                waterSpray.classList.add('active');
-            } else {
-                waterSpray.classList.remove('active');
-            }
-        });
-
-        // Hose drag handler
-        let isDragging = false;
-        let startX, startY;
-
-        hose.addEventListener('mousedown', (e) => {
-            if (gameWon) return;
-            isDragging = true;
-            startX = e.clientX;
-            startY = e.clientY;
-            hose.style.cursor = 'grabbing';
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging || gameWon) return;
-            
-            const deltaX = e.clientX - startX;
-            const deltaY = e.clientY - startY;
-            
-            // Calculate angle
-            const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
-            hoseAngle = Math.max(-60, Math.min(60, angle));
-            hose.style.transform = `rotate(${hoseAngle}deg)`;
-            
-            // Check if aiming at fire
-            checkAiming();
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            hose.style.cursor = 'grab';
-        });
-
-        function checkAiming() {
-            // Check if hose is pointing toward the tree (roughly -45 to -15 degrees)
-            const isAimingAtFire = hoseAngle >= -45 && hoseAngle <= -15;
-            
-            if (isValveOn && isAimingAtFire) {
-                isExtinguishing = true;
-                startExtinguishing();
-            } else {
-                isExtinguishing = false;
+        function updateAngleLabel() {
+            if (inputAim && angleDisplay) {
+                angleDisplay.textContent = `${inputAim.value}°`;
             }
         }
 
-        function startExtinguishing() {
-            if (!isExtinguishing || gameWon) return;
-            
-            fireIntensity -= 2;
-            progressFill.style.width = fireIntensity + '%';
-            progressLabel.textContent = `Fire Intensity: ${fireIntensity}%`;
-            
-            // Gradually extinguish flames
-            if (fireIntensity < 70) {
-                flames[2].classList.remove('active');
-            }
-            if (fireIntensity < 40) {
-                flames[1].classList.remove('active');
-            }
-            if (fireIntensity < 15) {
-                flames[0].classList.remove('active');
-                foliage.classList.remove('burning');
-            }
-            
-            if (fireIntensity <= 0) {
-                winGame();
-            } else {
-                setTimeout(startExtinguishing, 100);
-            }
+        if (inputAim) {
+            inputAim.addEventListener('input', updateAngleLabel);
         }
 
-        function winGame() {
-            gameWon = true;
-            fireIntensity = 0;
-            progressFill.style.width = '0%';
-            progressLabel.textContent = 'Fire Intensity: 0% (Extinguished!)';
-            waterSpray.classList.remove('active');
-            winMessage.classList.add('show');
+        // Observer for aim-status and valve state to update radar styling & sounds
+        if (aimStatus) {
+            const observer = new MutationObserver(() => {
+                const text = aimStatus.textContent || '';
+                updateAngleLabel();
+
+                if (valve && valveTag) {
+                    const isOn = valve.classList.contains('on');
+                    valveTag.textContent = isOn ? 'VALVE: OPEN' : 'VALVE: OFF';
+                    if (isOn) {
+                        startWaterAudio();
+                    } else {
+                        stopWaterAudio();
+                    }
+                }
+
+                if (radarBox) {
+                    radarBox.classList.remove('on-target', 'water-off', 'water-on');
+                    if (text.includes('On target')) {
+                        radarBox.classList.add('on-target');
+                    } else if (text.includes('Water is off')) {
+                        radarBox.classList.add('water-off');
+                    } else {
+                        radarBox.classList.add('water-on');
+                    }
+                }
+            });
+            observer.observe(aimStatus, { childList: true, characterData: true, subtree: true });
         }
 
-        function resetGame() {
-            gameWon = false;
-            isValveOn = false;
-            fireIntensity = 100;
-            hoseAngle = 0;
-            isExtinguishing = false;
-            
-            valve.classList.remove('on');
-            waterSpray.classList.remove('active');
-            hose.style.transform = 'rotate(0deg)';
-            foliage.classList.add('burning');
-            
-            flames.forEach(flame => flame.classList.add('active'));
-            
-            progressFill.style.width = '100%';
-            progressLabel.textContent = 'Fire Intensity: 100%';
-            
-            winMessage.classList.remove('show');
+        if (valve) {
+            valve.addEventListener('click', () => {
+                const willBeOn = !valve.classList.contains('on');
+                playValveSound(willBeOn);
+            });
         }
 
-        // Initialize
-        foliage.classList.add('burning');
+        // Watch for Win Condition
+        if (winMessage) {
+            const winObserver = new MutationObserver(() => {
+                if (winMessage.classList.contains('show')) {
+                    stopWaterAudio();
+                    playVictorySound();
+                    if (treeElem) treeElem.classList.add('saved');
+                } else {
+                    if (treeElem) treeElem.classList.remove('saved');
+                }
+            });
+            winObserver.observe(winMessage, { attributes: true, attributeFilter: ['class'] });
+        }
+    })();
     </script>
 </body>
 </html>

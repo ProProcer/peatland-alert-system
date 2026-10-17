@@ -56,6 +56,11 @@
     const heading=element('h3',id);heading.id='cell-explanation-title';title.append(heading);
     const dismiss=element('button','×','explain-close');dismiss.type='button';dismiss.setAttribute('aria-label','Close model explanation');dismiss.onclick=()=>close(true);
     header.append(title,dismiss);popup.append(header);
+    const historyLink=element('a','View Historical Data','explain-history-link');
+    historyLink.href=`analytics.html?cell=${encodeURIComponent(id)}`;
+    historyLink.setAttribute('aria-label',`View historical data for monitoring point ${id}`);
+    popup.append(historyLink);
+
     if(!risk){popup.append(element('p',`No ${horizon}-hour prediction supplied for this point. Model factors are unavailable.`,'explain-note'));}
     else {
       const result=element('div',null,'explain-result');result.append(element('span',risk.risk_level,`badge ${risk.risk_level}`),element('strong',`${(risk.risk_score*100).toFixed(1)}%`),element('span',`${horizon}-hour hotspot probability`));popup.append(result);
@@ -72,6 +77,7 @@
     popup.append(element('p',`Feature snapshot: ${feature?.ts || 'unavailable'}. Weather and soil are modeled. Prediction concerns surface hotspot emergence, not confirmed fire.`,'explain-note'));
     popup.hidden=false;position();if(focus)popup.focus({preventScroll:true});
   }
+  window.addEventListener('close-cell-explanation',()=>close());
   window.addEventListener('cell-explain',event=>show(event.detail,event.detail.keyboard));
   document.querySelector('#horizon').addEventListener('change',()=>{
     if(popup.hidden||!selection)return;

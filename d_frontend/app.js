@@ -52,6 +52,27 @@ function setMapView(view) {
   clearTimeout(tileTimer);
   tileTimer = setTimeout(updateMapTiles, 160);
 }
+function focusMonitoringCell(cellId) {
+  const feature = regionalCells().find(row => row.properties.cell_id === cellId);
+  if (!feature) return false;
+  const points = feature.geometry.coordinates[0].map(project);
+  const xs = points.map(point => point[0]), ys = points.map(point => point[1]);
+  const left = Math.min(...xs), right = Math.max(...xs);
+  const top = Math.min(...ys), bottom = Math.max(...ys);
+  const width = Math.max(20, (right - left) * 3, (bottom - top) * 3 * regionView[2] / regionView[3]);
+  const height = width * regionView[3] / regionView[2];
+  setMapView([(left + right - width) / 2, (top + bottom - height) / 2, width, height]);
+  const marker = [...document.querySelectorAll('.risk-map-marker')].find(node => node.dataset.cellId === cellId);
+  if (marker) {
+    marker.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 }));
+    window.dispatchEvent(new Event('close-cell-explanation'));
+    document.querySelector('#map-section').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+    marker.focus({ preventScroll: true });
+  }
+  return true;
+}
+window.addEventListener('locate-monitoring-cell', event => focusMonitoringCell(event.detail.cellId));
+
 function mapPixelScale() {
   const map = document.querySelector("#map");
   return Math.min((map.clientWidth || 900) / mapView[2], (map.clientHeight || 650) / mapView[3]);
@@ -125,6 +146,8 @@ function renderMap(horizon) {
   map.append(definitions, peatLayer);
   const riskLayer = svgElement("g", { "clip-path": "url(#peatland-clip)" });
   map.append(riskLayer);
+  const selectedOutline = svgElement('path', { class: 'selected-cell-outline', fill: 'none', 'pointer-events': 'none', 'aria-hidden': 'true' });
+  map.append(selectedOutline);
   const centerLayer = svgElement('g', { class: 'cell-centers', 'aria-label': 'Monitoring grid centers, including centers outside mapped peatland' });
   map.append(centerLayer);
   const risks = new Map(feeds.risk.data.filter(row => row.horizon_h === horizon).map(row => [row.cell_id, row]));
@@ -141,8 +164,10 @@ function renderMap(horizon) {
     const title = svgElement("title", {});
     title.textContent = description;
     cell.append(title);
+    if (selectedCell === id) selectedOutline.setAttribute("d", path);
     const select = (event) => {
       selectedCell = id;
+      selectedOutline.setAttribute("d", path);
       for (const other of map.querySelectorAll(".map-cell")) other.setAttribute("aria-pressed", other === cell);
       for (const other of map.querySelectorAll('.risk-map-marker')) other.setAttribute('aria-pressed', other === marker);
       document.querySelector("#map-detail").textContent = description;
@@ -344,20 +369,10 @@ function renderStatus(horizon) {
     });
     list.append(button);
   }
-  const mean = values => {
-    const available = values.filter(value => typeof value === 'number' && Number.isFinite(value));
-    return available.length ? available.reduce((a, b) => a + b, 0) / available.length : null;
-  };
-  const moisture = mean(feeds.features.data.map(row => row.weather.sm_27_81));
-  const rain = mean(feeds.features.data.map(row => row.derived.rain_24h_mm));
-  document.querySelector('#average-moisture').textContent = moisture === null ? 'Unavailable' : `${moisture.toFixed(2)} m³/m³`;
-  document.querySelector('#average-rain').textContent = rain === null ? 'Unavailable' : `${rain.toFixed(1)} mm`;
-  document.querySelector('#monitored-count').textContent = feeds.cells.data.features.length;
-  document.querySelector('#nav-dispatch-count').textContent = feeds.dispatch.data.length;
   const times = feeds.features.data.map(row => row.ts).sort();
   const date = times.length ? new Date(times.at(-1)) : null;
-  document.querySelector('#snapshot-date').textContent = date ? new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(date) : 'Unavailable';
-  document.querySelector('#snapshot-time').textContent = date ? `${new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: 'UTC' }).format(date)} UTC · Feature time` : '—';
+  document.querySelector('#snapshot-date').textContent = date ? new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Jakarta' }).format(date) : 'Unavailable';
+  document.querySelector('#snapshot-time').textContent = date ? `${new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: 'Asia/Jakarta' }).format(date)} WIB · Feature time` : '—';
 }
 
 function render() {
@@ -366,23 +381,6 @@ function render() {
   renderStatus(horizon);
   document.querySelector("#summary-horizon").textContent = horizon;
   document.querySelector("#priority-count").textContent = feeds.risk.data.some(row => row.horizon_h === horizon) ? feeds.risk.data.filter(row => row.horizon_h === horizon && ["HIGH", "CRITICAL"].includes(row.risk_level)).length : '—';
-  const riskBody = document.querySelector("#risk");
-  riskBody.replaceChildren();
-  for (const row of feeds.risk.data.filter(record => record.horizon_h === horizon)) {
-    const tr = element("tr");
-    tr.append(element("td", row.cell_id));
-    const level = element("td");
-    level.append(element("span", row.risk_level, `badge ${row.risk_level}`));
-    tr.append(level, element("td", row.risk_score.toFixed(2)), element("td", row.top_factors.map(f => `${f.feature}: ${f.contribution}`).join(", ")));
-    riskBody.append(tr);
-  }
-  if (!riskBody.children.length) {
-    const tr = element('tr');
-    const td = element('td', `No ${horizon}-hour predictions supplied for this dataset. Peat coverage and measurements remain available on the map.`);
-    td.colSpan = 4;
-    tr.append(td);
-    riskBody.append(tr);
-  }
   const dispatch = document.querySelector("#dispatch");
   dispatch.replaceChildren();
   if (feeds.dispatch.data.length === 0) dispatch.append(element("p", feeds.dispatch.url ? "No active simulated dispatches." : "Dispatch output has not been supplied for this dataset."));
@@ -402,21 +400,13 @@ async function reload() {
   const version = ++loadVersion;
   const status = document.querySelector("#status");
   const dataset = activeDataset;
+  status.classList.add("visually-hidden");
   status.textContent = "Loading handoffs…";
   try {
     const entries = await Promise.all(Object.entries(files).map(async ([kind, filename]) => [kind, await loadFeed(filename, dataset)]));
     if (version !== loadVersion) return;
     validateFeedSet(entries);
     feeds = Object.fromEntries(entries);
-    const sources = document.querySelector("#sources");
-    sources.replaceChildren();
-    for (const [kind, feed] of entries) {
-      const item = element("li");
-      const link = element(feed.url ? "a" : "span", `${kind}: ${feed.label}`);
-      if (feed.url) link.href = feed.url;
-      item.append(link);
-      sources.append(item);
-    }
     render();
     window.dispatchEvent(new CustomEvent('response-feeds', { detail: Object.fromEntries(Object.entries(feeds).map(([key, feed]) => [key, feed.data])) }));
     if (dataset) {
@@ -430,15 +420,14 @@ async function reload() {
     status.textContent = `${feeds.cells.data.features.length} cells · ${feeds.features.data.length} feature records · ${feeds.risk.data.length} predictions · ${feeds.dispatch.data.length} simulated dispatches`;
   } catch (error) {
     if (version === loadVersion) {
+      status.classList.remove("visually-hidden");
       status.textContent = `Could not load handoffs: ${error.message}`;
       document.querySelector('#dataset-info').textContent = status.textContent;
-      document.querySelector('#risk').replaceChildren();
       document.querySelector('#dispatch').replaceChildren();
       document.querySelector('#map').replaceChildren();
-      document.querySelector('#sources').replaceChildren();
       document.querySelector('#priority-count').textContent = '—';
       document.querySelector('#map-detail').textContent = 'Dataset unavailable. Retry Refresh feeds.';
-      for (const id of ['count-low', 'count-moderate', 'count-high', 'count-critical', 'average-moisture', 'average-rain', 'monitored-count', 'nav-dispatch-count', 'snapshot-date', 'snapshot-time']) document.querySelector(`#${id}`).textContent = '—';
+      for (const id of ['count-low', 'count-moderate', 'count-high', 'count-critical', 'snapshot-date', 'snapshot-time']) document.querySelector(`#${id}`).textContent = '—';
       document.querySelector('#risk-distribution').replaceChildren();
       document.querySelector('#priority-list').replaceChildren(element('p', 'Dataset unavailable.', 'subtle'));
       document.querySelector('#priority-caption').textContent = 'Refresh the feeds to try again.';
@@ -449,7 +438,7 @@ async function reload() {
 }
 
 document.querySelector("#horizon").addEventListener("change", () => { if (feeds.risk) render(); });
-document.querySelector("#reload").addEventListener("click", () => {
+window.addEventListener("refresh-dashboard", () => {
   if (activeDataset?.bundled) discoverDatasets().then(reload).catch(showStartupError);
   else reload();
 });
@@ -472,102 +461,10 @@ document.querySelector("#map-cells").addEventListener("click", () => {
 });
 loadPeatland();
 
-const navigationLinks = document.querySelectorAll('.nav-link');
-const navigationDescriptions = {
-  '#overview': 'View the regional outlook and key conditions.',
-  '#map-section': 'Explore mapped peatland and monitoring points.',
-  '#risk-section': 'Inspect cell forecasts and contributing factors.',
-  '#dispatch-section': 'Review simulated response actions and messages.',
-  '#data-notes': 'Check data sources, timestamps and limitations.',
-};
-const navigationTooltip = document.createElement('div');
-navigationTooltip.id = 'navigation-tooltip';
-navigationTooltip.className = 'navigation-tooltip';
-navigationTooltip.setAttribute('role', 'tooltip');
-navigationTooltip.hidden = true;
-document.body.append(navigationTooltip);
-let tooltipTimer;
-function hideNavigationTooltip() {
-  clearTimeout(tooltipTimer);
-  navigationTooltip.hidden = true;
-}
-for (const link of navigationLinks) {
-  const label = link.querySelector('span').textContent;
-  link.setAttribute('aria-label', label);
-  const description = document.createElement('span');
-  description.id = `nav-description-${link.hash.slice(1)}`;
-  description.className = 'visually-hidden';
-  description.textContent = navigationDescriptions[link.hash] || label;
-  link.append(description);
-  link.setAttribute('aria-describedby', description.id);
-  const showTooltip = () => {
-    clearTimeout(tooltipTimer);
-    navigationTooltip.replaceChildren();
-    const title = document.createElement('strong');
-    title.textContent = label;
-    const text = document.createElement('span');
-    text.textContent = description.textContent;
-    navigationTooltip.append(title, text);
-    navigationTooltip.hidden = false;
-    const bounds = link.getBoundingClientRect();
-    const tooltipBounds = navigationTooltip.getBoundingClientRect();
-    const left = bounds.right + 10 + tooltipBounds.width <= window.innerWidth - 12
-      ? bounds.right + 10 : Math.max(12, Math.min(bounds.left, window.innerWidth - tooltipBounds.width - 12));
-    const top = bounds.right + 10 + tooltipBounds.width <= window.innerWidth - 12
-      ? bounds.top + (bounds.height - tooltipBounds.height) / 2 : bounds.bottom + 10;
-    navigationTooltip.style.left = `${left}px`;
-    navigationTooltip.style.top = `${Math.max(12, Math.min(top, window.innerHeight - tooltipBounds.height - 12))}px`;
-  };
-  link.addEventListener('mouseenter', showTooltip);
-  link.addEventListener('focus', showTooltip);
-  link.addEventListener('mouseleave', () => { tooltipTimer = setTimeout(hideNavigationTooltip, 120); });
-  link.addEventListener('blur', hideNavigationTooltip);
-  link.addEventListener('click', hideNavigationTooltip);
-}
-navigationTooltip.addEventListener('mouseenter', () => clearTimeout(tooltipTimer));
-navigationTooltip.addEventListener('mouseleave', hideNavigationTooltip);
-document.addEventListener('keydown', event => { if (event.key === 'Escape') hideNavigationTooltip(); });
-window.addEventListener('resize', hideNavigationTooltip);
-window.addEventListener('scroll', hideNavigationTooltip, true);
-function activateNavigation(id) {
-  for (const link of navigationLinks) {
-    const active = link.getAttribute('href') === `#${id}`;
-    link.classList.toggle('active', active);
-    if (active) link.setAttribute('aria-current', 'page');
-    else link.removeAttribute('aria-current');
-  }
-}
-for (const link of navigationLinks) link.addEventListener('click', () => activateNavigation(link.getAttribute('href').slice(1)));
-if ('IntersectionObserver' in window) {
-  const observer = new IntersectionObserver(entries => {
-    const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-    if (visible.length) activateNavigation(visible[0].target.id);
-  }, { rootMargin: '-10% 0px -65% 0px', threshold: 0 });
-  for (const id of ['overview', 'map-section', 'risk-section', 'dispatch-section', 'data-notes']) observer.observe(document.getElementById(id));
-}
 function showStartupError(error) {
   const message = `Could not load the 40-cell map: ${error.message}`;
+  document.querySelector('#status').classList.remove('visually-hidden');
   document.querySelector('#status').textContent = message;
   document.querySelector('#map-detail').textContent = message;
 }
 discoverDatasets().then(reload).catch(showStartupError);
-
-
-const sidebarToggle = document.querySelector('#sidebar-toggle');
-const sidebar = document.querySelector('#sidebar');
-function setSidebarOpen(open) {
-  hideNavigationTooltip();
-  sidebar.hidden = !open;
-  document.body.classList.toggle('sidebar-closed', !open);
-  sidebarToggle.setAttribute('aria-expanded', String(open));
-  const label = open ? 'Close navigation' : 'Open navigation';
-  sidebarToggle.setAttribute('aria-label', label);
-  sidebarToggle.title = label;
-}
-sidebarToggle.addEventListener('click', () => setSidebarOpen(sidebar.hidden));
-sidebar.addEventListener('keydown', event => {
-  if (event.key === 'Escape') {
-    setSidebarOpen(false);
-    sidebarToggle.focus();
-  }
-});

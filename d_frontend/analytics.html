@@ -1,0 +1,40 @@
+﻿<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f5f7"><title>Historical data analytics · Kalimantan Watch</title><link rel="stylesheet" href="styles.css?v=icon-rail-9"><link rel="stylesheet" href="analytics.css?v=pin-day-10"><script src="analytics.js?v=remove-average-note-12" defer></script><script src="navigation.js?v=shared-nav-1" defer></script><link rel="stylesheet" href="easter-egg.css?v=1"><script src="easter-egg.js?v=1" defer></script></head>
+<body class="analytics-page">
+<a class="skip-link" href="#analytics-main">Skip to analytics</a>
+<aside id="sidebar" class="sidebar" aria-label="Workspace navigation">
+  <div class="brand"><button class="brand-mark" type="button" aria-label="Flame: activate five times to discover a surprise" title="Five sparks unlock a surprise"><svg viewBox="0 0 32 32"><path d="M17 4c-1 7 7 9 7 16a8 8 0 0 1-16 0c0-4 3-7 5-9-1 5 1 7 3 7 3 0 0-7 1-14Z" fill="currentColor"/><path d="M17 21c3 4 1 7-1 7s-4-3 1-7Z" fill="#f5eee3"/></svg></button></div>
+  <nav class="side-nav" aria-label="Main navigation">
+    <a class="nav-link" href="index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg><span class="visually-hidden">Home</span></a>
+    <a class="nav-link active" href="analytics.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V12m5 8V7m5 13V3m5 17v-6M2 21h20"/></svg><span class="visually-hidden">Analytics</span></a>
+  </nav>
+</aside>
+<div class="main-shell">
+<header class="app-header"><div class="header-navigation"><button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Close navigation" title="Close navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><div class="breadcrumb">Kalimantan <span>/</span> Analytics </div></div></header>
+<main id="analytics-main" class="analytics-main">
+<div class="analytics-title"><div><p class="eyebrow">EXPLORE THE RECORD</p><h1>Historical Data<span class="title-period">.</span></h1></div><button id="analytics-reload" type="button">Refresh data</button></div>
+<p id="analytics-status" role="status">Loading historical measurements…</p>
+<div class="analytics-kpis" id="analytics-kpis" hidden></div>
+<div class="analytics-layout">
+<section class="analytics-card points-panel" aria-labelledby="points-title"><div class="analytics-section-heading"><div><p class="eyebrow">MONITORING NETWORK</p><h2 id="points-title">All monitoring points</h2></div><span id="point-count" class="small-chip">40 points</span></div>
+<div class="analytics-filters"><label>Find a point<input id="point-search" type="search" placeholder="Cell ID or province"></label><label>Province<select id="province-filter"><option value="">All five provinces</option></select></label><label>Sort by<select id="point-sort"><option value="province">Province / point</option><option value="id">Cell ID</option><option value="risk">Highest risk</option></select></label></div>
+<p id="analytics-risk-note" class="analytics-hint" role="status">Loading latest forecast risk?</p><div class="point-table-scroll"><table class="point-table"><thead><tr><th scope="col">Point / province</th><th scope="col">Latest risk</th><th scope="col">Mean Temperature (<strong>°C</strong>)</th><th scope="col">Mean Soil Moisture (<strong>m³/m³</strong>)</th></tr></thead><tbody id="points-list"></tbody></table></div>
+<button id="export-points" type="button" hidden class="analytics-download">Download point summary CSV</button></section>
+<div class="point-explorer" id="point-explorer" hidden><button id="back-to-points" type="button" class="back-to-points">? All monitoring points</button><section class="analytics-card" aria-labelledby="selected-title"><div class="analytics-section-heading"><div><p class="eyebrow">POINT EXPLORER</p><h2 id="selected-title" tabindex="-1">Choose a monitoring point</h2><p id="selected-location" class="analytics-hint"></p></div><span id="selected-risk"></span></div>
+<div class="analytics-filters chart-filters"><label>Measurement<select id="measurement"></select></label><label>From (UTC)<input id="history-from" type="date"></label><label>To (UTC)<input id="history-to" type="date"></label></div>
+<div class="range-shortcuts" aria-label="Quick date ranges"><button type="button" data-range="90">Last 90 days</button><button type="button" data-range="365">Last year</button><button type="button" data-range="all">All records</button></div>
+<p id="history-status" role="status" class="analytics-hint"></p><div id="point-statistics" class="point-statistics"></div>
+<div class="history-chart-wrap"><svg id="history-chart" viewBox="0 0 760 270" role="group" tabindex="0" aria-label="Historical chart. Click or tap to pin a day. Arrow keys change days; Enter pins or unpins, Escape releases the selection." aria-describedby="day-reading"><title id="chart-title">Historical measurements</title><desc id="chart-description">Select a point and measurement to see its daily history.</desc></svg><div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div></div>
+<div class="chart-inspection-controls">
+  <p id="chart-pin-status" class="analytics-hint chart-help" role="status">Hover to explore. Click to pin a day.</p>
+  <button id="chart-unpin" type="button" hidden>Unpin day</button>
+</div><p id="day-reading" class="visually-hidden" aria-live="polite"></p>
+<p id="aggregation-note" class="analytics-hint"></p></section>
+<section class="analytics-card" aria-labelledby="records-title"><div class="analytics-section-heading"><div><p class="eyebrow">DAILY OBSERVATIONS</p><h2 id="records-title">Historical records</h2></div><button id="export-history" type="button">Download filtered CSV</button></div>
+<div class="history-table-scroll"><table><thead><tr><th scope="col">Date · UTC</th><th scope="col">Temp.<br>°C mean</th><th scope="col">Rain<br>mm total</th><th scope="col">Deep soil<br>m³/m³ mean</th><th scope="col">Hotspots¹<br>24h max</th><th scope="col">Hours</th></tr></thead><tbody id="history-records"></tbody></table></div>
+<div class="history-pagination"><button id="history-prev" type="button">← Newer</button><span id="history-page"></span><button id="history-next" type="button">Older →</button></div><p class="analytics-hint">¹ Daily maximum of the rolling 24-hour count. Do not sum these values as unique fires.</p></section>
+<details class="analytics-card" id="daily-inspector"><summary>All measurements for the inspected day</summary><dl id="daily-measurements"></dl></details>
+</div></div>
+<footer class="analytics-footer"><strong>About these records</strong><p id="analytics-provenance"></p><p>Weather and soil values are modeled, not sensor measurements. Satellite hotspots describe detected surface thermal anomalies. Missing measurements remain unavailable. This page analyzes historical inputs only.</p><a href="index.html">Return to the monitoring dashboard →</a></footer>
+</main></div></body></html>

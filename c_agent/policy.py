@@ -179,7 +179,7 @@ def build_critical_records(
             cell_id=primary,
             ts=ts,
             action="DISPATCH",
-            priority=1,
+            priority=1 if risk["risk_level"] == "CRITICAL" else 2,
             target=target,
             audiences=list(ALL_AUDIENCES),
             message_map=_phrase(rewriter, "DISPATCH", ctx, messages.critical_messages(ctx)),
@@ -216,36 +216,11 @@ def build_high_records(
     max_water_km: float | None = DEFAULT_MAX_WATER_KM,
     rewriter: Rewriter | None = None,
 ) -> list[dict[str, Any]]:
-    target = {"lat": feature["lat"], "lon": feature["lon"]}
-    water = nearest_water_source(target, water_catalogue_path or [], max_water_km)
-    ctx = _context(cell_id, risk, feature, target, [cell_id], water)
-    ts = format_ts(when)
-    return [
-        _base_record(
-            dispatch_id=state.allocate_dispatch_id(when),
-            cell_id=cell_id,
-            ts=ts,
-            action="SMS_WARN",
-            priority=2,
-            target=target,
-            audiences=["mpa"],
-            message_map=_phrase(rewriter, "SMS_WARN", ctx, messages.sms_warn_messages(ctx)),
-            rationale=messages.high_rationale(ctx, "SMS_WARN"),
-            water_source=water,
-        ),
-        _base_record(
-            dispatch_id=state.allocate_dispatch_id(when),
-            cell_id=cell_id,
-            ts=ts,
-            action="REWET",
-            priority=3,
-            target=target,
-            audiences=["brgm"],
-            message_map=_phrase(rewriter, "REWET", ctx, messages.rewet_messages(ctx)),
-            rationale=messages.high_rationale(ctx, "REWET"),
-            water_source=water,
-        ),
-    ]
+    # HIGH now receives the same five-audience dispatch workflow as CRITICAL.
+    return build_critical_records(
+        state, [cell_id], {cell_id: risk}, {cell_id: feature}, when,
+        water_catalogue_path, max_water_km=max_water_km, rewriter=rewriter,
+    )
 
 
 def decide(
@@ -288,7 +263,7 @@ def decide(
         if cell_id in handled or cell_id not in features_by_cell:
             continue
         feature = features_by_cell[cell_id]
-        if risk["risk_level"] == "HIGH" and falling_deep_moisture(feature):
+        if risk["risk_level"] == "HIGH":
             decision, reused = state.should_emit([cell_id], "HIGH", when)
             if decision == "reuse":
                 output.extend(reused)

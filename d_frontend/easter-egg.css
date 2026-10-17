@@ -1,0 +1,15 @@
+﻿.sidebar .brand-mark { border:0; padding:0; flex-shrink:0; min-height:44px; cursor:pointer; }
+.brand-home { color:inherit; text-decoration:none; }
+.sidebar .brand-mark:focus-visible { outline:3px solid #f0b56c; outline-offset:4px; }
+.sidebar .brand-mark:hover, .sidebar .brand-mark:focus-visible { color:#ff682c; background:#ff8a2424; box-shadow:0 0 18px #ff642e40; }
+.sidebar .brand-mark:hover svg, .sidebar .brand-mark:focus-visible svg { animation:brand-flame .75s ease-in-out infinite alternate; filter:drop-shadow(0 0 3px #ff3f20) drop-shadow(0 -2px 6px #ffad3280); }
+body.easter-open { overflow:hidden; }
+.easter-dialog { border:1px solid #dfe5db; border-radius:20px; padding:0; width:min(960px,calc(100vw - 32px)); max-width:none; height:min(780px,calc(100dvh - 32px)); max-height:none; overflow:hidden; background:#f7f8f2; box-shadow:0 25px 90px #102b4145; }
+.easter-dialog::backdrop { background:#142d2a90; backdrop-filter:blur(7px); }
+.easter-dialog-header { height:60px; display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-bottom:1px solid #dde4d5; }
+.easter-dialog-header h2 { margin:0; font-size:16px; font-weight:600; letter-spacing:-.025em; }
+.easter-dialog-close { border:1px solid #dce2d7; border-radius:9px; padding:8px 16px; background:white; color:#315445; font:inherit; font-size:12px; min-height:40px; }
+.easter-dialog iframe { display:block; border:0; width:100%; height:calc(100% - 60px); background:#d3e8dd; }
+@media(max-width:600px) { .easter-dialog { width:calc(100vw - 16px); height:calc(100dvh - 16px); border-radius:14px; }.easter-dialog-header { padding:10px 14px; }.sidebar .brand-home { font-size:inherit; } }
+@media(prefers-reduced-motion:reduce) { .sidebar .brand-mark:hover svg,.sidebar .brand-mark:focus-visible svg { animation:none; } }
+@media(min-width:761px) and (max-width:950px) { .sidebar .brand-home { display:none; } }

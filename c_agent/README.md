@@ -1,3 +1,5 @@
+Current policy revision 2: both HIGH and CRITICAL immediately create simulated DISPATCH records for all five audiences. HIGH does not require falling soil moisture. Critical clustering and cooldown/dedupe remain; LOW/MODERATE do not trigger action. Internal state migration replaces old policy records on the next run. The older SMS_WARN/REWET descriptions below are historical.
+
 # Role C — Agent engineer
 
 Read `TEAM_PLAYBOOK.md` and `contracts/CONTRACTS.md`. Own this folder and `data/processed/dispatch.json`. Decisions use risk, features and cells; notifications remain simulated.
@@ -92,3 +94,12 @@ python -m unittest discover -s c_agent/tests -v   # policy + hardening tests
 ```
 
 Done when CRITICAL input creates a valid dispatch with all five messages, reruns do not duplicate active incidents, escalation is tested, and no real notification is sent.
+
+
+Water lookup now prefers an explicit catalogue, then dataset-local water files,
+then the shared `role_a_real/water_sources.geojson` for regional real-source
+bundles. There is no implicit mock-water fallback. Synthetic tests pass their
+catalogue explicitly. Spatial indexes are cached per file revision. Missing
+spatial dependencies or invalid catalogues report an error rather than silently
+claiming there is no nearby water. Catalogue/radius changes invalidate cached
+incident content while preserving the dispatch ID sequence; stable reruns dedupe.

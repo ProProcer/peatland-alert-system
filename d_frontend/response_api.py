@@ -25,6 +25,7 @@ def response_bundle(directory):
             'email': generate_batch_email_summary(records),
             'individual_emails': [generate_email_notification(row) for row in records],
             'engine': {'simulation': True, 'water_available': water is not None,
+                       'water_catalogue': water.name if water else None,
                        'spatial_water': _WATER_INDEX_AVAILABLE,
                        'llm_available': llm._pick_provider(None) is not None,
                        'state_persisted': STATE.is_file()},

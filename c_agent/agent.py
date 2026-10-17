@@ -92,6 +92,11 @@ def dispatch_live(
         print(f"C: using water catalogue from {catalogue_path}")
 
     store = StateStore(state_path or PACKAGE / "state" / "incidents.json", cooldown_hours=cooldown_hours)
+    water_stat = catalogue_path.stat() if catalogue_path else None
+    store.set_water_context({'catalogue': str(catalogue_path.resolve()) if catalogue_path else None,
+                             'modified_ns': water_stat.st_mtime_ns if water_stat else None,
+                             'size': water_stat.st_size if water_stat else None,
+                             'max_km': max_water_km})
     if now is None and risk_rows:
         latest_risk_ts = max(row["ts"] for row in risk_rows)
         now = dispatch_timestamp(latest_risk_ts)

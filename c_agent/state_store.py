@@ -8,6 +8,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+POLICY_VERSION = "2-high-critical-dispatch"
+
 LEVEL_RANK = {"LOW": 0, "MODERATE": 1, "HIGH": 2, "CRITICAL": 3}
 
 
@@ -28,12 +30,19 @@ class StateStore:
             loaded = json.loads(path.read_text(encoding="utf-8"))
             self._data["next_seq"] = int(loaded.get("next_seq", 1))
             self._data["incidents"] = dict(loaded.get("incidents", {}))
+            self._data["water_context"] = loaded.get("water_context")
 
     def save(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         temporary = self.path.with_suffix(self.path.suffix + ".tmp")
         temporary.write_text(json.dumps(self._data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         temporary.replace(self.path)
+
+    def set_water_context(self, context: dict) -> None:
+        """Rebuild incident messages when the source catalogue or search radius changes."""
+        if self._data.get('water_context') != context:
+            self._data['incidents'] = {}
+            self._data['water_context'] = context
 
     def allocate_dispatch_id(self, when: datetime) -> str:
         seq = int(self._data["next_seq"])
@@ -55,6 +64,8 @@ class StateStore:
         cluster_key: str,
     ) -> None:
         entry = {
+            "policy_version": POLICY_VERSION,
+            "cell_ids": sorted(cell_ids),
             "risk_level": risk_level,
             "cluster_key": cluster_key,
             "ts": records[0]["ts"],
@@ -72,12 +83,17 @@ class StateStore:
         if not present:
             return "new", []
 
+        if any(item.get('policy_version') != POLICY_VERSION for item in present):
+            return "new", []
+        if len(present) != len(cell_ids) or any(item.get('cell_ids') != sorted(cell_ids) for item in present):
+            return "new", []
+
         max_level = max(LEVEL_RANK[item["risk_level"]] for item in present)
         new_level = LEVEL_RANK[risk_level]
         if new_level > max_level:
             return "new", []
         if new_level < max_level:
-            return "suppress", []
+            return "new", []
 
         freshest = max(present, key=lambda item: parse_ts(item["ts"]))
         if when - parse_ts(freshest["ts"]) < self.cooldown:

@@ -44,6 +44,8 @@ def critical_messages(ctx: dict[str, Any]) -> dict[str, dict[str, str]]:
     horizon = ctx["horizon_h"]
     days = _fmt_num(ctx.get("days_since_rain"), 0)
     sm = _fmt_num(ctx.get("sm_27_81"))
+    level_en = ctx.get("risk_level", "CRITICAL").lower()
+    level_id = "kritis" if ctx.get("risk_level", "CRITICAL") == "CRITICAL" else "tinggi"
     water_id, water_en = _water_blurb(ctx)
     return {
         "manggala_agni": {
@@ -64,11 +66,11 @@ def critical_messages(ctx: dict[str, Any]) -> dict[str, dict[str, str]]:
         },
         "leadership": {
             "id": (
-                f"Simulasi: {ctx['cluster_size']} sel kritis (horizon {horizon} jam); "
+                f"Simulasi: {ctx['cluster_size']} sel berisiko {level_id} (horizon {horizon} jam); "
                 f"{days} hari tanpa hujan ≥1 mm."
             ),
             "en": (
-                f"Simulation: {ctx['cluster_size']} critical cell(s) at the {horizon}-hour horizon; "
+                f"Simulation: {ctx['cluster_size']} {level_en}-risk cell(s) at the {horizon}-hour horizon; "
                 f"{days} day(s) without ≥1 mm rain."
             ),
         },

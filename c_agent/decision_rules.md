@@ -24,8 +24,8 @@ For each `cell_id`, pick one driving risk row:
 | --- | --- | --- | --- |
 | Driving level CRITICAL | `DISPATCH` | 1 | All five: `manggala_agni`, `mpa`, `bpbd`, `brgm`, `leadership` |
 | CRITICAL cluster of 2+ edge-adjacent cells | additional `BRIEF` | 2 | `leadership` |
-| HIGH and `sm_27_81_delta_7d < 0` (not null) | `SMS_WARN` then `REWET` | 2 / 3 | `mpa` / `brgm` |
-| MODERATE or LOW, or HIGH without falling deep moisture | none | — | — |
+| Driving level HIGH (any moisture trend, including null) | `DISPATCH` | 2 | All five audiences |
+| MODERATE or LOW | none | — | — |
 
 Edge-adjacent means cells are within 15 km of each other (configurable via `--cluster-distance-km`; 0 disables clustering). Distance is computed using Haversine formula. Cluster target is the mean of member cell centers (named `lat` / `lon`). Primary `cell_id` on the record is the member with the strongest driving risk.
 
@@ -47,8 +47,15 @@ State file: `c_agent/state/incidents.json` (gitignored). Default cooldown: **6 h
 - Same severity inside cooldown → reuse prior dispatch IDs (no new mint, no new log lines).
 - Severity rise → mint new dispatch(es) and replace state.
 - Cooldown expired at same severity → mint again.
-- Severity fall / condition no longer met → clear state; no action this run.
+- Severity falls to HIGH: mint a HIGH dispatch; MODERATE/LOW: clear state and emit no action.
 
 ## Coordinates and nulls
 
 JSON uses `lat` / `lon`. GeoJSON from Role A stays `[lon, lat]` and is not rewritten here. Missing measurements remain `null`. Lookup uses the dispatch `target` (not `cell_id` alone), matching A's shifted-target example.
+
+
+Policy revision 2 (human requested): HIGH and CRITICAL trigger DISPATCH immediately;
+HIGH no longer depends on moisture decline and no longer emits SMS_WARN/REWET.
+Existing critical clustering, cooldown/dedupe and fixed risk thresholds remain.
+Persisted entries carry an internal policy version so legacy actions are replaced
+on the next run. Dispatch schema remains 1.0; no fields or risk thresholds changed.
