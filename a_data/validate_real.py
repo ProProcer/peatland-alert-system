@@ -101,7 +101,12 @@ def validate(output_dir: Path, bundle_name: str = "sample", weather_path: Path |
         require(all(shape(f["geometry"]).is_valid for f in catalogue["features"]), "Extracted water geometries are valid")
         index = WaterIndex(water_path)
         schema = json.loads((ROOT / "contracts/dispatch.schema.json").read_text(encoding="utf-8"))["items"]["properties"]["water_source"]
-        for row in snapshot.head(5).to_dict("records"):
+        cell_provinces = pd.read_parquet(output_dir / "cells.parquet", columns=["cell_id", "province"])
+        water_targets = snapshot.merge(cell_provinces, on="cell_id", validate="one_to_one")
+        first_per_province = water_targets.groupby("province", sort=True).head(1)
+        additional = water_targets[~water_targets["cell_id"].isin(first_per_province["cell_id"])]
+        water_targets = pd.concat([first_per_province, additional], ignore_index=True).head(5)
+        for row in water_targets.to_dict("records"):
             for suffix, offset in (("center", 0), ("shifted", .02)):
                 lat, lon = row["lat"] + offset, row["lon"] + offset
                 lookup = index.nearest(lat, lon)

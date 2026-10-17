@@ -61,7 +61,9 @@ def load_boundary(cache_dir: Path, download: bool = False):
         raise ValueError(f"Expected five Kalimantan provinces, found {len(provinces)}; names: {names}")
     for feature in provinces:
         feature["geometry"] = mapping(polygonal(shape(feature["geometry"])))
-    write_json(cache_dir / "kalimantan_boundary.geojson", {"type": "FeatureCollection", "features": provinces})
+    regional_cache = cache_dir / "kalimantan_boundary.geojson"
+    if not regional_cache.exists():
+        write_json(regional_cache, {"type": "FeatureCollection", "features": provinces})
     region = shapely.union_all([shape(f["geometry"]) for f in provinces])
     return region, provinces, metadata
 
