@@ -7,7 +7,6 @@ import json
 from collections import Counter
 from pathlib import Path
 
-import osmium
 import shapely
 from pyproj import Transformer
 from shapely.geometry import Point, mapping, shape
@@ -35,6 +34,9 @@ def water_kind(tags) -> str | None:
 
 
 def extract(pbf_path: Path, output_dir: Path) -> dict:
+    # Catalogue lookup uses Shapely/PyProj; only raw PBF extraction needs Pyosmium.
+    import osmium
+
     region, _, _ = load_boundary(output_dir / "cache")
     shapely.prepare(region)
     factory = osmium.geom.GeoJSONFactory()
