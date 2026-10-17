@@ -4,20 +4,20 @@
     "cell_id": "-3.15_111.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.003713847282058417,
+    "risk_score": 0.0026439269393864592,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.8589179584395406
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.2984893839731095
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.22738550311175992
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": 0.0895399275488091
+        "contribution": 0.20726221919968976
       }
     ],
     "model_version": "v1"
@@ -27,20 +27,20 @@
     "cell_id": "-3.45_111.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0031204903713611186,
+    "risk_score": 0.0023930840683118477,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 3.055438284356392
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "contribution": 0.20726221919968976
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.30289443254266507
-      },
-      {
-        "feature": "sm_3_9",
-        "contribution": 0.1625349433793832
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.16817525588796825
       }
     ],
     "model_version": "v1"
@@ -50,20 +50,20 @@
     "cell_id": "-3.35_113.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.003154344167657427,
+    "risk_score": 0.002464094571565617,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 0.5568227119849993
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.4904134318613247
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3274575782611524
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": -0.20058338741319043
+        "contribution": 0.20726221919968976
       }
     ],
     "model_version": "v1"
@@ -73,20 +73,20 @@
     "cell_id": "-3.35_113.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0017193301535615882,
+    "risk_score": 0.00312853079851115,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 0.5568227119849993
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "contribution": 0.20726221919968976
       },
       {
         "feature": "vpd_mean_24h",
-        "contribution": 0.32715432954857826
-      },
-      {
-        "feature": "sm_3_9",
-        "contribution": 0.16134128524999675
+        "contribution": 0.1310324415924878
       }
     ],
     "model_version": "v1"
@@ -96,20 +96,20 @@
     "cell_id": "-3.35_113.75",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0038455760950137597,
+    "risk_score": 0.0032481491788292636,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.6245420563312003
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.5568227119849993
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3271543295485786
-      },
-      {
-        "feature": "sm_3_9",
-        "contribution": 0.16134128524999675
+        "contribution": 0.20726221919968976
       }
     ],
     "model_version": "v1"
@@ -119,20 +119,20 @@
     "cell_id": "-3.35_112.65",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.003154344167657427,
+    "risk_score": 0.0024482359334291196,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.2132083161413156
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "contribution": 0.20726221919968976
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.2922807276025779
-      },
-      {
-        "feature": "sm_3_9",
-        "contribution": 0.16074445618530353
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.16800561979154754
       }
     ],
     "model_version": "v1"
@@ -142,20 +142,20 @@
     "cell_id": "-3.35_112.55",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.003362823495128926,
+    "risk_score": 0.00250713079046907,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.2132083161413156
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "contribution": 0.20726221919968976
       },
       {
         "feature": "vpd_mean_24h",
-        "contribution": 0.34049727290183074
-      },
-      {
-        "feature": "sm_3_9",
-        "contribution": 0.15955079805591707
+        "contribution": 0.13669137614401408
       }
     ],
     "model_version": "v1"
@@ -165,20 +165,20 @@
     "cell_id": "-3.35_112.45",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0034587824964690435,
+    "risk_score": 0.00250713079046907,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.2132083161413156
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "contribution": 0.20726221919968976
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.34049727290183074
-      },
-      {
-        "feature": "sm_3_9",
-        "contribution": 0.15955079805591707
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.14921512450449767
       }
     ],
     "model_version": "v1"
@@ -188,20 +188,20 @@
     "cell_id": "-3.35_111.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.003180542011824443,
+    "risk_score": 0.002458552193013274,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 13.848494909849157
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 3.055438284356392
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 2.9149869664274104
-      },
-      {
-        "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.30319768125523916
+        "contribution": 0.4559494773615347
       }
     ],
     "model_version": "v1"
@@ -211,20 +211,20 @@
     "cell_id": "-3.35_111.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0033997654753333256,
+    "risk_score": 0.002860812701160684,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 3.055438284356392
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.40511385502211794
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.30350092996781297
-      },
-      {
-        "feature": "rain_30d_mm",
-        "contribution": 0.0643300322947198
+        "contribution": 0.20726221919968976
       }
     ],
     "model_version": "v1"
@@ -234,20 +234,20 @@
     "cell_id": "-3.25_114.25",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0032452579787352405,
+    "risk_score": 0.0023774307084210755,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.41176072035670125
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.9371082146870792
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.5568227119849993
       },
       {
         "feature": "rain_24h_mm",
-        "contribution": 0.31291259853399417
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": -0.16271428343473404
+        "contribution": 0.18867826218136213
       }
     ],
     "model_version": "v1"
@@ -257,20 +257,20 @@
     "cell_id": "-3.25_114.05",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.003154344167657427,
+    "risk_score": 0.0028955665164466624,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 0.5568227119849993
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "contribution": 0.20726221919968976
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.33564529350064815
-      },
-      {
-        "feature": "sm_3_9",
-        "contribution": 0.16074445618530353
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.13527634293790375
       }
     ],
     "model_version": "v1"
@@ -280,20 +280,20 @@
     "cell_id": "-3.25_113.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.004174569760309957,
+    "risk_score": 0.002768272682912055,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.3698921262567578
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.5568227119849993
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.33564529350064815
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": 0.2697647061869829
+        "contribution": 0.20726221919968976
       }
     ],
     "model_version": "v1"
@@ -303,20 +303,20 @@
     "cell_id": "-3.25_113.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0031956519730308615,
+    "risk_score": 0.002696908601348983,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 0.5568227119849993
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.5043243031174006
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.29197747889000397
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": 0.2779795260686688
+        "contribution": 0.20726221919968976
       }
     ],
     "model_version": "v1"
@@ -326,20 +326,20 @@
     "cell_id": "-3.25_113.75",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0031945981388739287,
+    "risk_score": 0.002974136155656517,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 0.5568227119849993
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.38410654990360105
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3071399145186999
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": 0.09605652108527502
+        "contribution": 0.20726221919968976
       }
     ],
     "model_version": "v1"
@@ -349,20 +349,20 @@
     "cell_id": "-3.45_111.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0031204903713611186,
+    "risk_score": 0.0023930840683118477,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 3.055438284356392
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "contribution": 0.20726221919968976
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.30289443254266507
-      },
-      {
-        "feature": "sm_3_9",
-        "contribution": 0.1625349433793832
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.19186491292410102
       }
     ],
     "model_version": "v1"
@@ -372,20 +372,20 @@
     "cell_id": "-3.25_112.75",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.002664939987658072,
+    "risk_score": 0.00246524640690138,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.2132083161413156
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "contribution": 0.20726221919968976
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.28227352008763873
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": -0.19520692841604434
+        "feature": "sm_27_81",
+        "contribution": 0.11603381496529216
       }
     ],
     "model_version": "v1"
@@ -395,20 +395,20 @@
     "cell_id": "-3.25_112.55",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.004312386171168282,
+    "risk_score": 0.0024378706800434993,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "frp_sum_10km_7d",
-        "contribution": 0.8125140078879441
+        "feature": "hotspots_10km_7d",
+        "contribution": 5.769861893881823
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 2.2132083161413156
       },
       {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.34049727290183074
+        "contribution": 0.20726221919968976
       }
     ],
     "model_version": "v1"
@@ -418,20 +418,20 @@
     "cell_id": "-3.25_112.45",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.004058833141405713,
+    "risk_score": 0.00250713079046907,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "frp_sum_10km_7d",
-        "contribution": 1.007671509843299
+        "feature": "hotspots_10km_7d",
+        "contribution": 6.491168413164621
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 2.2132083161413156
       },
       {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.34049727290183074
+        "contribution": 0.20726221919968976
       }
     ],
     "model_version": "v1"
@@ -441,20 +441,20 @@
     "cell_id": "-3.25_112.35",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.004631554378247524,
+    "risk_score": 0.00321794091534104,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.2132083161413156
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "contribution": 0.20726221919968976
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.2819702713750649
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": 0.15340651293321494
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.16502641146387811
       }
     ],
     "model_version": "v1"
@@ -464,20 +464,20 @@
     "cell_id": "-3.25_112.25",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.002247408585317756,
+    "risk_score": 0.002453798133666167,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3483817394287525
+        "feature": "days_since_rain",
+        "contribution": 2.2132083161413156
       },
       {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "contribution": 0.20726221919968976
       },
       {
-        "feature": "sm_3_9",
-        "contribution": 0.1541793364736781
+        "feature": "vpd_mean_24h",
+        "contribution": 0.14003529201537043
       }
     ],
     "model_version": "v1"
@@ -487,20 +487,20 @@
     "cell_id": "-3.25_112.15",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0039703223144341914,
+    "risk_score": 0.00278628580270558,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 28.29866884614787
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 2.2132083161413156
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 9.441675342158586
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.35535645981795266
-      },
-      {
-        "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "contribution": 1.4768269267405412
       }
     ],
     "model_version": "v1"
@@ -510,20 +510,20 @@
     "cell_id": "-3.25_112.05",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0030379862530194282,
+    "risk_score": 0.002884118557598209,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 35.05490657676341
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 3.055438284356392
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 9.792980538883937
-      },
-      {
-        "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.2655948408960735
+        "contribution": 1.5317766244341116
       }
     ],
     "model_version": "v1"
@@ -533,20 +533,20 @@
     "cell_id": "-3.25_111.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.003236181144045679,
+    "risk_score": 0.00268067856510119,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 22.912913502169644
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 3.055438284356392
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 5.80589406354604
-      },
-      {
-        "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.26862732802181255
+        "contribution": 0.9081331413881644
       }
     ],
     "model_version": "v1"
@@ -556,20 +556,20 @@
     "cell_id": "-3.25_111.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.003713847282058417,
+    "risk_score": 0.0028009481537740223,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 3.055438284356392
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "contribution": 0.20726221919968976
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.26529159218349946
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": 0.12991913573677774
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.16177993280343722
       }
     ],
     "model_version": "v1"
@@ -579,20 +579,20 @@
     "cell_id": "-3.15_112.45",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0038308936433303744,
+    "risk_score": 0.002352816994432689,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "frp_sum_10km_7d",
-        "contribution": 0.5402480062021051
+        "feature": "hotspots_10km_7d",
+        "contribution": 3.4857245828196315
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 3.055438284356392
       },
       {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.26013636406974283
+        "contribution": 0.20726221919968976
       }
     ],
     "model_version": "v1"
@@ -602,20 +602,20 @@
     "cell_id": "-3.15_112.35",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.002990548724181763,
+    "risk_score": 0.002399460690658017,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "frp_sum_10km_7d",
-        "contribution": 1.0167175766284138
+        "feature": "hotspots_10km_7d",
+        "contribution": 7.3807797869467375
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 3.055438284356392
       },
       {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.22223027499800338
+        "contribution": 0.20726221919968976
       }
     ],
     "model_version": "v1"
@@ -625,20 +625,20 @@
     "cell_id": "-3.15_112.25",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.003266949634363474,
+    "risk_score": 0.002376559213193464,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 28.99593181478791
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 3.055438284356392
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 5.156377791094072
-      },
-      {
-        "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.22283677242315114
+        "contribution": 0.8065385075740992
       }
     ],
     "model_version": "v1"
@@ -648,20 +648,20 @@
     "cell_id": "-3.15_112.15",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.002990548724181763,
+    "risk_score": 0.0024402673870626635,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 39.62318119888779
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 2.8589179584395406
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 7.431561206970459
-      },
-      {
-        "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.24709666942906458
+        "contribution": 1.1624132343506928
       }
     ],
     "model_version": "v1"
@@ -671,20 +671,20 @@
     "cell_id": "-3.15_112.05",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0030379862530194282,
+    "risk_score": 0.002625692930295612,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 21.350082710390254
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 2.8589179584395406
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 6.471962251961937
-      },
-      {
-        "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.23041799023749918
+        "contribution": 1.0123167570531821
       }
     ],
     "model_version": "v1"
@@ -694,20 +694,20 @@
     "cell_id": "-3.15_111.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.003266949634363474,
+    "risk_score": 0.0025466630665707075,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "frp_sum_10km_7d",
-        "contribution": 3.398978655937042
+        "feature": "hotspots_10km_7d",
+        "contribution": 12.766535130924959
       },
       {
-        "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "feature": "days_since_rain",
+        "contribution": 2.8589179584395406
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.22738550311175992
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.5543881144907298
       }
     ],
     "model_version": "v1"
@@ -717,20 +717,20 @@
     "cell_id": "-3.25_112.65",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.003086779112474222,
+    "risk_score": 0.002584287231718002,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "frp_sum_10km_7d",
-        "contribution": 0.7773764379235428
+        "feature": "hotspots_10km_7d",
+        "contribution": 5.505382836811465
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 3.055438284356392
       },
       {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.332612806374909
+        "contribution": 0.20726221919968976
       }
     ],
     "model_version": "v1"
@@ -740,20 +740,20 @@
     "cell_id": "-3.45_112.55",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.0026162438578757104,
+    "risk_score": 0.005091968107043249,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.2132083161413156
+      },
+      {
         "feature": "rain_24h_mm",
-        "contribution": 0.3446394292556653
+        "contribution": 0.20726221919968976
       },
       {
         "feature": "vpd_mean_24h",
-        "contribution": 0.3414070190395525
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": -0.16564960791582056
+        "contribution": 0.13707721259070904
       }
     ],
     "model_version": "v1"
@@ -763,20 +763,20 @@
     "cell_id": "-3.15_111.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004781985589988176,
+    "risk_score": 0.004773256644055689,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.2727792527560153
+        "feature": "days_since_rain",
+        "contribution": 3.210929383091764
       },
       {
-        "feature": "peat_fraction",
-        "contribution": 0.12383695606135177
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.20871545584388312
       },
       {
         "feature": "rain_24h_mm",
-        "contribution": 0.06817090265025708
+        "contribution": 0.1589387153647037
       }
     ],
     "model_version": "v1"
@@ -786,20 +786,20 @@
     "cell_id": "-3.45_111.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004980315344318108,
+    "risk_score": 0.0051629801506886805,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 3.4316467656939595
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.3633622893379272
+        "contribution": 0.17692975528279659
       },
       {
-        "feature": "sm_3_9",
-        "contribution": 0.10312432138816131
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": 0.09828291434495766
+        "feature": "sm_0_1",
+        "contribution": 0.1645567650528761
       }
     ],
     "model_version": "v1"
@@ -809,20 +809,20 @@
     "cell_id": "-3.35_113.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.00485252828613837,
+    "risk_score": 0.004742230820072673,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 0.6253829011803338
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.34291625926676406
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.39282906027421194
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": -0.27741407452205086
-      },
-      {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.1097640139585501
+        "contribution": 0.19219501644668693
       }
     ],
     "model_version": "v1"
@@ -832,20 +832,20 @@
     "cell_id": "-3.35_113.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.005334960382871351,
+    "risk_score": 0.0056037646775141566,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 0.6253829011803338
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.392465272978702
+        "contribution": 0.1920065564323178
       },
       {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.1097640139585501
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": -0.10292812883532085
+        "feature": "sm_0_1",
+        "contribution": 0.16361263127642411
       }
     ],
     "model_version": "v1"
@@ -855,20 +855,20 @@
     "cell_id": "-3.35_113.75",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.005194017332224335,
+    "risk_score": 0.0052576287725134485,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3924652729787024
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.454432116100614
       },
       {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.1097640139585501
+        "feature": "days_since_rain",
+        "contribution": 0.6253829011803338
       },
       {
-        "feature": "sm_3_9",
-        "contribution": 0.10236697541687
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.2017956040123231
       }
     ],
     "model_version": "v1"
@@ -878,20 +878,20 @@
     "cell_id": "-3.35_112.65",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004962254540391802,
+    "risk_score": 0.004767764151391758,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.4857151259702652
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.35062973399508807
+        "contribution": 0.170333654779881
       },
       {
-        "feature": "peat_fraction",
-        "contribution": -0.2070151521867608
-      },
-      {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.1097640139585501
+        "feature": "sm_0_1",
+        "contribution": 0.16361263127642411
       }
     ],
     "model_version": "v1"
@@ -901,20 +901,20 @@
     "cell_id": "-3.35_112.55",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004959974835064621,
+    "risk_score": 0.005483323028024696,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.4857151259702652
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.4084719139811284
+        "contribution": 0.20029879706455456
       },
       {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.1097640139585501
-      },
-      {
-        "feature": "sm_3_9",
-        "contribution": 0.101230956459933
+        "feature": "sm_0_1",
+        "contribution": 0.16314056438819813
       }
     ],
     "model_version": "v1"
@@ -924,20 +924,20 @@
     "cell_id": "-3.35_112.45",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.005001856588703794,
+    "risk_score": 0.00504182233086898,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.4857151259702652
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.4084719139811284
+        "contribution": 0.20029879706455456
       },
       {
-        "feature": "peat_fraction",
-        "contribution": 0.12041730018573867
-      },
-      {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.1097640139585501
+        "feature": "sm_0_1",
+        "contribution": 0.16314056438819813
       }
     ],
     "model_version": "v1"
@@ -947,20 +947,20 @@
     "cell_id": "-3.35_111.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004760939690035702,
+    "risk_score": 0.004724951449771523,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 32.25034335535471
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 4.168569872608331
+        "contribution": 13.48664040503692
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3637260766334371
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": -0.31237584796100043
+        "feature": "days_since_rain",
+        "contribution": 3.4316467656939595
       }
     ],
     "model_version": "v1"
@@ -970,20 +970,20 @@
     "cell_id": "-3.35_111.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.0046892902980850484,
+    "risk_score": 0.004772080745495702,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 3.4316467656939595
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.2832714577454836
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.36408986392894666
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": -0.0700745685332374
-      },
-      {
-        "feature": "rain_24h_mm",
-        "contribution": 0.06817090265025708
+        "contribution": 0.17730667531153468
       }
     ],
     "model_version": "v1"
@@ -993,20 +993,20 @@
     "cell_id": "-3.25_114.25",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004894139229072563,
+    "risk_score": 0.00472951134349637,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.4939619284259049
+        "feature": "hotspots_10km_7d",
+        "contribution": 2.1823354726648017
       },
       {
-        "feature": "peat_fraction",
-        "contribution": -0.22503973500846883
+        "feature": "days_since_rain",
+        "contribution": 0.6253829011803338
       },
       {
         "feature": "frp_sum_10km_7d",
-        "contribution": 0.12812274851461022
+        "contribution": 0.4144986531733155
       }
     ],
     "model_version": "v1"
@@ -1016,20 +1016,20 @@
     "cell_id": "-3.25_114.05",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.005039346051256614,
+    "risk_score": 0.005747392818950038,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 0.6253829011803338
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.4026513172529735
+        "contribution": 0.19728343683465036
       },
       {
-        "feature": "peat_fraction",
-        "contribution": -0.13816637500351564
-      },
-      {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.11989106308458297
+        "feature": "sm_0_1",
+        "contribution": 0.16314056438819813
       }
     ],
     "model_version": "v1"
@@ -1039,20 +1039,20 @@
     "cell_id": "-3.25_113.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.00514461238611805,
+    "risk_score": 0.004923257586574923,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.4026513172529735
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": 0.3730943388218677
+        "feature": "hotspots_10km_7d",
+        "contribution": 3.190201658676754
       },
       {
         "feature": "frp_sum_10km_7d",
-        "contribution": 0.21038617223381376
+        "contribution": 0.6806472012977394
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.6253829011803338
       }
     ],
     "model_version": "v1"
@@ -1062,20 +1062,20 @@
     "cell_id": "-3.25_113.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004886655801862588,
+    "risk_score": 0.004739936131551344,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "peat_fraction",
-        "contribution": 0.38445573162828606
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.1744692866528494
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3502659466995784
+        "feature": "days_since_rain",
+        "contribution": 0.6253829011803338
       },
       {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.14014516133664814
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.2114810324629633
       }
     ],
     "model_version": "v1"
@@ -1085,20 +1085,20 @@
     "cell_id": "-3.25_113.75",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004967758620624548,
+    "risk_score": 0.004745696777812593,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.8945064572050849
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.6253829011803338
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.36845531147506283
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": 0.1328496404529615
-      },
-      {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.07938286658045095
+        "contribution": 0.17956819548396283
       }
     ],
     "model_version": "v1"
@@ -1108,20 +1108,20 @@
     "cell_id": "-3.45_111.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004980315344318108,
+    "risk_score": 0.0051629801506886805,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 3.4316467656939595
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.3633622893379272
+        "contribution": 0.17692975528279659
       },
       {
-        "feature": "sm_3_9",
-        "contribution": 0.10312432138816131
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": 0.09828291434495766
+        "feature": "sm_0_1",
+        "contribution": 0.1645567650528761
       }
     ],
     "model_version": "v1"
@@ -1131,20 +1131,20 @@
     "cell_id": "-3.25_112.75",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.0049832049979196685,
+    "risk_score": 0.004738847264322412,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.4857151259702652
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.33862475324326846
+        "contribution": 0.16411447430570353
       },
       {
-        "feature": "peat_fraction",
-        "contribution": -0.26997823740645455
-      },
-      {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.1401451613366487
+        "feature": "sm_0_1",
+        "contribution": 0.16125229683529418
       }
     ],
     "model_version": "v1"
@@ -1154,20 +1154,20 @@
     "cell_id": "-3.25_112.55",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.005015525640702735,
+    "risk_score": 0.004731243956774053,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 13.436841216464934
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 1.161933639279713
+        "contribution": 3.759208308724876
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.4084719139811284
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": -0.23753986242080075
+        "feature": "days_since_rain",
+        "contribution": 2.4857151259702652
       }
     ],
     "model_version": "v1"
@@ -1177,20 +1177,20 @@
     "cell_id": "-3.25_112.45",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.005199250063955184,
+    "risk_score": 0.005009254490713905,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 15.11661819315152
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 1.441018140320089
+        "contribution": 4.662136139804023
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.4084719139811284
-      },
-      {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.1097640139585501
+        "feature": "days_since_rain",
+        "contribution": 2.4857151259702652
       }
     ],
     "model_version": "v1"
@@ -1200,20 +1200,20 @@
     "cell_id": "-3.25_112.35",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004731255806338572,
+    "risk_score": 0.00579192474454702,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.4857151259702652
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.33826096594775895
+        "contribution": 0.16392601429133458
       },
       {
-        "feature": "peat_fraction",
-        "contribution": 0.21216675199206592
-      },
-      {
-        "feature": "sm_3_9",
-        "contribution": 0.08911342091927187
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1590275532340832
       }
     ],
     "model_version": "v1"
@@ -1223,20 +1223,20 @@
     "cell_id": "-3.25_112.25",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.0047060806418279845,
+    "risk_score": 0.005956505609682144,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.4857151259702652
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.4179303836643801
+        "contribution": 0.20519875743814894
       },
       {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.1502722104626813
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": -0.0999486311009851
+        "feature": "sm_0_1",
+        "contribution": 0.16219643061174616
       }
     ],
     "model_version": "v1"
@@ -1246,20 +1246,20 @@
     "cell_id": "-3.25_112.15",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.005199250063955184,
+    "risk_score": 0.005091129774058975,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 65.90187545497601
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 13.502044376722719
+        "contribution": 43.68342259471966
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.4262974914611031
-      },
-      {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.1097640139585501
+        "feature": "days_since_rain",
+        "contribution": 2.4857151259702652
       }
     ],
     "model_version": "v1"
@@ -1269,20 +1269,20 @@
     "cell_id": "-3.25_112.05",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004882805775388095,
+    "risk_score": 0.0047808960319679515,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 81.63578646994037
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 14.004427500910355
+        "contribution": 45.3087930577963
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3186164519902359
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": -0.07074799846475019
+        "feature": "days_since_rain",
+        "contribution": 3.4316467656939595
       }
     ],
     "model_version": "v1"
@@ -1292,20 +1292,20 @@
     "cell_id": "-3.25_111.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004694074496717014,
+    "risk_score": 0.0047613662205574425,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 53.35954069571615
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 8.302704387908717
+        "contribution": 26.86189090219577
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3222543249453327
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": -0.10856004221282338
+        "feature": "days_since_rain",
+        "contribution": 3.4316467656939595
       }
     ],
     "model_version": "v1"
@@ -1315,20 +1315,20 @@
     "cell_id": "-3.25_111.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004819419778799074,
+    "risk_score": 0.004769599247164932,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3182526646947261
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": 0.1796828604199393
+        "feature": "days_since_rain",
+        "contribution": 3.4316467656939595
       },
       {
         "feature": "rain_24h_mm",
-        "contribution": 0.06817090265025708
+        "contribution": 0.1589387153647037
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.15589908698788124
       }
     ],
     "model_version": "v1"
@@ -1338,20 +1338,20 @@
     "cell_id": "-3.15_112.45",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.005087346758844036,
+    "risk_score": 0.004732240399969735,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 8.11754745695741
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 3.4316467656939595
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 0.7725803196818155
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3120682806710614
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": 0.13666842044118613
+        "contribution": 2.499525499118998
       }
     ],
     "model_version": "v1"
@@ -1361,20 +1361,20 @@
     "cell_id": "-3.15_112.35",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004997858513338812,
+    "risk_score": 0.004778451475792611,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 17.18834313106498
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 1.4539544456622187
+        "contribution": 4.7039892347670325
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.26659486873235066
-      },
-      {
-        "feature": "rain_24h_mm",
-        "contribution": 0.06817090265025708
+        "feature": "days_since_rain",
+        "contribution": 3.4316467656939595
       }
     ],
     "model_version": "v1"
@@ -1384,20 +1384,20 @@
     "cell_id": "-3.15_112.25",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004918497165477455,
+    "risk_score": 0.004737227918080692,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 67.52565986577305
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 7.373865255420074
+        "contribution": 23.856798537005368
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.26732244332336996
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": 0.1389244988296002
+        "feature": "days_since_rain",
+        "contribution": 3.4316467656939595
       }
     ],
     "model_version": "v1"
@@ -1407,20 +1407,20 @@
     "cell_id": "-3.15_112.15",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.00483183282605858,
+    "risk_score": 0.004763209797805999,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 92.27437398895542
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 10.62748564937479
+        "contribution": 34.38330357227923
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.29642542696414503
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": 0.08648878241661212
+        "feature": "days_since_rain",
+        "contribution": 3.210929383091764
       }
     ],
     "model_version": "v1"
@@ -1430,20 +1430,20 @@
     "cell_id": "-3.15_112.05",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004962416945199559,
+    "risk_score": 0.004801464062550844,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 49.720023912895215
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 9.255213546718522
+        "contribution": 29.943563390782778
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.27641712571111227
-      },
-      {
-        "feature": "rain_24h_mm",
-        "contribution": 0.06817090265025708
+        "feature": "days_since_rain",
+        "contribution": 3.210929383091764
       }
     ],
     "model_version": "v1"
@@ -1453,20 +1453,20 @@
     "cell_id": "-3.15_111.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.004918497165477455,
+    "risk_score": 0.004744621723299427,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 29.730677890324827
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 4.860700986304306
+        "contribution": 15.72590644447022
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.2727792527560153
-      },
-      {
-        "feature": "peat_fraction",
-        "contribution": 0.14844717310723973
+        "feature": "days_since_rain",
+        "contribution": 3.210929383091764
       }
     ],
     "model_version": "v1"
@@ -1476,20 +1476,20 @@
     "cell_id": "-3.25_112.65",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.005399407816088659,
+    "risk_score": 0.005109225911677229,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 12.820922991679854
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 1.1116852446085739
+        "contribution": 3.596638643098563
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.39901344429787666
-      },
-      {
-        "feature": "sm_3_9",
-        "contribution": 0.10198830243122432
+        "feature": "days_since_rain",
+        "contribution": 3.4316467656939595
       }
     ],
     "model_version": "v1"
@@ -1499,20 +1499,20 @@
     "cell_id": "-3.45_112.55",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.005115741733469802,
+    "risk_score": 0.0052585248153198625,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 2.4857151259702652
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.40956327586765745
+        "contribution": 0.2008641771076616
       },
       {
-        "feature": "peat_fraction",
-        "contribution": -0.22909939485789158
-      },
-      {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.1097640139585501
+        "feature": "sm_0_1",
+        "contribution": 0.16314056438819813
       }
     ],
     "model_version": "v1"
@@ -1522,20 +1522,20 @@
     "cell_id": "-3.15_111.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007823121990705045,
+    "risk_score": 0.005616622076052152,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 9.18461316397564
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.37669240459571124
+      },
+      {
         "feature": "nearest_hotspot_km",
-        "contribution": 0.4612004118116648
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3295599106472294
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": -0.13958043147490587
+        "contribution": 0.18907248066843102
       }
     ],
     "model_version": "v1"
@@ -1545,20 +1545,20 @@
     "cell_id": "-3.45_111.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007824995219373531,
+    "risk_score": 0.0056464172752292915,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 9.815958028936329
+      },
+      {
         "feature": "nearest_hotspot_km",
-        "contribution": 0.5899137523468428
+        "contribution": 0.24120526722687438
       },
       {
         "feature": "vpd_mean_24h",
-        "contribution": 0.43899835635186263
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": 0.20359452030852598
+        "contribution": 0.19097654207904458
       }
     ],
     "model_version": "v1"
@@ -1568,20 +1568,20 @@
     "cell_id": "-3.35_113.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007819621545361494,
+    "risk_score": 0.005588683142478557,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 1.7888590315790256
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.6188997827491243
+      },
+      {
         "feature": "nearest_hotspot_km",
-        "contribution": 0.586135736497019
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.474598814593129
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": 0.1938293794041194
+        "contribution": 0.23967505681438456
       }
     ],
     "model_version": "v1"
@@ -1591,20 +1591,20 @@
     "cell_id": "-3.35_113.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007825985521012097,
+    "risk_score": 0.006369601059988151,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.4741593027629896
+        "feature": "days_since_rain",
+        "contribution": 1.7888590315790256
       },
       {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.27073516268654246
+        "feature": "vpd_mean_24h",
+        "contribution": 0.20725031889259837
       },
       {
         "feature": "sm_27_81",
-        "contribution": 0.1938293794041194
+        "contribution": 0.1239762101645175
       }
     ],
     "model_version": "v1"
@@ -1614,20 +1614,20 @@
     "cell_id": "-3.35_113.75",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007800363184341287,
+    "risk_score": 0.006145263340208689,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "frp_sum_10km_7d",
-        "contribution": 0.5060834247875861
+        "feature": "hotspots_10km_7d",
+        "contribution": 2.1381054761291587
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 1.7888590315790256
       },
       {
         "feature": "vpd_mean_24h",
-        "contribution": 0.47415930276299006
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.46650905209206617
+        "contribution": 0.2072503188925986
       }
     ],
     "model_version": "v1"
@@ -1637,20 +1637,20 @@
     "cell_id": "-3.35_112.65",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007817927660828209,
+    "risk_score": 0.005564913735301823,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 7.1101943219619566
+      },
+      {
         "feature": "nearest_hotspot_km",
-        "contribution": 0.589313055180833
+        "contribution": 0.24096196674992584
       },
       {
         "feature": "vpd_mean_24h",
-        "contribution": 0.4236154422969944
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": 0.19243435927491845
+        "contribution": 0.1838567647231147
       }
     ],
     "model_version": "v1"
@@ -1660,20 +1660,20 @@
     "cell_id": "-3.35_112.55",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007824995219373531,
+    "risk_score": 0.006005525108449521,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 7.1101943219619566
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.4934978232891098
+        "contribution": 0.21620089614005308
       },
       {
         "feature": "nearest_hotspot_km",
-        "contribution": 0.4626088646448503
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": 0.18685427875811467
+        "contribution": 0.18964294656283473
       }
     ],
     "model_version": "v1"
@@ -1683,20 +1683,20 @@
     "cell_id": "-3.35_112.45",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007824967924286367,
+    "risk_score": 0.005847932486555114,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.4983711087448666
+        "feature": "days_since_rain",
+        "contribution": 7.1101943219619566
       },
       {
         "feature": "vpd_mean_24h",
-        "contribution": 0.4934978232891098
+        "contribution": 0.21620089614005308
       },
       {
-        "feature": "sm_27_81",
-        "contribution": 0.18685427875811467
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.20412773447032873
       }
     ],
     "model_version": "v1"
@@ -1706,20 +1706,20 @@
     "cell_id": "-3.35_111.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007809431914531645,
+    "risk_score": 0.005548634790972269,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 47.4100062641627
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 9.815958028936329
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 33.81993955293467
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.439437868182002
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.21557666272149778
+        "contribution": 4.533160796610375
       }
     ],
     "model_version": "v1"
@@ -1729,20 +1729,20 @@
     "cell_id": "-3.35_111.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007830922570557756,
+    "risk_score": 0.005622018409591705,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 9.815958028936329
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.5112520591253851
+      },
+      {
         "feature": "nearest_hotspot_km",
-        "contribution": 0.5954495383649656
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.43987738001214094
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": -0.14516051199170962
+        "contribution": 0.2434474275943706
       }
     ],
     "model_version": "v1"
@@ -1752,20 +1752,20 @@
     "cell_id": "-3.25_114.25",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.00782545992005713,
+    "risk_score": 0.005560258050637467,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "frp_sum_10km_7d",
-        "contribution": 1.0394700682823594
+        "feature": "hotspots_10km_7d",
+        "contribution": 3.208168585664497
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 1.7888590315790256
       },
       {
         "feature": "vpd_mean_24h",
-        "contribution": 0.5967831033717961
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.45953419727506817
+        "contribution": 0.2640051155298677
       }
     ],
     "model_version": "v1"
@@ -1775,20 +1775,20 @@
     "cell_id": "-3.25_114.05",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007818285154179807,
+    "risk_score": 0.006373618117722961,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 1.7888590315790256
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.4864656340068844
+        "contribution": 0.21294614077734236
       },
       {
         "feature": "nearest_hotspot_km",
-        "contribution": 0.47341564733921776
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": 0.1938293794041194
+        "contribution": 0.19402001962493087
       }
     ],
     "model_version": "v1"
@@ -1798,20 +1798,20 @@
     "cell_id": "-3.25_113.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007826165125065905,
+    "risk_score": 0.00575741118900639,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 4.689794429636504
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 1.7888590315790256
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 1.7068797801555804
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.49718911399591176
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.4864656340068844
+        "contribution": 0.22878071310429038
       }
     ],
     "model_version": "v1"
@@ -1821,20 +1821,20 @@
     "cell_id": "-3.25_113.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.00783032783446819,
+    "risk_score": 0.005628426871300844,
     "risk_level": "LOW",
     "top_factors": [
       {
-        "feature": "frp_sum_10km_7d",
-        "contribution": 0.5303711733293834
+        "feature": "days_since_rain",
+        "contribution": 1.7888590315790256
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.42317593046685525
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.72654274169249
       },
       {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.3225759962625027
+        "feature": "peat_fraction",
+        "contribution": 0.20723622470242142
       }
     ],
     "model_version": "v1"
@@ -1844,20 +1844,20 @@
     "cell_id": "-3.25_113.75",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007825256684316231,
+    "risk_score": 0.0057281449626356085,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 1.7888590315790256
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.3149800072558215
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.44515152197380986
-      },
-      {
-        "feature": "frp_sum_10km_7d",
-        "contribution": 0.40326948406911806
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.29044621216568695
+        "contribution": 0.19382445302141652
       }
     ],
     "model_version": "v1"
@@ -1867,20 +1867,20 @@
     "cell_id": "-3.45_111.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007824995219373531,
+    "risk_score": 0.0056464172752292915,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 9.815958028936329
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.24213275006603732
+      },
+      {
         "feature": "nearest_hotspot_km",
-        "contribution": 0.5827938221884689
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.43899835635186263
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": 0.20359452030852598
+        "contribution": 0.23832148068451448
       }
     ],
     "model_version": "v1"
@@ -1890,20 +1890,20 @@
     "cell_id": "-3.25_112.75",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007826029579194382,
+    "risk_score": 0.005582596926501128,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 7.1101943219619566
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.4091115519024045
+        "contribution": 0.1771438317875238
       },
       {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.23796253738782527
-      },
-      {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.19117869445113517
+        "feature": "peat_fraction",
+        "contribution": -0.14552851230742653
       }
     ],
     "model_version": "v1"
@@ -1913,20 +1913,20 @@
     "cell_id": "-3.25_112.55",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007817847641223168,
+    "risk_score": 0.005616003415540659,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 19.752990510018577
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 7.1101943219619566
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 9.426860205265774
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.4934978232891098
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.4425411527710332
+        "contribution": 1.2635537998803008
       }
     ],
     "model_version": "v1"
@@ -1936,20 +1936,20 @@
     "cell_id": "-3.25_112.45",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007822794198103463,
+    "risk_score": 0.005854747645433858,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 22.222366916638588
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 7.1101943219619566
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 11.6910950013208
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.5172447588932505
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.4934978232891098
+        "contribution": 1.5670479928809347
       }
     ],
     "model_version": "v1"
@@ -1959,20 +1959,20 @@
     "cell_id": "-3.25_112.35",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.00782989719806055,
+    "risk_score": 0.005772145927723642,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 7.1101943219619566
+      },
+      {
         "feature": "nearest_hotspot_km",
-        "contribution": 0.578763401910428
+        "contribution": 0.2366890388628487
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.4086720400722656
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": 0.17429909759530618
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.1883088882541678
       }
     ],
     "model_version": "v1"
@@ -1982,20 +1982,20 @@
     "cell_id": "-3.25_112.25",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007842647101914287,
+    "risk_score": 0.005643273483381223,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 7.1101943219619566
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.504925130872726
+        "contribution": 0.22148987360445804
       },
       {
         "feature": "nearest_hotspot_km",
-        "contribution": 0.3572436505673505
-      },
-      {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.20499348485910857
+        "contribution": 0.14696685569806744
       }
     ],
     "model_version": "v1"
@@ -2005,20 +2005,20 @@
     "cell_id": "-3.25_112.15",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007822794198103463,
+    "risk_score": 0.005918515996624072,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 96.87984694345027
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 109.5431619516261
+        "contribution": 14.682973136452132
       },
       {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.5150339029659252
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.38895243562255016
+        "feature": "days_since_rain",
+        "contribution": 7.1101943219619566
       }
     ],
     "model_version": "v1"
@@ -2028,20 +2028,20 @@
     "cell_id": "-3.25_112.05",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007803525048672553,
+    "risk_score": 0.0055966635766813815,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 120.00967261879106
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 113.61903627103845
+        "contribution": 15.229296419486777
       },
       {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.5948788442267434
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3849384012447548
+        "feature": "days_since_rain",
+        "contribution": 9.815958028936329
       }
     ],
     "model_version": "v1"
@@ -2051,20 +2051,20 @@
     "cell_id": "-3.25_111.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007824154967418444,
+    "risk_score": 0.0055519367617061725,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 78.44183644068752
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 9.815958028936329
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 67.36050230801571
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.5654961433052705
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3893335195461456
+        "contribution": 9.028880959499817
       }
     ],
     "model_version": "v1"
@@ -2074,20 +2074,20 @@
     "cell_id": "-3.25_111.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007821772068834415,
+    "risk_score": 0.005823200418194414,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 9.815958028936329
+      },
+      {
         "feature": "nearest_hotspot_km",
-        "contribution": 0.5672673195789807
+        "contribution": 0.23203277864963612
       },
       {
         "feature": "vpd_mean_24h",
-        "contribution": 0.3844988894146155
-      },
-      {
-        "feature": "sm_27_81",
-        "contribution": -0.13539537108730304
+        "contribution": 0.1657521880180361
       }
     ],
     "model_version": "v1"
@@ -2097,20 +2097,20 @@
     "cell_id": "-3.15_112.45",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.00782704449336589,
+    "risk_score": 0.005560422546666097,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 11.933298555721874
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 9.815958028936329
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 6.268005697377673
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.377027188302251
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.35047227513754575
+        "contribution": 0.8401462975540204
       }
     ],
     "model_version": "v1"
@@ -2120,20 +2120,20 @@
     "cell_id": "-3.15_112.35",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.0078185592445371,
+    "risk_score": 0.005632866129756925,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 25.267931151469934
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 9.815958028936329
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 11.796048277403317
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.5218857935282877
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.32208820953486494
+        "contribution": 1.5811157520563233
       }
     ],
     "model_version": "v1"
@@ -2143,20 +2143,20 @@
     "cell_id": "-3.15_112.25",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007823503661297455,
+    "risk_score": 0.005588261833284967,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 99.26691080318297
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 9.815958028936329
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 59.82475641070382
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.5622298674143822
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.322967233195143
+        "contribution": 8.018802356455978
       }
     ],
     "model_version": "v1"
@@ -2166,20 +2166,20 @@
     "cell_id": "-3.15_112.15",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007821659049818004,
+    "risk_score": 0.005647731926420848,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 135.64905652738446
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 86.2216379347005
+        "contribution": 11.556995599407989
       },
       {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.5899527407785242
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.35812817960627036
+        "feature": "days_since_rain",
+        "contribution": 9.18461316397564
       }
     ],
     "model_version": "v1"
@@ -2189,20 +2189,20 @@
     "cell_id": "-3.15_112.05",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007796140278627804,
+    "risk_score": 0.005632813158242283,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 73.09152089301084
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 75.08828501503979
+        "contribution": 10.064699850914614
       },
       {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.5259142897939599
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.33395502894862045
+        "feature": "days_since_rain",
+        "contribution": 9.18461316397564
       }
     ],
     "model_version": "v1"
@@ -2212,20 +2212,20 @@
     "cell_id": "-3.15_111.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007824382732906768,
+    "risk_score": 0.005588230578521526,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 43.70594165423269
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 9.18461316397564
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 39.43525443147757
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.5707500325330127
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.3295599106472294
+        "contribution": 5.285828082033725
       }
     ],
     "model_version": "v1"
@@ -2235,20 +2235,20 @@
     "cell_id": "-3.25_112.65",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.00781898658507481,
+    "risk_score": 0.005928442423964551,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "hotspots_10km_7d",
+        "contribution": 18.847552494257908
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 9.815958028936329
+      },
+      {
         "feature": "frp_sum_10km_7d",
-        "contribution": 9.019190975207602
-      },
-      {
-        "feature": "vpd_mean_24h",
-        "contribution": 0.4820705157054936
-      },
-      {
-        "feature": "nearest_hotspot_km",
-        "contribution": 0.24836929567347055
+        "contribution": 1.208910507495933
       }
     ],
     "model_version": "v1"
@@ -2258,20 +2258,20 @@
     "cell_id": "-3.45_112.55",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.007813619213694356,
+    "risk_score": 0.007839916905490124,
     "risk_level": "LOW",
     "top_factors": [
       {
+        "feature": "days_since_rain",
+        "contribution": 7.1101943219619566
+      },
+      {
         "feature": "vpd_mean_24h",
-        "contribution": 0.49481635877952707
+        "contribution": 0.21681116277056137
       },
       {
-        "feature": "sm_27_81",
-        "contribution": 0.18685427875811467
-      },
-      {
-        "feature": "sm_27_81_delta_7d",
-        "contribution": -0.1497343232272138
+        "feature": "peat_fraction",
+        "contribution": -0.12349326532570193
       }
     ],
     "model_version": "v1"

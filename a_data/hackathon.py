@@ -15,6 +15,10 @@ from a_data.common import ROOT, utc_now, write_json, write_parquet
 def prepare(output_dir: Path) -> dict:
     cells = pd.read_parquet(output_dir / "cells.parquet")
     cells = cells[cells["province"] == "Central Kalimantan"]
+    existing_scope = output_dir / "hackathon/scope.json"
+    if existing_scope.exists():
+        original_ids = set(json.loads(existing_scope.read_text(encoding="utf-8"))["cell_ids"])
+        cells = cells[cells["cell_id"].isin(original_ids)]
     frames, selected = [], []
     for row in cells.to_dict("records"):
         path = output_dir / "cache/normalized_weather" / f"{row['cell_id']}.parquet"

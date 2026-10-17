@@ -1,0 +1,13 @@
+{
+  "updated_at": "2026-10-17T08:34:39Z",
+  "is_mock": false,
+  "status": "complete",
+  "model": "icon_global",
+  "start_date_with_warmup": "2024-11-02",
+  "end_date": "2026-10-16",
+  "expected_cells": 40,
+  "completed_cells": 40,
+  "last_cell_id": "-0.85_109.35",
+  "error": null,
+  "completed_rows": 685440
+}

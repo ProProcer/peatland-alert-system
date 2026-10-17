@@ -1,0 +1,67 @@
+paths:
+  history: /content/drive/MyDrive/peat_fire_alert_system/history.parquet
+  model_dir: /content/peatland-alert-system/b_model/models
+horizons:
+- 24
+- 48
+- 72
+seed: 42
+split:
+  train_ratio: 0.55
+  calibration_ratio: 0.2
+  embargo_hours: 72
+  strict_embargo: true
+baseline:
+  features:
+  - peat_fraction
+  - peat_area_km2
+  - temp_c
+  - precip_mm
+  max_iter: 500
+  c: 1.0
+  z_score_clip: 3.0
+model:
+  backend: xgboost
+  class_weight: balanced
+  max_iter: 150
+  learning_rate: 0.05
+  max_depth: 4
+  min_samples_leaf: 25
+  l2_regularization: 2.0
+  logistic_max_iter: 500
+  logistic_c: 1.0
+  colsample_bytree: 0.7
+  cold_start_multiplier: 5.0
+dryness:
+  rain_weight: 0.4
+  soil_weight: 0.4
+  air_weight: 0.2
+  rainless_days_cap: 30.0
+  soil_moisture_reference: 0.5
+  vpd_reference_kpa: 3.5
+  missing_days_since_rain: 0.0
+  missing_soil_moisture: 0.3
+  missing_vpd_kpa: 1.5
+explanation:
+  method: signed_standardized
+  importance_split: calibration
+  permutation_repeats: 5
+  priority_multipliers:
+    days_since_rain: 3.0
+    sm_27_81: 3.0
+    vpd_mean_24h: 2.5
+    sm_27_81_delta_7d: 2.5
+    vpd_kpa: 2.0
+    rain_24h_mm: 2.5
+    sm_0_1: 2.0
+    hotspots_10km_7d: 2.0
+    peat_fraction: 2.0
+    et_mm: 0.05
+    et0_mm: 0.05
+    wind_dir_deg: 0.05
+    soil_air_temp_gap_c: 0.05
+  top_k: 3
+  z_score_clip: null
+  contribution_clip: null
+calibration:
+  method: sigmoid

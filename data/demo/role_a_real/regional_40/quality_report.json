@@ -1,0 +1,298 @@
+{
+  "generated_at": "2026-10-17T08:36:08Z",
+  "is_mock": false,
+  "mode": "historical_replay",
+  "snapshot": "2026-10-16T00:00:00Z",
+  "history_rows": 656640,
+  "cells": 40,
+  "first_hour": "2024-12-02T00:00:00Z",
+  "last_hour": "2026-10-16T23:00:00Z",
+  "missing_values": {
+    "peat_fraction": 0,
+    "peat_area_km2": 0,
+    "temp_c": 0,
+    "precip_mm": 0,
+    "wind_kmh": 0,
+    "wind_dir_deg": 0,
+    "sm_0_1": 0,
+    "sm_1_3": 0,
+    "sm_3_9": 0,
+    "sm_9_27": 0,
+    "sm_27_81": 0,
+    "vpd_kpa": 0,
+    "soil_temp_0_c": 0,
+    "soil_temp_18_c": 0,
+    "et_mm": 0,
+    "et0_mm": 0,
+    "rain_24h_mm": 0,
+    "rain_7d_mm": 0,
+    "rain_30d_mm": 0,
+    "days_since_rain": 0,
+    "sm_27_81_delta_7d": 0,
+    "vpd_mean_24h": 0,
+    "soil_air_temp_gap_c": 0,
+    "hotspots_in_cell_24h": 960,
+    "hotspots_10km_7d": 104208,
+    "frp_sum_10km_7d": 104208,
+    "nearest_hotspot_km": 241719,
+    "target_24h": 960,
+    "target_48h": 1920,
+    "target_72h": 2880
+  },
+  "entirely_missing_features": [],
+  "rows_with_all_targets": 653760,
+  "target_counts": {
+    "target_24h": {
+      "0": 626507,
+      "1": 29173,
+      "<NA>": 960
+    },
+    "target_48h": {
+      "0": 615382,
+      "1": 39338,
+      "<NA>": 1920
+    },
+    "target_72h": {
+      "0": 607390,
+      "1": 46370,
+      "<NA>": 2880
+    }
+  },
+  "spatial_coverage": [
+    {
+      "cell_id": "-0.05_110.25",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 105.9291719778781
+    },
+    {
+      "cell_id": "-0.05_116.35",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 113.18083331091373
+    },
+    {
+      "cell_id": "-0.15_116.55",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 95.03064504991117
+    },
+    {
+      "cell_id": "-0.15_116.85",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 63.578268372939434
+    },
+    {
+      "cell_id": "-0.25_116.15",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 106.64419845310964
+    },
+    {
+      "cell_id": "-0.85_109.35",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 6.647584922520977
+    },
+    {
+      "cell_id": "-1.55_110.15",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 12.162194603687945
+    },
+    {
+      "cell_id": "-1.55_114.75",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 164.30075950960585
+    },
+    {
+      "cell_id": "-2.05_114.15",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 136.05081357131314
+    },
+    {
+      "cell_id": "-2.25_115.05",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 134.89050659259644
+    },
+    {
+      "cell_id": "-2.25_115.25",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 115.70183132625229
+    },
+    {
+      "cell_id": "-2.35_115.15",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 119.97373499678528
+    },
+    {
+      "cell_id": "-2.45_111.65",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 44.78197314241858
+    },
+    {
+      "cell_id": "-2.45_115.35",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 95.13682191871517
+    },
+    {
+      "cell_id": "-2.55_113.35",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 57.731770018461354
+    },
+    {
+      "cell_id": "-2.55_114.95",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 116.74001712666312
+    },
+    {
+      "cell_id": "-2.65_114.85",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 101.55836706994924
+    },
+    {
+      "cell_id": "-2.65_114.95",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 107.28429118132267
+    },
+    {
+      "cell_id": "-2.75_114.85",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 92.10127745554023
+    },
+    {
+      "cell_id": "-2.85_110.85",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 15.069089198054451
+    },
+    {
+      "cell_id": "-2.95_110.85",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 5.534415547248791
+    },
+    {
+      "cell_id": "-3.05_114.95",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 71.2128001060131
+    },
+    {
+      "cell_id": "-3.25_112.15",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 10.72155886416706
+    },
+    {
+      "cell_id": "-3.25_114.25",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 13.12552630216414
+    },
+    {
+      "cell_id": "0.05_116.65",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 90.06194648794904
+    },
+    {
+      "cell_id": "0.05_116.85",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 67.86218450391566
+    },
+    {
+      "cell_id": "0.15_111.65",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 89.16549664393663
+    },
+    {
+      "cell_id": "0.15_116.55",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 101.16171088610461
+    },
+    {
+      "cell_id": "0.25_109.15",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 5.233813178992127
+    },
+    {
+      "cell_id": "0.75_112.95",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 72.65065705942531
+    },
+    {
+      "cell_id": "1.35_118.55",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 1.3718067101659686
+    },
+    {
+      "cell_id": "1.45_109.15",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 12.420644729585296
+    },
+    {
+      "cell_id": "3.55_117.05",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 25.74566880861959
+    },
+    {
+      "cell_id": "3.55_117.25",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 4.5023693445571515
+    },
+    {
+      "cell_id": "3.65_117.15",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 15.021659076963243
+    },
+    {
+      "cell_id": "3.65_117.35",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 2.0180229212434306
+    },
+    {
+      "cell_id": "3.75_116.85",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 50.11563142408237
+    },
+    {
+      "cell_id": "3.75_117.05",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 29.55047808524281
+    },
+    {
+      "cell_id": "3.85_117.35",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 23.435973137119138
+    },
+    {
+      "cell_id": "3.95_117.15",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 33.75974228845014
+    }
+  ],
+  "definitions": {
+    "schema_version": "1.0",
+    "scope": "All Indonesian Kalimantan",
+    "start_date": "2024-12-02",
+    "end_date": "2026-10-17",
+    "grid_size_deg": 0.1,
+    "minimum_peat_fraction": 0.05,
+    "horizons_h": [
+      24,
+      48,
+      72
+    ],
+    "weather_model": "icon_global",
+    "weather_historical_end_date": "2026-10-16",
+    "nearest_hotspot_lookback_h": 168,
+    "soil_air_temp_gap_formula": "soil_temp_18_c - temp_c",
+    "definitions_status": "Human approved on 2026-10-17; human will confirm with Role B",
+    "firms_export_coverage": {
+      "start": "2024-12-02T00:00:00Z",
+      "end_exclusive": "2026-10-17T00:00:00Z",
+      "scope": "All Indonesian Kalimantan",
+      "status": "human_declared_complete_local_J1V_J2V_exports",
+      "confirmation_date": "2026-10-17",
+      "confirmation": "Yes, use that as the declared export coverage",
+      "limitation": "Declared export completeness, not independently audited satellite observation availability. Geographic coverage outside Kalimantan is unconfirmed."
+    },
+    "replay_snapshot": "2026-10-16T00:00:00Z",
+    "weather_daily_budget": 8000
+  },
+  "notes": [
+    "Coverage is human-declared export completeness; satellite observation availability is not independently verified.",
+    "10km features stay null where the required disk crosses the declared regional boundary.",
+    "Nearest distance stays null when an unobserved source outside the declared region could be nearer.",
+    "Incomplete future windows remain null. No model has been trained or evaluated by Role A."
+  ]
+}

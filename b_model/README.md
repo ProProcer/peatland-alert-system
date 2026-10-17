@@ -1,5 +1,47 @@
 # Role B — ML lead
 
+## Uploaded XGBoost integration repair
+
+The active `b_model/model/` upload has been integrated with the processed 33-cell
+replay. Its actual bundles declare schema `1.0`, model version `v1`, and the 29
+canonical-plus-leading-indicator predictors. The supplied top-level manifest
+listed a different version and unrelated feature names. Those supplied fields
+are retained, while authoritative `models` entries now match each real bundle.
+
+The Linux-trained XGBoost 3.4.1 pickle also failed on Windows with
+`input stream corrupted`, matching the RNG snapshot portability issue described
+by [XGBoost maintainers](https://github.com/dmlc/xgboost/issues/12459).
+`repair_artifacts.py` explicitly converts trusted snapshots through stable
+Model IO, verifies equality of every stored model field, and retains the original
+imputer, scaler, explanations and calibration. `portable_xgboost.PortableBooster`
+persists the inference model in UBJSON without training RNG state; it is not a
+checkpoint for exactly resuming stochastic training. Inference uses the normal
+loader and performs no monkeypatching or error suppression.
+
+Original uploads, previous processed feeds, and conversion checks are backed up
+under `b_model/runs/uploaded_xgboost_integration_backup_02/`. Results and current
+artifact/feed fingerprints are recorded in `b_model/model/integration_check.json`.
+The run produced **99 LOW predictions, zero dispatch records and zero new
+simulated notifications**. No probabilities or risk thresholds were adjusted.
+
+```bash
+# Reproduce inference using the installed/declared dependencies.
+uv run --no-project --with-requirements b_model/requirements-training.txt python -m b_model.predict paths.features=data/processed/features.json paths.model_dir=b_model/model paths.output=data/processed/risk.json
+python -m c_agent.agent --data-dir data/processed --output data/processed/dispatch.json --water-sources data/demo/role_a_real/water_sources.geojson
+python -m contracts.validate --data-dir data/processed
+```
+
+Conversion-only library: [py-ubjson](https://github.com/Iotic-Labs/py-ubjson)
+(Apache-2.0), used to decode complete UBJSON snapshots during explicit recovery.
+It is not required for normal inference. Role E should add it to the root
+dependency inventory if this repair tooling is distributed.
+
+For another *new, trusted* upload, use a fresh backup path:
+
+```bash
+uv run --no-project --with-requirements b_model/requirements-training.txt --with py-ubjson python -m b_model.repair_artifacts --model-dir b_model/model --backup-dir b_model/runs/new_upload_backup
+```
+
 ## Early-warning ensemble training
 
 `train.py` now defaults to Snap ML boosting when installed, otherwise XGBoost.
