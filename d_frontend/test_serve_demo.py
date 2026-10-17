@@ -33,12 +33,12 @@ class DemoServerTests(unittest.TestCase):
                     catalog = {row['id']: row for row in json.loads(body)['datasets']}
                     self.assertIn('risk.json', catalog['mock']['files'])
                     self.assertNotIn('risk.json', catalog['replay']['files'])
-                    coverage = demo / 'central_coverage'
-                    coverage.mkdir()
+                    coverage = demo / 'role_a_real/regional_40'
+                    coverage.mkdir(parents=True)
                     for name in ['features.json', 'cells.geojson']:
                         shutil.copyfile(ROOT / 'd_frontend/mocks' / name, coverage / name)
                     (coverage / 'build_status.json').write_text('{"state":"running"}')
-                    self.assertNotIn('coverage', [row['id'] for row in json.loads(get('/demo/catalog.json')[1])['datasets']])
+                    self.assertEqual(next(row for row in json.loads(get('/demo/catalog.json')[1])['datasets'] if row['id'] == 'coverage')['cell_count'], 3)
                     (coverage / 'build_status.json').write_text('{"state":"complete"}')
                     self.assertIn('coverage', [row['id'] for row in json.loads(get('/demo/catalog.json')[1])['datasets']])
                     self.assertEqual(get('/demo/replay/features.json')[0], 200)

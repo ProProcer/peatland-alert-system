@@ -1,3 +1,7 @@
+The peatland highlight now covers the supplied mapped peat polygons across all five Indonesian Kalimantan provinces, clipped to their combined administrative boundary. Rebuild with `.venv/Scripts/python.exe d_frontend/extract_peatland.py`. Polygon holes are preserved; this shows the supplied dataset extent, not a guarantee of complete contemporary peat coverage. This supersedes the Central Kalimantan mask described below.
+
+Current dataset: the website loads 40 unique cells from `data/demo/role_a_real/regional_40/`, timestamp `2026-10-16T00:00:00Z`. No risk or dispatch files are currently supplied for this dataset; markers remain visible with unavailable predictions. Rebuild the static copy with `python -m d_frontend.export_coverage`. Start with `python -m d_frontend.serve_demo` and open http://127.0.0.1:8001. The earlier 33-cell workflows below are retained as historical documentation.
+
 # Role D — Frontend / alerts
 
 ## Interface

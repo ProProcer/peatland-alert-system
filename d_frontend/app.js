@@ -24,13 +24,13 @@ function peatGeometryPaths(geometry) {
 }
 async function loadPeatland() {
   try {
-    const response = await fetch("assets/peatland.geojson");
+    const response = await fetch("assets/peatland.geojson?v=kalimantan-green-2", { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     peatland = await response.json();
     peatlandPaths = peatland.features.flatMap(feature => peatGeometryPaths(feature.geometry));
     provincePaths = peatland.scope_boundary ? peatGeometryPaths(peatland.scope_boundary) : [];
     if (!peatlandPaths.length) throw new Error('No polygon geometry found in the peatland dataset');
-    document.querySelector("#peat-status").textContent = "Highlighted peatland: source polygons clipped to the Central Kalimantan province boundary. Areas outside the province and non-peat areas remain gray.";
+    document.querySelector("#peat-status").textContent = "Highlighted peatland: source polygons clipped to all five Indonesian Kalimantan provinces. Areas outside this scope and non-peat areas remain gray.";
     if (feeds.risk) renderMap(Number(document.querySelector("#horizon").value));
   } catch (error) {
     document.querySelector("#peat-status").textContent = `Peatland boundaries unavailable (${error.message}). Risk shading is hidden to avoid showing non-peat areas as peatland.`;
@@ -137,7 +137,7 @@ function renderMap(horizon) {
     const measurements = featureRow ? ` Feature time: ${featureRow.ts}. Peat coverage: ${(featureRow.peat.peat_fraction * 100).toFixed(1)}%. Temperature: ${reading(featureRow.weather.temp_c, '°C')}. Deep soil moisture: ${reading(featureRow.weather.sm_27_81, 'm³/m³')}. Rain in 24h: ${reading(featureRow.derived.rain_24h_mm, 'mm')}.` : '';
     const description = (risk ? `${id}: ${risk.risk_level}, score ${risk.risk_score.toFixed(2)}, ${horizon}h. ${risk.top_factors.map(f => `${f.feature}: ${f.contribution}`).join(", ")}. Timestamp: ${risk.ts}.` : `${id}: no prediction for ${horizon}h.`) + measurements;
     const path = feature.geometry.coordinates.map(ring => ring.map((point, index) => `${index ? "L" : "M"}${project(point).join(",")}`).join(" ") + " Z").join(" ");
-    const cell = svgElement("path", { d: path, fill: mapColors[risk?.risk_level] || "#bdcdb8", "fill-rule": "evenodd", class: "map-cell", tabindex: 0, role: "button", "aria-label": description, "aria-pressed": selectedCell === id });
+    const cell = svgElement("path", { d: path, fill: mapColors[risk?.risk_level] || "transparent", "fill-rule": "evenodd", class: "map-cell", tabindex: 0, role: "button", "aria-label": description, "aria-pressed": selectedCell === id });
     const title = svgElement("title", {});
     title.textContent = description;
     cell.append(title);
@@ -166,7 +166,7 @@ function renderMap(horizon) {
     if (selectedCell === id) document.querySelector("#map-detail").textContent = description;
   }
   if (!regionalCells().length) document.querySelector("#map-detail").textContent = "No cell geometry is available within the Kalimantan regional bounds.";
-  const provinceLayer = svgElement('g', { class: 'province-boundary', role: 'img', 'aria-label': 'Central Kalimantan monitoring boundary' });
+  const provinceLayer = svgElement('g', { class: 'province-boundary', role: 'img', 'aria-label': 'Kalimantan monitoring boundary' });
   for (const d of provincePaths) provinceLayer.append(svgElement('path', { d }));
   map.append(provinceLayer);
   updateRiskLabels();
@@ -253,7 +253,7 @@ function element(tag, text, className) {
 
 async function loadFeed(filename, dataset) {
   if (dataset?.bundled) {
-    if (!(filename in dataset.bundled)) throw new Error(`${filename} is missing from the 33-cell snapshot`);
+    if (!(filename in dataset.bundled)) throw new Error(`${filename} is missing from the 40-cell snapshot`);
     return { data: dataset.bundled[filename], label: dataset.label, url: 'assets/coverage-snapshot.json' };
   }
   if (dataset) {
@@ -266,7 +266,7 @@ async function loadFeed(filename, dataset) {
     if (!response.ok) throw new Error(`${filename}: HTTP ${response.status}`);
     return { data: await response.json(), label: dataset.label, url };
   }
-  throw new Error('The 33-cell dataset is unavailable. Start python -m d_frontend.serve_demo.');
+  throw new Error('The 40-cell dataset is unavailable. Start python -m d_frontend.serve_demo.');
 }
 
 function validateFeedSet(entries) {
@@ -294,7 +294,7 @@ async function discoverDatasets() {
   }
   if (!demoDatasets.length) {
     const response = await fetch('assets/coverage-snapshot.json', { cache: 'no-store' });
-    if (!response.ok) throw new Error('The real 33-cell snapshot could not be loaded. Run python -m d_frontend.export_coverage.');
+    if (!response.ok) throw new Error('The real 40-cell snapshot could not be loaded. Run python -m d_frontend.export_coverage.');
     const snapshot = await response.json();
     if (snapshot.id !== 'coverage') throw new Error('Unexpected bundled dataset');
     demoDatasets = [{ ...snapshot, bundled: snapshot.feeds }];
@@ -422,7 +422,7 @@ async function reload() {
       document.querySelector('#dataset-info').textContent = `${dataset.description} Feature time: ${times.join(', ')}. ${feeds.cells.data.features.length} monitored cells. Weather and soil moisture are modeled; all notifications are simulated.`;
       if (focusedDataset !== dataset.id) {
         focusedDataset = dataset.id;
-        document.querySelector('#map-cells').click();
+        document.querySelector('#map-reset').click();
       }
     }
     status.textContent = `${feeds.cells.data.features.length} cells · ${feeds.features.data.length} feature records · ${feeds.risk.data.length} predictions · ${feeds.dispatch.data.length} simulated dispatches`;
@@ -488,8 +488,27 @@ if ('IntersectionObserver' in window) {
   for (const id of ['overview', 'map-section', 'risk-section', 'dispatch-section', 'data-notes']) observer.observe(document.getElementById(id));
 }
 function showStartupError(error) {
-  const message = `Could not load the 33-cell map: ${error.message}`;
+  const message = `Could not load the 40-cell map: ${error.message}`;
   document.querySelector('#status').textContent = message;
   document.querySelector('#map-detail').textContent = message;
 }
 discoverDatasets().then(reload).catch(showStartupError);
+
+
+const sidebarToggle = document.querySelector('#sidebar-toggle');
+const sidebar = document.querySelector('#sidebar');
+function setSidebarOpen(open) {
+  sidebar.hidden = !open;
+  document.body.classList.toggle('sidebar-closed', !open);
+  sidebarToggle.setAttribute('aria-expanded', String(open));
+  const label = open ? 'Close navigation' : 'Open navigation';
+  sidebarToggle.setAttribute('aria-label', label);
+  sidebarToggle.title = label;
+}
+sidebarToggle.addEventListener('click', () => setSidebarOpen(sidebar.hidden));
+sidebar.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    setSidebarOpen(false);
+    sidebarToggle.focus();
+  }
+});
