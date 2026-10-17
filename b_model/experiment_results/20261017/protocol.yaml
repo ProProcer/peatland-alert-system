@@ -1,0 +1,64 @@
+history: data/demo/role_a_real/hackathon/history.parquet
+events: data/demo/role_a_real/firms_normalized.parquet
+features: data/demo/role_a_real/hackathon/features.json
+previous_model_dir: b_model/model_real_2025
+output_dir: b_model/runs/chronological_experiment
+seed: 42
+embargo_hours: 72
+calibration_methods:
+- sigmoid
+- isotonic
+development:
+- name: archive_2025
+  train_end: '2025-06-28T00:00:00Z'
+  calibration_start: '2025-07-01T00:00:00Z'
+  calibration_end: '2025-08-01T00:00:00Z'
+  validation_start: '2025-08-04T00:00:00Z'
+  validation_end: '2025-11-01T00:00:00Z'
+- name: archive_2026
+  train_end: '2025-12-29T00:00:00Z'
+  calibration_start: '2026-01-01T00:00:00Z'
+  calibration_end: '2026-04-01T00:00:00Z'
+  validation_start: '2026-04-04T00:00:00Z'
+  validation_end: '2026-07-01T00:00:00Z'
+- name: nrt_transition
+  train_end: '2026-06-28T00:00:00Z'
+  calibration_start: '2026-07-01T00:00:00Z'
+  calibration_end: '2026-08-01T00:00:00Z'
+  validation_start: '2026-08-04T00:00:00Z'
+  validation_end: '2026-09-01T00:00:00Z'
+final:
+  name: final_2026
+  train_end: '2026-09-01T00:00:00Z'
+  calibration_start: '2026-09-04T00:00:00Z'
+  calibration_end: '2026-09-19T00:00:00Z'
+  validation_start: '2026-09-22T00:00:00Z'
+  validation_end: '2026-10-14T00:00:00Z'
+candidates:
+- name: lr_c0001
+  backend: logistic_regression
+  c: 0.001
+- name: lr_c001
+  backend: logistic_regression
+  c: 0.01
+- name: lr_c01
+  backend: logistic_regression
+  c: 0.1
+- name: boost_stumps
+  backend: hist_gradient_boosting
+  max_depth: 1
+  max_iter: 60
+  min_samples_leaf: 250
+  l2_regularization: 10.0
+- name: boost_shallow
+  backend: hist_gradient_boosting
+  max_depth: 2
+  max_iter: 75
+  min_samples_leaf: 250
+  l2_regularization: 20.0
+- name: boost_smooth
+  backend: hist_gradient_boosting
+  max_depth: 2
+  max_iter: 75
+  min_samples_leaf: 1000
+  l2_regularization: 50.0

@@ -1,0 +1,46 @@
+{
+  "status": "historical_replay_candidate",
+  "source_history": "data/demo/role_a_real/hackathon/history.parquet",
+  "source_history_sha256": "444152463a2aa952a6154c965d7c3876e48e4ffea1c86370ca811dafa76bfb40",
+  "fitted_partitions": {
+    "train": {
+      "rows": 505296,
+      "start": "2024-12-02T00:00:00Z",
+      "end": "2026-08-31T23:00:00Z",
+      "positives": {
+        "24": 7650,
+        "48": 11384,
+        "72": 14428
+      }
+    },
+    "calibration": {
+      "rows": 11880,
+      "start": "2026-09-04T00:00:00Z",
+      "end": "2026-09-18T23:00:00Z",
+      "positives": {
+        "24": 6620,
+        "48": 7740,
+        "72": 8327
+      }
+    }
+  },
+  "evaluation_partition": {
+    "rows": 17424,
+    "start": "2026-09-22T00:00:00Z",
+    "end": "2026-10-13T23:00:00Z",
+    "positives": {
+      "24": 11971,
+      "48": 13839,
+      "72": 14808
+    }
+  },
+  "protocol": "b_model/experiment_results/20261017/protocol.yaml",
+  "selection": "b_model/experiment_results/20261017/selection.json",
+  "evaluation": "b_model/experiment_results/20261017/final_results.json",
+  "files": {
+    "artifact_manifest.json": "567ad42b1a53ac7ae886bd7812991bf87008c01069826762a23d96033d7681d7",
+    "model_24h.joblib": "fcc7b06578daad95efe2bd789fb8108b8336a1807e5eef90de8cdb5c88bc6a87",
+    "model_48h.joblib": "af72102511e9a824db3e1b920d0cc6522ac38343452b63a91c49725ae1e58bdd",
+    "model_72h.joblib": "a4ca9a6f54d69e5ce6fa3ea65f8512e59abe835fda37418398e50c5bae2f3642"
+  }
+}

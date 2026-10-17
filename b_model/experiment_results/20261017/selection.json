@@ -1,0 +1,645 @@
+{
+  "selected": {
+    "24": {
+      "horizon_h": 24,
+      "key": "lr_c0001__sigmoid",
+      "spec": {
+        "name": "lr_c0001",
+        "backend": "logistic_regression",
+        "c": 0.001
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.1805468213505159,
+      "mean_brier": 0.057899247502566635
+    },
+    "48": {
+      "horizon_h": 48,
+      "key": "lr_c0001__sigmoid",
+      "spec": {
+        "name": "lr_c0001",
+        "backend": "logistic_regression",
+        "c": 0.001
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.2373807839454871,
+      "mean_brier": 0.0653973089108429
+    },
+    "72": {
+      "horizon_h": 72,
+      "key": "lr_c01__sigmoid",
+      "spec": {
+        "name": "lr_c01",
+        "backend": "logistic_regression",
+        "c": 0.1
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.2583907338617589,
+      "mean_brier": 0.0728729669406225
+    }
+  },
+  "leaderboard": [
+    {
+      "horizon_h": 24,
+      "key": "boost_shallow__isotonic",
+      "spec": {
+        "name": "boost_shallow",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 2,
+        "max_iter": 75,
+        "min_samples_leaf": 250,
+        "l2_regularization": 20.0
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.07921419352836957,
+      "mean_brier": 0.07673095885307338
+    },
+    {
+      "horizon_h": 24,
+      "key": "boost_shallow__sigmoid",
+      "spec": {
+        "name": "boost_shallow",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 2,
+        "max_iter": 75,
+        "min_samples_leaf": 250,
+        "l2_regularization": 20.0
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.07090658706776642,
+      "mean_brier": 0.07638457563346256
+    },
+    {
+      "horizon_h": 24,
+      "key": "boost_smooth__isotonic",
+      "spec": {
+        "name": "boost_smooth",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 2,
+        "max_iter": 75,
+        "min_samples_leaf": 1000,
+        "l2_regularization": 50.0
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.08361324733764951,
+      "mean_brier": 0.07714331860291716
+    },
+    {
+      "horizon_h": 24,
+      "key": "boost_smooth__sigmoid",
+      "spec": {
+        "name": "boost_smooth",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 2,
+        "max_iter": 75,
+        "min_samples_leaf": 1000,
+        "l2_regularization": 50.0
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.07402808864947084,
+      "mean_brier": 0.07646757160976404
+    },
+    {
+      "horizon_h": 24,
+      "key": "boost_stumps__isotonic",
+      "spec": {
+        "name": "boost_stumps",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 1,
+        "max_iter": 60,
+        "min_samples_leaf": 250,
+        "l2_regularization": 10.0
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.16060808529879392,
+      "mean_brier": 0.0668249543516042
+    },
+    {
+      "horizon_h": 24,
+      "key": "boost_stumps__sigmoid",
+      "spec": {
+        "name": "boost_stumps",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 1,
+        "max_iter": 60,
+        "min_samples_leaf": 250,
+        "l2_regularization": 10.0
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.1734243398557189,
+      "mean_brier": 0.06878459086600039
+    },
+    {
+      "horizon_h": 24,
+      "key": "dryness_baseline__isotonic",
+      "spec": {
+        "name": "dryness_baseline",
+        "backend": "dryness_baseline",
+        "c": 1.0
+      },
+      "calibration": "isotonic",
+      "eligible": false,
+      "mean_pr_auc": 0.09850108275676073,
+      "mean_brier": 0.07284219570271204
+    },
+    {
+      "horizon_h": 24,
+      "key": "dryness_baseline__sigmoid",
+      "spec": {
+        "name": "dryness_baseline",
+        "backend": "dryness_baseline",
+        "c": 1.0
+      },
+      "calibration": "sigmoid",
+      "eligible": false,
+      "mean_pr_auc": 0.11281866381792814,
+      "mean_brier": 0.07252034343371232
+    },
+    {
+      "horizon_h": 24,
+      "key": "lr_c0001__isotonic",
+      "spec": {
+        "name": "lr_c0001",
+        "backend": "logistic_regression",
+        "c": 0.001
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.09410885936934738,
+      "mean_brier": 0.07635591177888339
+    },
+    {
+      "horizon_h": 24,
+      "key": "lr_c0001__sigmoid",
+      "spec": {
+        "name": "lr_c0001",
+        "backend": "logistic_regression",
+        "c": 0.001
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.1805468213505159,
+      "mean_brier": 0.057899247502566635
+    },
+    {
+      "horizon_h": 24,
+      "key": "lr_c001__isotonic",
+      "spec": {
+        "name": "lr_c001",
+        "backend": "logistic_regression",
+        "c": 0.01
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.09017710021748492,
+      "mean_brier": 0.07707183285677556
+    },
+    {
+      "horizon_h": 24,
+      "key": "lr_c001__sigmoid",
+      "spec": {
+        "name": "lr_c001",
+        "backend": "logistic_regression",
+        "c": 0.01
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.1796373827487809,
+      "mean_brier": 0.05692852444798043
+    },
+    {
+      "horizon_h": 24,
+      "key": "lr_c01__isotonic",
+      "spec": {
+        "name": "lr_c01",
+        "backend": "logistic_regression",
+        "c": 0.1
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.09014893535019113,
+      "mean_brier": 0.07725610981485102
+    },
+    {
+      "horizon_h": 24,
+      "key": "lr_c01__sigmoid",
+      "spec": {
+        "name": "lr_c01",
+        "backend": "logistic_regression",
+        "c": 0.1
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.1800859547643985,
+      "mean_brier": 0.05683704748090032
+    },
+    {
+      "horizon_h": 48,
+      "key": "boost_shallow__isotonic",
+      "spec": {
+        "name": "boost_shallow",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 2,
+        "max_iter": 75,
+        "min_samples_leaf": 250,
+        "l2_regularization": 20.0
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.11508514965410623,
+      "mean_brier": 0.09699310733749379
+    },
+    {
+      "horizon_h": 48,
+      "key": "boost_shallow__sigmoid",
+      "spec": {
+        "name": "boost_shallow",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 2,
+        "max_iter": 75,
+        "min_samples_leaf": 250,
+        "l2_regularization": 20.0
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.2020588540591343,
+      "mean_brier": 0.09371797578663744
+    },
+    {
+      "horizon_h": 48,
+      "key": "boost_smooth__isotonic",
+      "spec": {
+        "name": "boost_smooth",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 2,
+        "max_iter": 75,
+        "min_samples_leaf": 1000,
+        "l2_regularization": 50.0
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.11272030042047021,
+      "mean_brier": 0.0968123247729719
+    },
+    {
+      "horizon_h": 48,
+      "key": "boost_smooth__sigmoid",
+      "spec": {
+        "name": "boost_smooth",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 2,
+        "max_iter": 75,
+        "min_samples_leaf": 1000,
+        "l2_regularization": 50.0
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.19962671491144454,
+      "mean_brier": 0.09417324416708338
+    },
+    {
+      "horizon_h": 48,
+      "key": "boost_stumps__isotonic",
+      "spec": {
+        "name": "boost_stumps",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 1,
+        "max_iter": 60,
+        "min_samples_leaf": 250,
+        "l2_regularization": 10.0
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.20508736334512453,
+      "mean_brier": 0.07784403031559907
+    },
+    {
+      "horizon_h": 48,
+      "key": "boost_stumps__sigmoid",
+      "spec": {
+        "name": "boost_stumps",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 1,
+        "max_iter": 60,
+        "min_samples_leaf": 250,
+        "l2_regularization": 10.0
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.21895913540494813,
+      "mean_brier": 0.08117820338213776
+    },
+    {
+      "horizon_h": 48,
+      "key": "dryness_baseline__isotonic",
+      "spec": {
+        "name": "dryness_baseline",
+        "backend": "dryness_baseline",
+        "c": 1.0
+      },
+      "calibration": "isotonic",
+      "eligible": false,
+      "mean_pr_auc": 0.1320019160054409,
+      "mean_brier": 0.08920747860910293
+    },
+    {
+      "horizon_h": 48,
+      "key": "dryness_baseline__sigmoid",
+      "spec": {
+        "name": "dryness_baseline",
+        "backend": "dryness_baseline",
+        "c": 1.0
+      },
+      "calibration": "sigmoid",
+      "eligible": false,
+      "mean_pr_auc": 0.14653579014490167,
+      "mean_brier": 0.08880011434293443
+    },
+    {
+      "horizon_h": 48,
+      "key": "lr_c0001__isotonic",
+      "spec": {
+        "name": "lr_c0001",
+        "backend": "logistic_regression",
+        "c": 0.001
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.19252789373106283,
+      "mean_brier": 0.06842541088357297
+    },
+    {
+      "horizon_h": 48,
+      "key": "lr_c0001__sigmoid",
+      "spec": {
+        "name": "lr_c0001",
+        "backend": "logistic_regression",
+        "c": 0.001
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.2373807839454871,
+      "mean_brier": 0.0653973089108429
+    },
+    {
+      "horizon_h": 48,
+      "key": "lr_c001__isotonic",
+      "spec": {
+        "name": "lr_c001",
+        "backend": "logistic_regression",
+        "c": 0.01
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.18892982164671887,
+      "mean_brier": 0.06798247946184446
+    },
+    {
+      "horizon_h": 48,
+      "key": "lr_c001__sigmoid",
+      "spec": {
+        "name": "lr_c001",
+        "backend": "logistic_regression",
+        "c": 0.01
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.23700036693464346,
+      "mean_brier": 0.06578123266975226
+    },
+    {
+      "horizon_h": 48,
+      "key": "lr_c01__isotonic",
+      "spec": {
+        "name": "lr_c01",
+        "backend": "logistic_regression",
+        "c": 0.1
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.1882056391761265,
+      "mean_brier": 0.06767851872953863
+    },
+    {
+      "horizon_h": 48,
+      "key": "lr_c01__sigmoid",
+      "spec": {
+        "name": "lr_c01",
+        "backend": "logistic_regression",
+        "c": 0.1
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.23693856527370974,
+      "mean_brier": 0.06593989272667335
+    },
+    {
+      "horizon_h": 72,
+      "key": "boost_shallow__isotonic",
+      "spec": {
+        "name": "boost_shallow",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 2,
+        "max_iter": 75,
+        "min_samples_leaf": 250,
+        "l2_regularization": 20.0
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.14306389730979832,
+      "mean_brier": 0.10317185621502638
+    },
+    {
+      "horizon_h": 72,
+      "key": "boost_shallow__sigmoid",
+      "spec": {
+        "name": "boost_shallow",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 2,
+        "max_iter": 75,
+        "min_samples_leaf": 250,
+        "l2_regularization": 20.0
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.20899984287134712,
+      "mean_brier": 0.10573352620069831
+    },
+    {
+      "horizon_h": 72,
+      "key": "boost_smooth__isotonic",
+      "spec": {
+        "name": "boost_smooth",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 2,
+        "max_iter": 75,
+        "min_samples_leaf": 1000,
+        "l2_regularization": 50.0
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.14135692579665296,
+      "mean_brier": 0.1004570555067144
+    },
+    {
+      "horizon_h": 72,
+      "key": "boost_smooth__sigmoid",
+      "spec": {
+        "name": "boost_smooth",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 2,
+        "max_iter": 75,
+        "min_samples_leaf": 1000,
+        "l2_regularization": 50.0
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.149275480192228,
+      "mean_brier": 0.10595110270173673
+    },
+    {
+      "horizon_h": 72,
+      "key": "boost_stumps__isotonic",
+      "spec": {
+        "name": "boost_stumps",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 1,
+        "max_iter": 60,
+        "min_samples_leaf": 250,
+        "l2_regularization": 10.0
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.2277723913032583,
+      "mean_brier": 0.08484849895136874
+    },
+    {
+      "horizon_h": 72,
+      "key": "boost_stumps__sigmoid",
+      "spec": {
+        "name": "boost_stumps",
+        "backend": "hist_gradient_boosting",
+        "max_depth": 1,
+        "max_iter": 60,
+        "min_samples_leaf": 250,
+        "l2_regularization": 10.0
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.23862563885720559,
+      "mean_brier": 0.08859554978856891
+    },
+    {
+      "horizon_h": 72,
+      "key": "dryness_baseline__isotonic",
+      "spec": {
+        "name": "dryness_baseline",
+        "backend": "dryness_baseline",
+        "c": 1.0
+      },
+      "calibration": "isotonic",
+      "eligible": false,
+      "mean_pr_auc": 0.15506040596247647,
+      "mean_brier": 0.09553510592914322
+    },
+    {
+      "horizon_h": 72,
+      "key": "dryness_baseline__sigmoid",
+      "spec": {
+        "name": "dryness_baseline",
+        "backend": "dryness_baseline",
+        "c": 1.0
+      },
+      "calibration": "sigmoid",
+      "eligible": false,
+      "mean_pr_auc": 0.1737336671049237,
+      "mean_brier": 0.0966250678404912
+    },
+    {
+      "horizon_h": 72,
+      "key": "lr_c0001__isotonic",
+      "spec": {
+        "name": "lr_c0001",
+        "backend": "logistic_regression",
+        "c": 0.001
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.22845734854371558,
+      "mean_brier": 0.06994980334648761
+    },
+    {
+      "horizon_h": 72,
+      "key": "lr_c0001__sigmoid",
+      "spec": {
+        "name": "lr_c0001",
+        "backend": "logistic_regression",
+        "c": 0.001
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.25824535797796405,
+      "mean_brier": 0.07252506373600198
+    },
+    {
+      "horizon_h": 72,
+      "key": "lr_c001__isotonic",
+      "spec": {
+        "name": "lr_c001",
+        "backend": "logistic_regression",
+        "c": 0.01
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.22172706068357342,
+      "mean_brier": 0.06970113175351682
+    },
+    {
+      "horizon_h": 72,
+      "key": "lr_c001__sigmoid",
+      "spec": {
+        "name": "lr_c001",
+        "backend": "logistic_regression",
+        "c": 0.01
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.25837575146223773,
+      "mean_brier": 0.0727882986745066
+    },
+    {
+      "horizon_h": 72,
+      "key": "lr_c01__isotonic",
+      "spec": {
+        "name": "lr_c01",
+        "backend": "logistic_regression",
+        "c": 0.1
+      },
+      "calibration": "isotonic",
+      "eligible": true,
+      "mean_pr_auc": 0.22178445447033202,
+      "mean_brier": 0.06947547178146034
+    },
+    {
+      "horizon_h": 72,
+      "key": "lr_c01__sigmoid",
+      "spec": {
+        "name": "lr_c01",
+        "backend": "logistic_regression",
+        "c": 0.1
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.2583907338617589,
+      "mean_brier": 0.0728729669406225
+    }
+  ]
+}
