@@ -1,0 +1,5 @@
+2026/10/17-16:36:25.560 fe8 Creating DB D:\Felix\University\Github-Repo\peatland-alert-system\data\demo\ui-mobile-browser\Default\EdgeCoupons/coupons_data.db since it was missing.
+2026/10/17-16:36:25.577 fe8 Reusing MANIFEST D:\Felix\University\Github-Repo\peatland-alert-system\data\demo\ui-mobile-browser\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/10/17-16:36:25.747 6f7c Level-0 table #5: started
+2026/10/17-16:36:25.752 6f7c Level-0 table #5: 683273 bytes OK
+2026/10/17-16:36:25.754 6f7c Delete type=0 #3

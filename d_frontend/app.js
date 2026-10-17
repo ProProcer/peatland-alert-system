@@ -63,7 +63,7 @@ function updateRiskLabels() {
     label.setAttribute("font-size", 11 / scale);
     label.setAttribute("display", Number(label.dataset.cellWidth) * scale >= 65 ? "block" : "none");
   }
-  for (const marker of document.querySelectorAll(".risk-map-marker")) marker.setAttribute("r", 4 / scale);
+  for (const marker of document.querySelectorAll(".risk-map-marker")) marker.setAttribute("r", 5 / scale);
 }
 function updateMapTiles() {
   const map = document.querySelector("#map");
@@ -125,6 +125,8 @@ function renderMap(horizon) {
   map.append(definitions, peatLayer);
   const riskLayer = svgElement("g", { "clip-path": "url(#peatland-clip)" });
   map.append(riskLayer);
+  const centerLayer = svgElement('g', { class: 'cell-centers', 'aria-label': 'Monitoring grid centers, including centers outside mapped peatland' });
+  map.append(centerLayer);
   const risks = new Map(feeds.risk.data.filter(row => row.horizon_h === horizon).map(row => [row.cell_id, row]));
   document.querySelector("#map-detail").textContent = "Select a colored cell for its prediction and contributing signals.";
   for (const feature of regionalCells()) {
@@ -142,6 +144,7 @@ function renderMap(horizon) {
     const select = () => {
       selectedCell = id;
       for (const other of map.querySelectorAll(".map-cell")) other.setAttribute("aria-pressed", other === cell);
+      for (const other of map.querySelectorAll('.risk-map-marker')) other.setAttribute('aria-pressed', other === marker);
       document.querySelector("#map-detail").textContent = description;
     };
     cell.addEventListener("click", select);
@@ -150,10 +153,16 @@ function renderMap(horizon) {
     const points = feature.geometry.coordinates[0].map(project);
     const xs = points.map(point => point[0]), ys = points.map(point => point[1]);
     const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
-    const marker = svgElement("circle", { cx, cy, r: 1, fill: mapColors[risk?.risk_level] || "#bdcdb8", class: "risk-map-marker", "aria-hidden": "true" });
+    const marker = svgElement("circle", { cx, cy, r: 1, fill: mapColors[risk?.risk_level] || "#497dc9", class: "risk-map-marker", tabindex: 0, role: 'button', 'data-cell-id': id, 'aria-pressed': selectedCell === id, 'aria-label': `Grid center ${id}. This marker is not an ignition location. ${description}` });
+    const markerTitle = svgElement('title', {});
+    markerTitle.textContent = `Grid center ${id} (not a fire location). ${description}`;
+    marker.append(markerTitle);
+    marker.addEventListener('click', select);
+    marker.addEventListener('keydown', event => { if (['Enter', ' '].includes(event.key)) { event.preventDefault(); select(); } });
     const label = svgElement("text", { x: cx, y: cy, "text-anchor": "middle", "dominant-baseline": "central", class: "risk-map-label", "data-cell-width": Math.max(...xs) - Math.min(...xs), "aria-hidden": "true" });
-    label.textContent = risk ? `${risk.risk_level} · ${risk.risk_score.toFixed(2)}` : "NO DATA";
-    riskLayer.append(marker, label);
+    label.textContent = risk ? `${risk.risk_level} · ${risk.risk_score.toFixed(2)}` : "NO FORECAST";
+    centerLayer.append(marker);
+    riskLayer.append(label);
     if (selectedCell === id) document.querySelector("#map-detail").textContent = description;
   }
   if (!regionalCells().length) document.querySelector("#map-detail").textContent = "No cell geometry is available within the Kalimantan regional bounds.";
@@ -243,6 +252,10 @@ function element(tag, text, className) {
 }
 
 async function loadFeed(filename, dataset) {
+  if (dataset?.bundled) {
+    if (!(filename in dataset.bundled)) throw new Error(`${filename} is missing from the 33-cell snapshot`);
+    return { data: dataset.bundled[filename], label: dataset.label, url: 'assets/coverage-snapshot.json' };
+  }
   if (dataset) {
     const url = dataset.base + filename;
     if (!dataset.files.includes(filename)) {
@@ -253,15 +266,7 @@ async function loadFeed(filename, dataset) {
     if (!response.ok) throw new Error(`${filename}: HTTP ${response.status}`);
     return { data: await response.json(), label: dataset.label, url };
   }
-  for (const [base, label] of [["/data/", "served handoff"], ["mocks/", "static mock"]]) {
-    try {
-      const response = await fetch(base + filename, { cache: "no-store" });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return { data: await response.json(), label, url: base + filename };
-    } catch (error) {
-      if (label === "static mock") throw new Error(`${filename}: ${error.message}`);
-    }
-  }
+  throw new Error('The 33-cell dataset is unavailable. Start python -m d_frontend.serve_demo.');
 }
 
 function validateFeedSet(entries) {
@@ -278,18 +283,22 @@ function validateFeedSet(entries) {
 }
 
 async function discoverDatasets() {
-  const response = await fetch('/demo/catalog.json', { cache: 'no-store' });
   const select = document.querySelector('#dataset');
   select.replaceChildren();
-  if (response.status === 404) {
-    select.append(element('option', 'Served feeds / static mocks'));
-    select.disabled = true;
-    document.querySelector('#dataset-info').textContent = 'Using the existing feed server or bundled synthetic mocks. Run python -m d_frontend.serve_demo to choose data/demo datasets.';
-    return;
+  demoDatasets = [];
+  try {
+    const response = await fetch('/demo/catalog.json', { cache: 'no-store' });
+    if (response.ok) demoDatasets = (await response.json()).datasets.filter(dataset => dataset.id === 'coverage');
+  } catch (error) {
+    // Plain static servers do not provide the dataset catalogue.
   }
-  if (!response.ok) throw new Error(`Dataset catalogue: HTTP ${response.status}`);
-  demoDatasets = (await response.json()).datasets;
-  if (!demoDatasets.length) throw new Error('No datasets with features and geometry found in data/demo');
+  if (!demoDatasets.length) {
+    const response = await fetch('assets/coverage-snapshot.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error('The real 33-cell snapshot could not be loaded. Run python -m d_frontend.export_coverage.');
+    const snapshot = await response.json();
+    if (snapshot.id !== 'coverage') throw new Error('Unexpected bundled dataset');
+    demoDatasets = [{ ...snapshot, bundled: snapshot.feeds }];
+  }
   for (const dataset of demoDatasets) {
     const option = element('option', dataset.label);
     option.value = dataset.id;
@@ -297,11 +306,63 @@ async function discoverDatasets() {
   }
   activeDataset = demoDatasets[0];
   select.value = activeDataset.id;
+  select.disabled = true;
+}
+
+function renderStatus(horizon) {
+  const rows = feeds.risk.data.filter(row => row.horizon_h === horizon);
+  const counts = { LOW: 0, MODERATE: 0, HIGH: 0, CRITICAL: 0 };
+  for (const row of rows) counts[row.risk_level]++;
+  for (const level of Object.keys(counts)) document.querySelector(`#count-${level.toLowerCase()}`).textContent = rows.length ? counts[level] : '—';
+  document.querySelector('#priority-caption').textContent = rows.length ? `${rows.length} predictions in the ${horizon}-hour window.` : 'No forecast supplied for this snapshot.';
+  const distribution = document.querySelector('#risk-distribution');
+  distribution.replaceChildren();
+  distribution.setAttribute('aria-label', rows.length ? Object.entries(counts).map(([level, count]) => `${level}: ${count}`).join(', ') : 'Risk distribution unavailable');
+  for (const [level, count] of Object.entries(counts)) {
+    const segment = element('span', undefined, level.toLowerCase());
+    segment.style.width = `${rows.length ? count / rows.length * 100 : 0}%`;
+    distribution.append(segment);
+  }
+  const list = document.querySelector('#priority-list');
+  list.replaceChildren();
+  if (!rows.length) list.append(element('p', 'No predictions supplied. Select another dataset to inspect its forecasts.', 'subtle'));
+  for (const row of [...rows].sort((a, b) => b.risk_score - a.risk_score || a.cell_id.localeCompare(b.cell_id)).slice(0, 3)) {
+    const button = element('button', undefined, 'priority-item');
+    button.type = 'button';
+    button.setAttribute('aria-label', `Inspect ${row.cell_id}, ${row.risk_level}, score ${row.risk_score.toFixed(2)}`);
+    const text = element('span');
+    text.append(element('strong', row.cell_id), element('small', `Risk score ${row.risk_score.toFixed(2)}`));
+    button.append(text, element('span', row.risk_level, `badge ${row.risk_level}`));
+    button.addEventListener('click', () => {
+      const marker = [...document.querySelectorAll('.risk-map-marker')].find(node => node.dataset.cellId === row.cell_id);
+      if (marker) {
+        marker.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 0 }));
+        marker.focus({ preventScroll: true });
+        document.querySelector('#map-section').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+      }
+    });
+    list.append(button);
+  }
+  const mean = values => {
+    const available = values.filter(value => typeof value === 'number' && Number.isFinite(value));
+    return available.length ? available.reduce((a, b) => a + b, 0) / available.length : null;
+  };
+  const moisture = mean(feeds.features.data.map(row => row.weather.sm_27_81));
+  const rain = mean(feeds.features.data.map(row => row.derived.rain_24h_mm));
+  document.querySelector('#average-moisture').textContent = moisture === null ? 'Unavailable' : `${moisture.toFixed(2)} m³/m³`;
+  document.querySelector('#average-rain').textContent = rain === null ? 'Unavailable' : `${rain.toFixed(1)} mm`;
+  document.querySelector('#monitored-count').textContent = feeds.cells.data.features.length;
+  document.querySelector('#nav-dispatch-count').textContent = feeds.dispatch.data.length;
+  const times = feeds.features.data.map(row => row.ts).sort();
+  const date = times.length ? new Date(times.at(-1)) : null;
+  document.querySelector('#snapshot-date').textContent = date ? new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(date) : 'Unavailable';
+  document.querySelector('#snapshot-time').textContent = date ? `${new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: 'UTC' }).format(date)} UTC · Feature time` : '—';
 }
 
 function render() {
   const horizon = Number(document.querySelector("#horizon").value);
   renderMap(horizon);
+  renderStatus(horizon);
   document.querySelector("#summary-horizon").textContent = horizon;
   document.querySelector("#priority-count").textContent = feeds.risk.data.some(row => row.horizon_h === horizon) ? feeds.risk.data.filter(row => row.horizon_h === horizon && ["HIGH", "CRITICAL"].includes(row.risk_level)).length : '—';
   const riskBody = document.querySelector("#risk");
@@ -375,13 +436,20 @@ async function reload() {
       document.querySelector('#sources').replaceChildren();
       document.querySelector('#priority-count').textContent = '—';
       document.querySelector('#map-detail').textContent = 'Dataset unavailable. Retry Refresh feeds.';
+      for (const id of ['count-low', 'count-moderate', 'count-high', 'count-critical', 'average-moisture', 'average-rain', 'monitored-count', 'nav-dispatch-count', 'snapshot-date', 'snapshot-time']) document.querySelector(`#${id}`).textContent = '—';
+      document.querySelector('#risk-distribution').replaceChildren();
+      document.querySelector('#priority-list').replaceChildren(element('p', 'Dataset unavailable.', 'subtle'));
+      document.querySelector('#priority-caption').textContent = 'Refresh the feeds to try again.';
       feeds = {};
     }
   }
 }
 
 document.querySelector("#horizon").addEventListener("change", () => { if (feeds.risk) render(); });
-document.querySelector("#reload").addEventListener("click", reload);
+document.querySelector("#reload").addEventListener("click", () => {
+  if (activeDataset?.bundled) discoverDatasets().then(reload).catch(showStartupError);
+  else reload();
+});
 document.querySelector('#dataset').addEventListener('change', event => {
   activeDataset = demoDatasets.find(dataset => dataset.id === event.target.value);
   selectedCell = null;
@@ -400,6 +468,28 @@ document.querySelector("#map-cells").addEventListener("click", () => {
   setMapView([(Math.min(...xs) + Math.max(...xs) - width) / 2, (Math.min(...ys) + Math.max(...ys) - height) / 2, width, height]);
 });
 loadPeatland();
-discoverDatasets().then(reload).catch(error => {
-  document.querySelector('#status').textContent = `Could not discover datasets: ${error.message}`;
-});
+
+const navigationLinks = document.querySelectorAll('.nav-link');
+for (const link of navigationLinks) link.setAttribute('aria-label', link.querySelector('span').textContent);
+function activateNavigation(id) {
+  for (const link of navigationLinks) {
+    const active = link.getAttribute('href') === `#${id}`;
+    link.classList.toggle('active', active);
+    if (active) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  }
+}
+for (const link of navigationLinks) link.addEventListener('click', () => activateNavigation(link.getAttribute('href').slice(1)));
+if ('IntersectionObserver' in window) {
+  const observer = new IntersectionObserver(entries => {
+    const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+    if (visible.length) activateNavigation(visible[0].target.id);
+  }, { rootMargin: '-10% 0px -65% 0px', threshold: 0 });
+  for (const id of ['overview', 'map-section', 'risk-section', 'dispatch-section', 'data-notes']) observer.observe(document.getElementById(id));
+}
+function showStartupError(error) {
+  const message = `Could not load the 33-cell map: ${error.message}`;
+  document.querySelector('#status').textContent = message;
+  document.querySelector('#map-detail').textContent = message;
+}
+discoverDatasets().then(reload).catch(showStartupError);

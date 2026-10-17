@@ -1,0 +1,488 @@
+"use strict";
+
+const files = { features: "features.json", cells: "cells.geojson", risk: "risk.json", dispatch: "dispatch.json" };
+let feeds = {};
+let loadVersion = 0;
+let demoDatasets = [];
+let activeDataset = null;
+let focusedDataset = null;
+const mapBounds = { west: 108, east: 119.5, south: -4.5, north: 4.5 };
+const mapColors = { LOW: "#32945b", MODERATE: "#e9c643", HIGH: "#e78b38", CRITICAL: "#d64b57" };
+let mapView;
+let selectedCell;
+let peatland;
+let peatlandPaths = [];
+let provincePaths = [];
+function polygonPath(polygon) {
+  return polygon.map(ring => ring.map((point, index) => `${index ? "L" : "M"}${project(point).join(",")}`).join(" ") + " Z").join(" ");
+}
+function peatGeometryPaths(geometry) {
+  if (geometry.type === 'Polygon') return [polygonPath(geometry.coordinates)];
+  if (geometry.type === 'MultiPolygon') return geometry.coordinates.map(polygonPath);
+  if (geometry.type === 'GeometryCollection') return geometry.geometries.flatMap(peatGeometryPaths);
+  return [];
+}
+async function loadPeatland() {
+  try {
+    const response = await fetch("assets/peatland.geojson");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    peatland = await response.json();
+    peatlandPaths = peatland.features.flatMap(feature => peatGeometryPaths(feature.geometry));
+    provincePaths = peatland.scope_boundary ? peatGeometryPaths(peatland.scope_boundary) : [];
+    if (!peatlandPaths.length) throw new Error('No polygon geometry found in the peatland dataset');
+    document.querySelector("#peat-status").textContent = "Highlighted peatland: source polygons clipped to the Central Kalimantan province boundary. Areas outside the province and non-peat areas remain gray.";
+    if (feeds.risk) renderMap(Number(document.querySelector("#horizon").value));
+  } catch (error) {
+    document.querySelector("#peat-status").textContent = `Peatland boundaries unavailable (${error.message}). Risk shading is hidden to avoid showing non-peat areas as peatland.`;
+  }
+}
+let tileTimer;
+let tileGeneration = 0;
+let tileSignature = "";
+const project = ([lon, lat]) => [256 * 64 * (lon + 180) / 360, 256 * 64 * (1 - Math.asinh(Math.tan(lat * Math.PI / 180)) / Math.PI) / 2];
+const mapNW = project([mapBounds.west, mapBounds.north]);
+const mapSE = project([mapBounds.east, mapBounds.south]);
+const regionView = [mapNW[0], mapNW[1], mapSE[0] - mapNW[0], mapSE[1] - mapNW[1]];
+function setMapView(view) {
+  const width = Math.min(regionView[2], Math.max(20, view[2]));
+  const height = width * regionView[3] / regionView[2];
+  mapView = [Math.max(regionView[0], Math.min(view[0], mapSE[0] - width)), Math.max(regionView[1], Math.min(view[1], mapSE[1] - height)), width, height];
+  document.querySelector("#map").setAttribute("viewBox", mapView.join(" "));
+  updateRiskLabels();
+  clearTimeout(tileTimer);
+  tileTimer = setTimeout(updateMapTiles, 160);
+}
+function mapPixelScale() {
+  const map = document.querySelector("#map");
+  return Math.min((map.clientWidth || 900) / mapView[2], (map.clientHeight || 650) / mapView[3]);
+}
+function updateRiskLabels() {
+  if (!mapView) return;
+  const scale = mapPixelScale();
+  for (const label of document.querySelectorAll(".risk-map-label")) {
+    label.setAttribute("font-size", 11 / scale);
+    label.setAttribute("display", Number(label.dataset.cellWidth) * scale >= 65 ? "block" : "none");
+  }
+  for (const marker of document.querySelectorAll(".risk-map-marker")) marker.setAttribute("r", 5 / scale);
+}
+function updateMapTiles() {
+  const map = document.querySelector("#map");
+  const layer = document.querySelector("#map-tiles");
+  if (!mapView || !layer) return;
+  const [left, top, width, height] = mapView;
+  const zoom = Math.max(6, Math.min(18, Math.ceil(6 + Math.log2(mapPixelScale() * Math.min(window.devicePixelRatio || 1, 2)))));
+  const size = 256 / 2 ** (zoom - 6);
+  const bounds = [Math.floor(left / size), Math.floor(top / size), Math.floor((left + width) / size), Math.floor((top + height) / size)];
+  const signature = [zoom, ...bounds].join(":");
+  if (signature === tileSignature) return;
+  tileSignature = signature;
+  const generation = ++tileGeneration;
+  const pending = svgElement("g", { "aria-hidden": "true" });
+  let remaining = (bounds[2] - bounds[0] + 1) * (bounds[3] - bounds[1] + 1);
+  let failures = 0;
+  const complete = failed => {
+    if (failed) failures++;
+    if (--remaining || generation !== tileGeneration) return;
+    for (const child of Array.from(layer.children)) if (child !== pending) child.remove();
+    document.querySelector("#map-tile-status").textContent = failures ? "Some background tiles are unavailable. Risk overlays remain available." : "";
+    if (failures) tileSignature = "";
+  };
+  for (let x = bounds[0]; x <= bounds[2]; x++) {
+    for (let y = bounds[1]; y <= bounds[3]; y++) {
+      const tile = svgElement("image", { x: x * size, y: y * size, width: size, height: size });
+      tile.addEventListener("load", () => complete(false), { once: true });
+      tile.addEventListener("error", () => complete(true), { once: true });
+      tile.setAttribute("href", `https://tile.openstreetmap.org/${zoom}/${x}/${y}.png`);
+      pending.append(tile);
+    }
+  }
+  // Keep the previous tiles underneath until the replacement tiles finish loading.
+  layer.append(pending);
+}
+function svgElement(tag, attributes) {
+  const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, value);
+  return node;
+}
+function regionalCells() {
+  return feeds.cells.data.features.filter(feature => feature.geometry.type === "Polygon" && feature.geometry.coordinates[0].every(([lon, lat]) => lon >= mapBounds.west && lon <= mapBounds.east && lat >= mapBounds.south && lat <= mapBounds.north));
+}
+function renderMap(horizon) {
+  const map = document.querySelector("#map");
+  map.replaceChildren();
+  tileSignature = "";
+  tileGeneration++;
+  map.append(svgElement("g", { id: "map-tiles", "aria-hidden": "true" }));
+  if (!mapView) setMapView(regionView.slice());
+  const definitions = svgElement("defs", {});
+  const clip = svgElement("clipPath", { id: "peatland-clip", clipPathUnits: "userSpaceOnUse" });
+  const peatLayer = svgElement("g", { class: "peatland-layer", "aria-hidden": "true" });
+  for (const d of peatlandPaths) {
+    clip.append(svgElement("path", { d, "clip-rule": "evenodd" }));
+    peatLayer.append(svgElement("path", { d, "fill-rule": "evenodd" }));
+  }
+  definitions.append(clip);
+  map.append(definitions, peatLayer);
+  const riskLayer = svgElement("g", { "clip-path": "url(#peatland-clip)" });
+  map.append(riskLayer);
+  const centerLayer = svgElement('g', { class: 'cell-centers', 'aria-label': 'Monitoring grid centers, including centers outside mapped peatland' });
+  map.append(centerLayer);
+  const risks = new Map(feeds.risk.data.filter(row => row.horizon_h === horizon).map(row => [row.cell_id, row]));
+  document.querySelector("#map-detail").textContent = "Select a colored cell for its prediction and contributing signals.";
+  for (const feature of regionalCells()) {
+    const id = feature.properties.cell_id;
+    const risk = risks.get(id);
+    const featureRow = feeds.features.data.find(row => row.cell_id === id);
+    const reading = (value, unit) => value == null ? 'unavailable' : `${Number(value).toFixed(2)} ${unit}`;
+    const measurements = featureRow ? ` Feature time: ${featureRow.ts}. Peat coverage: ${(featureRow.peat.peat_fraction * 100).toFixed(1)}%. Temperature: ${reading(featureRow.weather.temp_c, '°C')}. Deep soil moisture: ${reading(featureRow.weather.sm_27_81, 'm³/m³')}. Rain in 24h: ${reading(featureRow.derived.rain_24h_mm, 'mm')}.` : '';
+    const description = (risk ? `${id}: ${risk.risk_level}, score ${risk.risk_score.toFixed(2)}, ${horizon}h. ${risk.top_factors.map(f => `${f.feature}: ${f.contribution}`).join(", ")}. Timestamp: ${risk.ts}.` : `${id}: no prediction for ${horizon}h.`) + measurements;
+    const path = feature.geometry.coordinates.map(ring => ring.map((point, index) => `${index ? "L" : "M"}${project(point).join(",")}`).join(" ") + " Z").join(" ");
+    const cell = svgElement("path", { d: path, fill: mapColors[risk?.risk_level] || "#bdcdb8", "fill-rule": "evenodd", class: "map-cell", tabindex: 0, role: "button", "aria-label": description, "aria-pressed": selectedCell === id });
+    const title = svgElement("title", {});
+    title.textContent = description;
+    cell.append(title);
+    const select = () => {
+      selectedCell = id;
+      for (const other of map.querySelectorAll(".map-cell")) other.setAttribute("aria-pressed", other === cell);
+      for (const other of map.querySelectorAll('.risk-map-marker')) other.setAttribute('aria-pressed', other === marker);
+      document.querySelector("#map-detail").textContent = description;
+    };
+    cell.addEventListener("click", select);
+    cell.addEventListener("keydown", event => { if (["Enter", " "].includes(event.key)) { event.preventDefault(); select(); } });
+    riskLayer.append(cell);
+    const points = feature.geometry.coordinates[0].map(project);
+    const xs = points.map(point => point[0]), ys = points.map(point => point[1]);
+    const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+    const marker = svgElement("circle", { cx, cy, r: 1, fill: mapColors[risk?.risk_level] || "#497dc9", class: "risk-map-marker", tabindex: 0, role: 'button', 'data-cell-id': id, 'aria-pressed': selectedCell === id, 'aria-label': `Grid center ${id}. This marker is not an ignition location. ${description}` });
+    const markerTitle = svgElement('title', {});
+    markerTitle.textContent = `Grid center ${id} (not a fire location). ${description}`;
+    marker.append(markerTitle);
+    marker.addEventListener('click', select);
+    marker.addEventListener('keydown', event => { if (['Enter', ' '].includes(event.key)) { event.preventDefault(); select(); } });
+    const label = svgElement("text", { x: cx, y: cy, "text-anchor": "middle", "dominant-baseline": "central", class: "risk-map-label", "data-cell-width": Math.max(...xs) - Math.min(...xs), "aria-hidden": "true" });
+    label.textContent = risk ? `${risk.risk_level} · ${risk.risk_score.toFixed(2)}` : "NO FORECAST";
+    centerLayer.append(marker);
+    riskLayer.append(label);
+    if (selectedCell === id) document.querySelector("#map-detail").textContent = description;
+  }
+  if (!regionalCells().length) document.querySelector("#map-detail").textContent = "No cell geometry is available within the Kalimantan regional bounds.";
+  const provinceLayer = svgElement('g', { class: 'province-boundary', role: 'img', 'aria-label': 'Central Kalimantan monitoring boundary' });
+  for (const d of provincePaths) provinceLayer.append(svgElement('path', { d }));
+  map.append(provinceLayer);
+  updateRiskLabels();
+  clearTimeout(tileTimer);
+  updateMapTiles();
+}
+function zoomMap(factor, anchor) {
+  const [x, y, width, height] = mapView || regionView;
+  const nextWidth = Math.min(regionView[2], Math.max(20, width * factor));
+  const nextHeight = nextWidth * regionView[3] / regionView[2];
+  const [ax, ay] = anchor || [x + width / 2, y + height / 2];
+  setMapView([ax - (ax - x) * nextWidth / width, ay - (ay - y) * nextHeight / height, nextWidth, nextHeight]);
+}
+
+const mapElement = document.querySelector("#map");
+window.addEventListener("resize", () => {
+  updateRiskLabels();
+  clearTimeout(tileTimer);
+  tileTimer = setTimeout(updateMapTiles, 160);
+});
+let mapDrag = null;
+let suppressMapClick = false;
+function pointerOnMap(event, inverse = mapElement.getScreenCTM()?.inverse()) {
+  if (!inverse) return null;
+  const point = mapElement.createSVGPoint();
+  point.x = event.clientX;
+  point.y = event.clientY;
+  return point.matrixTransform(inverse);
+}
+mapElement.addEventListener("wheel", event => {
+  event.preventDefault();
+  if (mapDrag) return;
+  const point = pointerOnMap(event);
+  if (!point) return;
+  // Normalize wheel units: pixels, lines, or pages; cap large trackpad bursts.
+  const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? mapElement.clientHeight : 1;
+  const delta = Math.max(-200, Math.min(200, event.deltaY * unit));
+  zoomMap(Math.exp(delta * .003), [point.x, point.y]);
+}, { passive: false });
+mapElement.addEventListener("pointerdown", event => {
+  if (event.button !== 0 || mapDrag) return;
+  const inverse = mapElement.getScreenCTM()?.inverse();
+  const point = pointerOnMap(event, inverse);
+  if (!point) return;
+  suppressMapClick = false;
+  mapDrag = { id: event.pointerId, inverse, point, view: (mapView || regionView).slice(), x: event.clientX, y: event.clientY, moved: false };
+});
+mapElement.addEventListener("pointermove", event => {
+  if (!mapDrag || event.pointerId !== mapDrag.id) return;
+  if (!mapDrag.moved && Math.hypot(event.clientX - mapDrag.x, event.clientY - mapDrag.y) < 5) return;
+  if (!mapDrag.moved) {
+    mapDrag.moved = true;
+    mapElement.setPointerCapture(event.pointerId);
+    mapElement.classList.add("is-dragging");
+  }
+  const point = pointerOnMap(event, mapDrag.inverse);
+  setMapView([mapDrag.view[0] + mapDrag.point.x - point.x, mapDrag.view[1] + mapDrag.point.y - point.y, mapDrag.view[2], mapDrag.view[3]]);
+});
+function finishMapDrag(event) {
+  if (!mapDrag || event.pointerId !== mapDrag.id) return;
+  suppressMapClick = mapDrag.moved;
+  mapDrag = null;
+  mapElement.classList.remove("is-dragging");
+  if (mapElement.hasPointerCapture(event.pointerId)) mapElement.releasePointerCapture(event.pointerId);
+}
+mapElement.addEventListener("pointerup", finishMapDrag);
+mapElement.addEventListener("pointercancel", finishMapDrag);
+mapElement.addEventListener("lostpointercapture", finishMapDrag);
+mapElement.addEventListener("pointerleave", event => { if (mapDrag && !mapDrag.moved) finishMapDrag(event); });
+mapElement.addEventListener("click", event => {
+  if (suppressMapClick && event.detail !== 0) {
+    event.stopPropagation();
+    event.preventDefault();
+    suppressMapClick = false;
+  }
+}, true);
+
+function element(tag, text, className) {
+  const node = document.createElement(tag);
+  if (text !== undefined) node.textContent = text;
+  if (className) node.className = className;
+  return node;
+}
+
+async function loadFeed(filename, dataset) {
+  if (dataset) {
+    const url = dataset.base + filename;
+    if (!dataset.files.includes(filename)) {
+      if (filename === 'risk.json' || filename === 'dispatch.json') return { data: [], label: 'not supplied for selected dataset', url: null };
+      throw new Error(`${filename} is missing from the selected dataset`);
+    }
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`${filename}: HTTP ${response.status}`);
+    return { data: await response.json(), label: dataset.label, url };
+  }
+  for (const [base, label] of [["/data/", "served handoff"], ["mocks/", "static mock"]]) {
+    try {
+      const response = await fetch(base + filename, { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return { data: await response.json(), label, url: base + filename };
+    } catch (error) {
+      if (label === "static mock") throw new Error(`${filename}: ${error.message}`);
+    }
+  }
+}
+
+function validateFeedSet(entries) {
+  const data = Object.fromEntries(entries.map(([kind, feed]) => [kind, feed.data]));
+  const times = new Map(data.features.map(row => [row.cell_id, row.ts]));
+  const cells = new Set(data.cells.features.map(row => row.properties.cell_id));
+  if (times.size !== cells.size || [...times.keys()].some(id => !cells.has(id))) throw new Error('Features and geometry refer to different cells');
+  for (const row of data.risk) {
+    if (times.get(row.cell_id) !== row.ts) throw new Error(`Risk does not match the selected feature snapshot: ${row.cell_id}`);
+  }
+  for (const row of data.dispatch) {
+    if (!cells.has(row.cell_id)) throw new Error(`Dispatch refers to a different dataset: ${row.cell_id}`);
+  }
+}
+
+async function discoverDatasets() {
+  const response = await fetch('/demo/catalog.json', { cache: 'no-store' });
+  const select = document.querySelector('#dataset');
+  select.replaceChildren();
+  if (response.status === 404) {
+    select.append(element('option', 'Served feeds / static mocks'));
+    select.disabled = true;
+    document.querySelector('#dataset-info').textContent = 'Using the existing feed server or bundled synthetic mocks. Run python -m d_frontend.serve_demo to choose data/demo datasets.';
+    return;
+  }
+  if (!response.ok) throw new Error(`Dataset catalogue: HTTP ${response.status}`);
+  demoDatasets = (await response.json()).datasets;
+  if (!demoDatasets.length) throw new Error('No datasets with features and geometry found in data/demo');
+  for (const dataset of demoDatasets) {
+    const option = element('option', dataset.label);
+    option.value = dataset.id;
+    select.append(option);
+  }
+  activeDataset = demoDatasets.find(dataset => dataset.id === 'coverage') || demoDatasets.find(dataset => dataset.id === 'replay') || demoDatasets[0];
+  select.value = activeDataset.id;
+}
+
+function renderStatus(horizon) {
+  const rows = feeds.risk.data.filter(row => row.horizon_h === horizon);
+  const counts = { LOW: 0, MODERATE: 0, HIGH: 0, CRITICAL: 0 };
+  for (const row of rows) counts[row.risk_level]++;
+  for (const level of Object.keys(counts)) document.querySelector(`#count-${level.toLowerCase()}`).textContent = rows.length ? counts[level] : '—';
+  document.querySelector('#priority-caption').textContent = rows.length ? `${rows.length} predictions in the ${horizon}-hour window.` : 'No forecast supplied for this snapshot.';
+  const distribution = document.querySelector('#risk-distribution');
+  distribution.replaceChildren();
+  distribution.setAttribute('aria-label', rows.length ? Object.entries(counts).map(([level, count]) => `${level}: ${count}`).join(', ') : 'Risk distribution unavailable');
+  for (const [level, count] of Object.entries(counts)) {
+    const segment = element('span', undefined, level.toLowerCase());
+    segment.style.width = `${rows.length ? count / rows.length * 100 : 0}%`;
+    distribution.append(segment);
+  }
+  const list = document.querySelector('#priority-list');
+  list.replaceChildren();
+  if (!rows.length) list.append(element('p', 'No predictions supplied. Select another dataset to inspect its forecasts.', 'subtle'));
+  for (const row of [...rows].sort((a, b) => b.risk_score - a.risk_score || a.cell_id.localeCompare(b.cell_id)).slice(0, 3)) {
+    const button = element('button', undefined, 'priority-item');
+    button.type = 'button';
+    button.setAttribute('aria-label', `Inspect ${row.cell_id}, ${row.risk_level}, score ${row.risk_score.toFixed(2)}`);
+    const text = element('span');
+    text.append(element('strong', row.cell_id), element('small', `Risk score ${row.risk_score.toFixed(2)}`));
+    button.append(text, element('span', row.risk_level, `badge ${row.risk_level}`));
+    button.addEventListener('click', () => {
+      const marker = [...document.querySelectorAll('.risk-map-marker')].find(node => node.dataset.cellId === row.cell_id);
+      if (marker) {
+        marker.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 0 }));
+        marker.focus({ preventScroll: true });
+        document.querySelector('#map-section').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+      }
+    });
+    list.append(button);
+  }
+  const mean = values => {
+    const available = values.filter(value => typeof value === 'number' && Number.isFinite(value));
+    return available.length ? available.reduce((a, b) => a + b, 0) / available.length : null;
+  };
+  const moisture = mean(feeds.features.data.map(row => row.weather.sm_27_81));
+  const rain = mean(feeds.features.data.map(row => row.derived.rain_24h_mm));
+  document.querySelector('#average-moisture').textContent = moisture === null ? 'Unavailable' : `${moisture.toFixed(2)} m³/m³`;
+  document.querySelector('#average-rain').textContent = rain === null ? 'Unavailable' : `${rain.toFixed(1)} mm`;
+  document.querySelector('#monitored-count').textContent = feeds.cells.data.features.length;
+  document.querySelector('#nav-dispatch-count').textContent = feeds.dispatch.data.length;
+  const times = feeds.features.data.map(row => row.ts).sort();
+  const date = times.length ? new Date(times.at(-1)) : null;
+  document.querySelector('#snapshot-date').textContent = date ? new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(date) : 'Unavailable';
+  document.querySelector('#snapshot-time').textContent = date ? `${new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: 'UTC' }).format(date)} UTC · Feature time` : '—';
+  document.querySelector('#dataset-mode').textContent = activeDataset?.id === 'mock' ? 'Synthetic demo' : activeDataset ? 'Historical replay' : 'Development data';
+}
+
+function render() {
+  const horizon = Number(document.querySelector("#horizon").value);
+  renderMap(horizon);
+  renderStatus(horizon);
+  document.querySelector("#summary-horizon").textContent = horizon;
+  document.querySelector("#priority-count").textContent = feeds.risk.data.some(row => row.horizon_h === horizon) ? feeds.risk.data.filter(row => row.horizon_h === horizon && ["HIGH", "CRITICAL"].includes(row.risk_level)).length : '—';
+  const riskBody = document.querySelector("#risk");
+  riskBody.replaceChildren();
+  for (const row of feeds.risk.data.filter(record => record.horizon_h === horizon)) {
+    const tr = element("tr");
+    tr.append(element("td", row.cell_id));
+    const level = element("td");
+    level.append(element("span", row.risk_level, `badge ${row.risk_level}`));
+    tr.append(level, element("td", row.risk_score.toFixed(2)), element("td", row.top_factors.map(f => `${f.feature}: ${f.contribution}`).join(", ")));
+    riskBody.append(tr);
+  }
+  if (!riskBody.children.length) {
+    const tr = element('tr');
+    const td = element('td', `No ${horizon}-hour predictions supplied for this dataset. Peat coverage and measurements remain available on the map.`);
+    td.colSpan = 4;
+    tr.append(td);
+    riskBody.append(tr);
+  }
+  const dispatch = document.querySelector("#dispatch");
+  dispatch.replaceChildren();
+  if (feeds.dispatch.data.length === 0) dispatch.append(element("p", feeds.dispatch.url ? "No active simulated dispatches." : "Dispatch output has not been supplied for this dataset."));
+  for (const row of feeds.dispatch.data) {
+    const article = element("article");
+    article.append(element("strong", `${row.action} · ${row.cell_id} · ${row.status}`));
+    article.append(element("p", `Target: ${row.target.lat}, ${row.target.lon}. Water source: ${row.water_source ? row.water_source.kind : "unavailable"}.`));
+    article.append(element("p", row.rationale));
+    for (const audience of row.audiences) {
+      article.append(element("p", `${audience} — ID: ${row.messages[audience].id} EN: ${row.messages[audience].en}`));
+    }
+    dispatch.append(article);
+  }
+}
+
+async function reload() {
+  const version = ++loadVersion;
+  const status = document.querySelector("#status");
+  const dataset = activeDataset;
+  status.textContent = "Loading handoffs…";
+  try {
+    const entries = await Promise.all(Object.entries(files).map(async ([kind, filename]) => [kind, await loadFeed(filename, dataset)]));
+    if (version !== loadVersion) return;
+    validateFeedSet(entries);
+    feeds = Object.fromEntries(entries);
+    const sources = document.querySelector("#sources");
+    sources.replaceChildren();
+    for (const [kind, feed] of entries) {
+      const item = element("li");
+      const link = element(feed.url ? "a" : "span", `${kind}: ${feed.label}`);
+      if (feed.url) link.href = feed.url;
+      item.append(link);
+      sources.append(item);
+    }
+    render();
+    if (dataset) {
+      const times = [...new Set(feeds.features.data.map(row => row.ts))].sort();
+      document.querySelector('#dataset-info').textContent = `${dataset.description} Feature time: ${times.join(', ')}. ${feeds.cells.data.features.length} monitored cells. Weather and soil moisture are modeled; all notifications are simulated.`;
+      if (focusedDataset !== dataset.id) {
+        focusedDataset = dataset.id;
+        document.querySelector('#map-cells').click();
+      }
+    }
+    status.textContent = `${feeds.cells.data.features.length} cells · ${feeds.features.data.length} feature records · ${feeds.risk.data.length} predictions · ${feeds.dispatch.data.length} simulated dispatches`;
+  } catch (error) {
+    if (version === loadVersion) {
+      status.textContent = `Could not load handoffs: ${error.message}`;
+      document.querySelector('#dataset-info').textContent = status.textContent;
+      document.querySelector('#risk').replaceChildren();
+      document.querySelector('#dispatch').replaceChildren();
+      document.querySelector('#map').replaceChildren();
+      document.querySelector('#sources').replaceChildren();
+      document.querySelector('#priority-count').textContent = '—';
+      document.querySelector('#map-detail').textContent = 'Dataset unavailable. Retry Refresh feeds.';
+      for (const id of ['count-low', 'count-moderate', 'count-high', 'count-critical', 'average-moisture', 'average-rain', 'monitored-count', 'nav-dispatch-count', 'snapshot-date', 'snapshot-time']) document.querySelector(`#${id}`).textContent = '—';
+      document.querySelector('#risk-distribution').replaceChildren();
+      document.querySelector('#priority-list').replaceChildren(element('p', 'Dataset unavailable.', 'subtle'));
+      document.querySelector('#priority-caption').textContent = 'Refresh the feeds to try again.';
+      feeds = {};
+    }
+  }
+}
+
+document.querySelector("#horizon").addEventListener("change", () => { if (feeds.risk) render(); });
+document.querySelector("#reload").addEventListener("click", reload);
+document.querySelector('#dataset').addEventListener('change', event => {
+  activeDataset = demoDatasets.find(dataset => dataset.id === event.target.value);
+  selectedCell = null;
+  reload();
+});
+document.querySelector("#map-in").addEventListener("click", () => zoomMap(.5));
+document.querySelector("#map-out").addEventListener("click", () => zoomMap(2));
+document.querySelector("#map-reset").addEventListener("click", () => setMapView(regionView.slice()));
+document.querySelector("#map-cells").addEventListener("click", () => {
+  if (!feeds.cells) return;
+  const points = regionalCells().flatMap(feature => feature.geometry.coordinates[0].map(project));
+  if (!points.length) return;
+  const xs = points.map(p => p[0]), ys = points.map(p => p[1]);
+  const width = Math.max(30, Math.max(...xs) - Math.min(...xs) + 20, (Math.max(...ys) - Math.min(...ys) + 20) * regionView[2] / regionView[3]);
+  const height = width * regionView[3] / regionView[2];
+  setMapView([(Math.min(...xs) + Math.max(...xs) - width) / 2, (Math.min(...ys) + Math.max(...ys) - height) / 2, width, height]);
+});
+loadPeatland();
+
+const navigationLinks = document.querySelectorAll('.nav-link');
+function activateNavigation(id) {
+  for (const link of navigationLinks) {
+    const active = link.getAttribute('href') === `#${id}`;
+    link.classList.toggle('active', active);
+    if (active) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  }
+}
+for (const link of navigationLinks) link.addEventListener('click', () => activateNavigation(link.getAttribute('href').slice(1)));
+if ('IntersectionObserver' in window) {
+  const observer = new IntersectionObserver(entries => {
+    const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+    if (visible.length) activateNavigation(visible[0].target.id);
+  }, { rootMargin: '-10% 0px -65% 0px', threshold: 0 });
+  for (const id of ['overview', 'map-section', 'risk-section', 'dispatch-section', 'data-notes']) observer.observe(document.getElementById(id));
+}
+discoverDatasets().then(reload).catch(error => {
+  document.querySelector('#status').textContent = `Could not discover datasets: ${error.message}`;
+});

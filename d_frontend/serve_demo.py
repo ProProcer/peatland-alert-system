@@ -8,6 +8,7 @@ from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 DATASETS = {
+    'coverage': ('central_coverage', 'Central Kalimantan · 33 spread-out cells', 'Spatially distributed historical replay with matching model predictions. Representative samples, not complete peatland coverage; model evaluation is unverified.'),
     'real': ('real', 'Real-data run · 9 cells', 'Real-source development inference; model evaluation is unverified.'),
     'replay': ('role_a_replay', 'Real-data replay · 33 cells', 'Historical replay from Role A. Predictions and dispatches appear only when supplied for this dataset.'),
     'mock': ('.', 'Synthetic demo · 3 cells', 'Synthetic development fixtures; not measured model performance.'),
@@ -37,6 +38,10 @@ class DemoHandler(SimpleHTTPRequestHandler):
                 directory = (self.demo_root / folder).resolve()
                 if not directory.is_relative_to(self.demo_root):
                     continue
+                if key == 'coverage':
+                    status = directory / 'build_status.json'
+                    if not status.exists() or json.loads(status.read_text(encoding='utf-8')).get('state') != 'complete':
+                        continue
                 if not all((directory / f).is_file() for f in FILES[:2]):
                     continue
                 features = json.loads((directory / 'features.json').read_text(encoding='utf-8'))
