@@ -1,4 +1,23 @@
 services:
+  live:
+    profiles: ["live"]
+    build:
+      context: .
+      dockerfile: e_platform/docker/live.Dockerfile
+    restart: unless-stopped
+    environment:
+      FIRMS_MAP_KEY: ${FIRMS_MAP_KEY:-}
+    ports:
+      - "127.0.0.1:${LIVE_PORT:-8001}:8001"
+    volumes:
+      - ./data/demo/role_a_real:/app/data/demo/role_a_real:ro
+      - ./data/raw/open-meteo_api.md:/app/data/raw/open-meteo_api.md:ro
+      - ./data/runtime/live:/app/data/runtime/live
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/live/status', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
   demo:
     build:
       context: .

@@ -3,6 +3,7 @@
 .codex
 .aws
 .venv
+.venv*
 venv
 .env
 .env.*
@@ -12,6 +13,9 @@ __pycache__
 node_modules
 data/raw
 data/demo
+data/runtime
+b_model/runs
+b_model/.test-output
 e_platform/evidence
 *.pem
 *.key

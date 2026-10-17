@@ -5,6 +5,7 @@ let feeds = {};
 let loadVersion = 0;
 let demoDatasets = [];
 let activeDataset = null;
+let liveMode = false;
 let focusedDataset = null;
 const mapBounds = { west: 108, east: 119.5, south: -4.5, north: 4.5 };
 const mapColors = { LOW: "#32945b", MODERATE: "#e9c643", HIGH: "#e78b38", CRITICAL: "#d64b57" };
@@ -342,11 +343,16 @@ async function discoverDatasets() {
   demoDatasets = [];
   try {
     const response = await fetch('/demo/catalog.json', { cache: 'no-store' });
-    if (response.ok) demoDatasets = (await response.json()).datasets.filter(dataset => dataset.id === 'coverage');
+    if (response.ok) {
+      const catalog = await response.json();
+      liveMode = catalog.mode === 'live';
+      demoDatasets = catalog.datasets.filter(dataset => dataset.id === (liveMode ? 'live' : 'coverage'));
+    }
   } catch (error) {
     // Plain static servers do not provide the dataset catalogue.
   }
   if (!demoDatasets.length) {
+    if (liveMode) throw new Error('Waiting for the first validated live snapshot. This page will retry automatically.');
     const response = await fetch('assets/coverage-snapshot.json', { cache: 'no-store' });
     if (!response.ok) throw new Error('The real 40-cell snapshot could not be loaded. Run python -m d_frontend.export_coverage.');
     const snapshot = await response.json();
@@ -436,7 +442,7 @@ async function reload() {
     validateFeedSet(entries);
     feeds = Object.fromEntries(entries);
     render();
-    window.dispatchEvent(new CustomEvent('response-feeds', { detail: Object.fromEntries(Object.entries(feeds).map(([key, feed]) => [key, feed.data])) }));
+    window.dispatchEvent(new CustomEvent('response-feeds', { detail: { ...Object.fromEntries(Object.entries(feeds).map(([key, feed]) => [key, feed.data])), generation: dataset?.generation } }));
     if (dataset) {
       const times = [...new Set(feeds.features.data.map(row => row.ts))].sort();
       document.querySelector('#dataset-info').textContent = `${dataset.description} Feature time: ${times.join(', ')}. ${feeds.cells.data.features.length} monitored cells. Weather and soil moisture are modeled; all notifications are simulated.`;
@@ -467,9 +473,26 @@ async function reload() {
 
 document.querySelector("#horizon").addEventListener("change", () => { if (feeds.risk) render(); });
 window.addEventListener("refresh-dashboard", () => {
-  if (activeDataset?.bundled) discoverDatasets().then(reload).catch(showStartupError);
+  if (liveMode || activeDataset?.bundled) discoverDatasets().then(reload).catch(showStartupError);
   else reload();
 });
+
+// Re-discover generation-specific URLs so all four feeds move together. Live
+// mode never falls back to a bundled historical snapshot after a refresh error.
+setInterval(async () => {
+  if (!liveMode || document.hidden) return;
+  try {
+    await discoverDatasets();
+    await reload();
+    const response = await fetch('/live/status', { cache: 'no-store' });
+    if (response.ok) {
+      const state = await response.json();
+      if (state.stale || state.state === 'error') {
+        document.querySelector('#dataset-info').textContent += ` Refresh status: ${state.state}; ${state.stale ? 'snapshot is stale' : 'last successful snapshot retained'}. ${state.error || ''}`;
+      }
+    }
+  } catch (error) { showStartupError(error); }
+}, 60000);
 document.querySelector('#dataset').addEventListener('change', event => {
   activeDataset = demoDatasets.find(dataset => dataset.id === event.target.value);
   selectedCell = null;

@@ -1,8 +1,9 @@
 PYTHON ?= .venv/bin/python
 ROLE ?= all
 PORT ?= 8000
+LIVE_PORT ?= 8001
 
-.PHONY: setup validate test model-test mock demo serve-live pipeline
+.PHONY: setup validate test model-test mock demo serve-live pipeline live live-once
 
 setup:
 	bash scripts/setup.sh $(ROLE)
@@ -27,3 +28,9 @@ serve-live:
 
 pipeline:
 	PYTHON="$(PYTHON)" bash scripts/run_pipeline.sh
+
+live:
+	$(PYTHON) -m e_platform.live_service --port $(LIVE_PORT)
+
+live-once:
+	$(PYTHON) -m e_platform.live_service --once

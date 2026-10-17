@@ -176,7 +176,7 @@ def _fetch_firms(session: requests.Session, key: str, region, cache_dir: Path,
     window_end = today + pd.Timedelta(days=1)
     raw = raw[(raw["ts"] >= window_start) & (raw["ts"] < window_end)]
     raw = raw[(raw["latitude"].between(-90, 90)) & (raw["longitude"].between(-180, 180))]
-    inside = np.asarray(shapely.contains_xy(buffered_region, raw["longitude"].to_numpy(), raw["latitude"].to_numpy()))
+    inside = np.asarray(shapely.contains_xy(buffered_wgs84, raw["longitude"].to_numpy(), raw["latitude"].to_numpy()))
     raw = raw.loc[inside].copy()
     raw["in_scope"] = np.asarray(shapely.contains_xy(region, raw["longitude"].to_numpy(), raw["latitude"].to_numpy()))
     raw["alert_eligible"] = raw["confidence"].isin(["n", "h"])
@@ -201,7 +201,7 @@ def _cells_from_geojson(path: Path) -> tuple[list[dict], dict]:
     return cells, payload
 
 
-def refresh_live(source_dir: Path, output_dir: Path) -> dict:
+def refresh_live(source_dir: Path, output_dir: Path, *, context_dir: Path | None = None, now=None) -> dict:
     """Fetch current weather and NRT detections, then atomically publish A's feed."""
     source_dir, output_dir = source_dir.resolve(), output_dir.resolve()
     if source_dir == output_dir or source_dir in output_dir.parents or output_dir in source_dir.parents:
@@ -218,15 +218,15 @@ def refresh_live(source_dir: Path, output_dir: Path) -> dict:
     source_features = json.loads((source_dir / "features.json").read_text(encoding="utf-8"))
     if {row["cell_id"] for row in source_features} != {cell["cell_id"] for cell in cells}:
         raise ValueError("Frozen features and geometry refer to different cells")
-    history_path = source_dir / "history.parquet"
+    history_path = (Path(context_dir) if context_dir is not None else source_dir) / "history.parquet"
     history = pd.read_parquet(history_path)
-    if history["cell_id"].nunique() != 40 or history.duplicated(["cell_id", "ts"]).any():
+    if set(history["cell_id"]) != {cell["cell_id"] for cell in cells} or history.duplicated(["cell_id", "ts"]).any():
         raise ValueError("Historical context does not match the frozen 40-cell bundle")
     per_cell_end = history.groupby("cell_id")["ts"].max()
     if per_cell_end.nunique() != 1:
         raise ValueError("Historical context has different final timestamps across cells")
     history_end = pd.Timestamp(per_cell_end.iloc[0])
-    retrieved = pd.Timestamp.now(tz="UTC").floor("s")
+    retrieved = (pd.Timestamp(now) if now is not None else pd.Timestamp.now(tz="UTC")).tz_convert("UTC").floor("s")
     today = retrieved.normalize()
     weather_cache = output_dir / "cache/raw_weather"
     firms_cache = output_dir / "cache/raw_firms"
@@ -244,10 +244,14 @@ def refresh_live(source_dir: Path, output_dir: Path) -> dict:
     if any(pd.isna(value) for value in latest_by_cell.values()):
         raise ValueError("At least one cell has no current or past hourly weather")
     snapshot = min(latest_by_cell.values())
-    if snapshot <= history_end:
+    frozen_end = pd.to_datetime(pd.read_parquet(source_dir / "history.parquet", columns=["ts"])["ts"], utc=True).max()
+    if snapshot <= frozen_end or snapshot < history_end:
         raise ValueError(f"Live weather is not newer than the training history (latest {snapshot.isoformat()})")
-    if (snapshot - history_end) > pd.Timedelta(hours=24):
-        raise ValueError("Live weather is more than 24 hours beyond saved history; refusing a discontinuous B context")
+    # A second refresh in the same hour may contain revised weather/NRT data.
+    # Rebuild that hour, retaining all earlier successfully published context.
+    if snapshot == history_end:
+        history = history[pd.to_datetime(history["ts"], utc=True) < snapshot].copy()
+        history_end = snapshot - pd.Timedelta(hours=1)
     detections, firms_report = _fetch_firms(session, key, load_boundary(source_dir.parent / "cache")[0], firms_cache, today)
     detections = detections[detections["alert_eligible"] & (detections["ts"] <= snapshot)].copy()
     detections["time_ns"] = detections["ts"].astype("int64")
@@ -269,16 +273,27 @@ def refresh_live(source_dir: Path, output_dir: Path) -> dict:
     region_metric = transform(TO_AREA, region)
     alert_detections = detections[detections["alert_eligible"]].copy()
     frames = []
+    unobserved_gap_rows = 0
     for cell in cells:
         cell_weather = weather[weather["cell_id"].eq(cell["cell_id"])].copy()
         built, _ = build_cell(cell, cell_weather, alert_detections, config, region_metric)
         built_ts = pd.to_datetime(built["ts"], utc=True)
         new_rows = built[(built_ts > history_end) & (built_ts <= snapshot)].copy()
-        if new_rows.empty or new_rows["ts"].iloc[-1] != snapshot.strftime("%Y-%m-%dT%H:%M:%SZ"):
+        if new_rows.empty or snapshot.strftime("%Y-%m-%dT%H:%M:%SZ") not in set(new_rows["ts"]):
             raise ValueError(f"Feature rows for {cell['cell_id']} do not reach the common live snapshot")
         cell_history_end = pd.to_datetime(history.loc[history["cell_id"].eq(cell["cell_id"]), "ts"], utc=True).max()
-        new_times = pd.to_datetime(new_rows["ts"], utc=True)
         expected = pd.date_range(cell_history_end + pd.Timedelta(hours=1), snapshot, freq="h", tz="UTC")
+        # A service restarted beyond the provider lookback cannot invent older
+        # observations. Represent missing hours explicitly, with null measures
+        # and labels, while retaining known cell metadata and true hourly order.
+        expected_text = expected.strftime("%Y-%m-%dT%H:%M:%SZ")
+        unobserved_gap_rows += len(expected_text.difference(new_rows["ts"]))
+        new_rows = new_rows.set_index("ts").reindex(expected_text).rename_axis("ts").reset_index()
+        for name, value in {"schema_version": "1.0", "cell_id": cell["cell_id"],
+                            "lat": cell["lat"], "lon": cell["lon"],
+                            "peat_fraction": cell["peat_fraction"], "peat_area_km2": cell["peat_area_km2"]}.items():
+            new_rows[name] = value
+        new_times = pd.to_datetime(new_rows["ts"], utc=True)
         if not new_times.reset_index(drop=True).equals(pd.Series(expected, name=new_times.name)):
             raise ValueError(f"Live rows for {cell['cell_id']} do not form a contiguous hourly extension")
         for target in ("target_24h", "target_48h", "target_72h"):
@@ -314,6 +329,8 @@ def refresh_live(source_dir: Path, output_dir: Path) -> dict:
         "history_start": str(history["ts"].min()), "history_end_before_refresh": history_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "history_rows_before": int(len(history)), "history_rows_after": int(len(combined_history)),
         "appended_live_rows": int(len(live_rows)), "new_targets": "null; live FIRMS observations are not training labels",
+        "history_context_source": str(history_path), "unobserved_gap_rows": unobserved_gap_rows,
+        "history_gap_policy": "Unobserved hours outside the weather lookback have null measurements/targets; no fabricated observations.",
         "weather": {"provider": "Open-Meteo Forecast API",
                     "model": _weather_template()[1].get("models", "best_match (provider default)"),
                     "requests": len(weather_reports),

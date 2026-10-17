@@ -1,5 +1,10 @@
 # Role E — Platform, integration and pitch
 
+For the implemented automatic A → B → C → dashboard service, use
+[LIVE_OPERATIONS.md](LIVE_OPERATIONS.md). The historical scaffold notes below
+remain for the offline demo; `python -m e_platform.live_service` is the live entry
+point, with hourly scheduling and an atomic pointer to complete generations.
+
 Read `TEAM_PLAYBOOK.md` and `contracts/CONTRACTS.md`. Own this folder, root integration files, `scripts/`, `config/`, `contracts/` and CI. Coordinate root README changes with the team. `mock_output.json` is a dispatch integration fixture, not a new contract.
 
 ```bash
@@ -10,7 +15,9 @@ make test
 make demo
 ```
 
-`scripts/run_pipeline.sh --mock` replays A → B → C into `data/demo/` and validates cross-file references. It never trains or overwrites B's artifacts. The live pipeline calls the same role CLIs without `--mock`; A and C currently fail with clear implementation instructions. Do not replace live failures with a synthetic result.
+`scripts/run_pipeline.sh --mock` replays A → B → C into `data/demo/` and validates
+cross-file references. Its live mode runs `e_platform.live_service --once`, using
+separate `data/runtime/live/` storage. It never trains or overwrites B's artifacts.
 
 `serve.py` serves only D's directory and four named handoff feeds under `/data/`. Its default bind is localhost. The frontend works with a plain static server and bundled mocks when the shared handoffs are absent. This is a development server, not a production deployment.
 

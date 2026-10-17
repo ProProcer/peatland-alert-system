@@ -41,7 +41,13 @@ a_data/.venv/Scripts/python.exe -m a_data.refresh --live
 
 The command reads the Forecast API URL from `data/raw/open-meteo_api.md`, changing only latitude and longitude for each selected cell. It makes 40 requests for the 14 canonical hourly variables with the URL's GMT, 30 past-day, and three forecast-day settings. The current URL pins `models=dwd_icon_global`; the historical bundle was requested with `models=icon_global`. The live manifest records the exact requested model and notes that it differs from the historical request identifier. The command requests both `VIIRS_NOAA20_NRT` and `VIIRS_NOAA21_NRT` from FIRMS in two adjacent five-day date windows, filters detections to Indonesian Kalimantan plus a 10 km border buffer, and excludes low-confidence detections from the feature feed. It picks one common latest weather hour no later than retrieval time. Although Open-Meteo returns forecast hours too, this adapter currently publishes only hours at or before retrieval time; Role B predicts future hotspot risk from the latest feature snapshot rather than receiving forecast-weather feature rows. The output includes `features.json`, `features.parquet`, matching cell geometry, and a `history.parquet` extended with contiguous post-training hours so B can calculate its causal indicators. All appended target columns are null. Raw response caches and `live_manifest.json` remain under the isolated live output directory; the dated source bundle is not changed.
 
-This is a one-shot refresh, not a continuously running service. Role A owns the data-fetching and feature-building adapter. Role E owns deployment and pipeline orchestration, including deciding how often to schedule this command and triggering B's inference and C's policy after a successful refresh. Until E adds a scheduler or long-running service, a person must run the command when a new snapshot is needed. Repeated runs replace the current files in the isolated `live/` handoff and preserve the historical source bundle.
+The A command is a one-shot adapter. Role E now provides continuous scheduling,
+B inference, simulated C actions and dashboard publication through
+`python -m e_platform.live_service`; see
+[LIVE_OPERATIONS.md](../e_platform/LIVE_OPERATIONS.md). It resumes the last
+successful live history rather than starting from the frozen cutoff each day.
+Unknown hours beyond available weather lookback receive null measurements and
+targets, never fabricated zeros. Repeated same-hour runs have no duplicate keys.
 
 The currently saved live snapshot was generated before the Forecast API URL was pinned to `dwd_icon_global`; its manifest records that it used the provider default. Editing the URL does not update existing outputs. Run the refresh command again to generate a snapshot from the newly pinned model.
 

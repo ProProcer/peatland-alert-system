@@ -4,7 +4,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import argparse
 import json
 from pathlib import Path
-from urllib.parse import unquote, urlsplit
+from urllib.parse import parse_qs, unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 DATASETS = {
@@ -17,9 +17,16 @@ FILES = ('features.json', 'cells.geojson', 'risk.json', 'dispatch.json')
 
 
 class DemoHandler(SimpleHTTPRequestHandler):
-    def __init__(self, *args, demo_root, **kwargs):
+    def __init__(self, *args, demo_root, live_root=None, **kwargs):
         self.demo_root = Path(demo_root).resolve()
+        self.live_root = Path(live_root).resolve() if live_root is not None else None
         super().__init__(*args, directory=str(ROOT / 'd_frontend'), **kwargs)
+
+    def live_directory(self):
+        if self.live_root is None:
+            return None
+        from e_platform.live_service import current_snapshot
+        return current_snapshot(self.live_root)
 
     def json_response(self, value, status=200):
         body = json.dumps(value, allow_nan=False).encode('utf-8')
@@ -32,13 +39,59 @@ class DemoHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = unquote(urlsplit(self.path).path)
+        if path == '/live/status':
+            if self.live_root is None:
+                return self.json_response({'state': 'disabled', 'snapshot': None})
+            from e_platform.live_service import service_status
+            return self.json_response(service_status(self.live_root))
+        if path.startswith('/live/snapshots/'):
+            # Immutable, generation-specific feed URLs prevent mixed snapshots
+            # if a refresh commits between the browser's parallel requests.
+            parts = path.split('/')
+            if self.live_root is None or len(parts) != 5 or parts[4] not in FILES:
+                return self.json_response({'error': 'Unknown live feed'}, 404)
+            directory = (self.live_root / 'snapshots' / parts[3]).resolve()
+            if (not directory.is_relative_to(self.live_root / 'snapshots')
+                    or not (directory / 'pipeline_manifest.json').is_file()):
+                return self.json_response({'error': 'Live snapshot unavailable'}, 404)
+            target = directory / parts[4]
+            if not target.is_file():
+                return self.json_response({'error': 'Live feed unavailable'}, 404)
+            return self.json_response(json.loads(target.read_text(encoding='utf-8')))
         if path == '/response/status':
             from d_frontend.response_api import response_bundle
             try:
+                if self.live_root is not None:
+                    generation = parse_qs(urlsplit(self.path).query).get('generation', [None])[0]
+                    directory = self.live_directory()
+                    if generation is not None:
+                        requested = (self.live_root / 'snapshots' / generation).resolve()
+                        if (not requested.is_relative_to(self.live_root / 'snapshots')
+                                or not (requested / 'pipeline_manifest.json').is_file()):
+                            return self.json_response({'error': 'Live response snapshot unavailable'}, 404)
+                        directory = requested
+                    if directory is None:
+                        return self.json_response({'error': 'Waiting for the first complete live snapshot'}, 503)
+                    bundle = response_bundle(directory,
+                        state_path=directory / 'agent_state.json', log_path=directory / 'notifications.log',
+                        water_sources=ROOT / 'data/demo/role_a_real/water_sources.geojson')
+                    bundle['engine']['automatic'] = True
+                    return self.json_response(bundle)
                 return self.json_response(response_bundle(self.demo_root / DATASETS['coverage'][0]))
             except (ValueError, OSError):
                 return self.json_response({'error': 'Response data is invalid or unreadable'}, 500)
         if path == '/demo/catalog.json':
+            if self.live_root is not None:
+                directory = self.live_directory()
+                if directory is None:
+                    return self.json_response({'mode': 'live', 'datasets': []})
+                manifest = json.loads((directory / 'pipeline_manifest.json').read_text(encoding='utf-8'))
+                return self.json_response({'mode': 'live', 'datasets': [{
+                    'id': 'live', 'label': 'Live Kalimantan · 40 cells',
+                    'description': 'Automatically refreshed live inputs; provisional modeled risk and simulated actions.',
+                    'base': f'/live/snapshots/{directory.name}/', 'files': list(FILES),
+                    'timestamps': [manifest['snapshot']], 'cell_count': manifest['cell_count'],
+                    'generation': directory.name}]})
             datasets = []
             for key, (folder, label, description) in DATASETS.items():
                 directory = (self.demo_root / folder).resolve()
@@ -71,6 +124,8 @@ class DemoHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
         if self.path != '/response/run':
             return self.json_response({'error': 'Unknown operation'}, 404)
+        if self.live_root is not None:
+            return self.json_response({'error': 'Live responses run automatically with each validated snapshot.'}, 409)
         # Mutations are same-origin and JSON-only; no external notification endpoint exists.
         origin = self.headers.get('Origin')
         if origin and origin != f"http://{self.headers.get('Host')}":
@@ -89,8 +144,8 @@ class DemoHandler(SimpleHTTPRequestHandler):
             return self.json_response({'error': str(exc)}, 400)
 
 
-def make_server(demo_root=ROOT / 'data/demo', port=8001):
-    return ThreadingHTTPServer(('127.0.0.1', port), partial(DemoHandler, demo_root=demo_root))
+def make_server(demo_root=ROOT / 'data/demo', port=8001, *, host='127.0.0.1', live_root=None):
+    return ThreadingHTTPServer((host, port), partial(DemoHandler, demo_root=demo_root, live_root=live_root))
 
 
 def main():

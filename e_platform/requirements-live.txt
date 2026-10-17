@@ -1,0 +1,4 @@
+# One environment for ingestion, fixed-model inference, simulated actions and HTTP.
+-r ../requirements.txt
+-r ../a_data/requirements.txt
+-r ../b_model/requirements-training.txt

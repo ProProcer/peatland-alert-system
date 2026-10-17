@@ -61,6 +61,13 @@ assert.throws(() => vm.runInContext('validateFeedSet(entries)', context), /snaps
   assert.deepEqual(paths, ['/demo/catalog.json', 'assets/coverage-snapshot.json']);
   for (const filename of snapshot.files) assert.deepEqual(snapshot.feeds[filename], JSON.parse(fs.readFileSync(__dirname + '/../data/demo/role_a_real/regional_40/' + filename, 'utf8')));
   console.log('PASS: plain static-server fallback loads the exact real 40-cell snapshot and matching supplied predictions, without mock data.');
+  context.fetch = async () => ({ ok: true, json: async () => ({ mode: 'live', datasets: [] }) });
+  await assert.rejects(vm.runInContext('discoverDatasets()', context), /Waiting/);
+  context.fetch = async () => ({ ok: true, json: async () => ({ mode: 'live', datasets: [{ id: 'live', generation: 'generation-1', label: 'Live' }] }) });
+  await vm.runInContext('discoverDatasets()', context);
+  assert.equal(context.activeDataset.id, 'live');
+  assert.equal(context.activeDataset.generation, 'generation-1');
+  console.log('PASS: live mode waits for its first snapshot and selects only its published generation.');
   console.log('PASS: interface exposes only the 40-cell coverage dataset and never falls back to mocks.');
   console.log('PASS: matched snapshots, rejection of mixed data, missing outputs, isolated dataset requests and failure handling.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

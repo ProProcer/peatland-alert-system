@@ -100,8 +100,10 @@ class PipelineTests(unittest.TestCase):
         protected = list((ROOT / "data/processed").glob("*")) + list((ROOT / "b_model/model").glob("*"))
         before = {path: path.read_bytes() for path in protected if path.is_file()}
         with tempfile.TemporaryDirectory() as folder:
-            result = subprocess.run(["bash", str(ROOT / "scripts/run_pipeline.sh"), "--mock", folder],
-                                    cwd="/tmp", env={**os.environ, "PYTHON": sys.executable}, capture_output=True, text=True)
+            command = ([sys.executable, "-m", "e_platform.prepare_demo", "--output-dir", folder]
+                       if os.name == "nt" else ["bash", str(ROOT / "scripts/run_pipeline.sh"), "--mock", folder])
+            result = subprocess.run(command, cwd=folder,
+                                    env={**os.environ, "PYTHON": sys.executable, "PYTHONPATH": str(ROOT)}, capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stderr)
             validate_directory(Path(folder))
             dispatch = load_json(Path(folder) / "dispatch.json")
@@ -120,13 +122,10 @@ class PipelineTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "missing risk horizon"):
                 validate_directory(directory)
 
-    def test_live_pipeline_fails_before_writing_mock_data(self):
-        with tempfile.TemporaryDirectory() as folder:
-            result = subprocess.run(["bash", "scripts/run_pipeline.sh", "live", folder], cwd=ROOT,
-                                    env={**os.environ, "PYTHON": sys.executable}, capture_output=True, text=True)
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn("live ingestion is not implemented", result.stderr)
-            self.assertEqual(list(Path(folder).iterdir()), [])
+    def test_live_pipeline_refuses_historical_processed_data(self):
+        from e_platform.live_service import refresh_once
+        with self.assertRaisesRegex(ValueError, "processed data"):
+            refresh_once(ROOT / "data/processed")
 
     def test_mock_pipeline_refuses_processed_directory(self):
         with self.assertRaisesRegex(ValueError, "separate mock output"):

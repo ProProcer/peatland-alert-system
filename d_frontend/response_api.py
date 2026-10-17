@@ -15,11 +15,13 @@ STATE = ROOT / 'c_agent/state/frontend_incidents.json'
 LOG = ROOT / 'c_agent/logs/frontend_notifications.log'
 
 
-def response_bundle(directory):
+def response_bundle(directory, *, state_path=None, log_path=None, water_sources=None):
     path = directory / 'dispatch.json'
     from contracts.validate import validate_file
     records = validate_file('dispatch', path) if path.is_file() else []
-    water = resolve_water_catalogue_path(None, directory)
+    water = resolve_water_catalogue_path(water_sources, directory)
+    state_path = Path(state_path) if state_path is not None else STATE
+    log_path = Path(log_path) if log_path is not None else LOG
     return {'dispatches': records, 'available': path.is_file(), 'summary': generate_summary(records),
             'timeline': generate_incident_timeline(records), 'social': generate_social_media_posts(records),
             'email': generate_batch_email_summary(records),
@@ -28,8 +30,8 @@ def response_bundle(directory):
                        'water_catalogue': water.name if water else None,
                        'spatial_water': _WATER_INDEX_AVAILABLE,
                        'llm_available': llm._pick_provider(None) is not None,
-                       'state_persisted': STATE.is_file()},
-            'log': LOG.read_text(encoding='utf-8').splitlines()[-100:] if LOG.exists() else []}
+                       'state_persisted': state_path.is_file()},
+            'log': log_path.read_text(encoding='utf-8').splitlines()[-100:] if log_path.exists() else []}
 
 
 def run_response(directory, options):

@@ -1,0 +1,17 @@
+[Unit]
+Description=Peatland live ingestion, prediction, simulated response and dashboard
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/peatland-alert-system
+Environment=OMP_NUM_THREADS=2
+Environment=MKL_NUM_THREADS=2
+ExecStart=/opt/peatland-alert-system/.venv/bin/python -m e_platform.live_service --host 127.0.0.1 --port 8001
+Restart=on-failure
+RestartSec=60
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target

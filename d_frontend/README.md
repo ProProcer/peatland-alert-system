@@ -4,6 +4,17 @@ Current dataset: the website loads 40 unique cells from `data/demo/role_a_real/r
 
 # Role D — Frontend / alerts
 
+## Automatic live mode
+
+Start `python -m e_platform.live_service` to view automatically refreshed live
+inputs, predictions and simulated responses on port 8001. The browser checks for
+new complete generations every minute, displays their feature timestamp, and
+flags stale data/refresh errors. The automatic service owns the response run;
+manual generation is disabled in this mode. It never falls back to bundled
+historical data while waiting for live data. The regular `serve_demo` command
+continues to serve the historical demo. See
+[LIVE_OPERATIONS.md](../e_platform/LIVE_OPERATIONS.md) for setup and auto-start.
+
 ## Interface
 
 The app uses a left navigation rail, forecast-driven status cards, a large regional

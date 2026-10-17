@@ -1,5 +1,25 @@
 # Peat Fire Early-Warning Agent
 
+## Automatic live dashboard
+
+The live pipeline can now run continuously: **Open-Meteo/FIRMS refresh → model
+inference → simulated responses → validated dashboard publication**, hourly by
+default. It covers the frozen 40-cell Kalimantan scope. Setup, Windows automatic
+startup, LinuxONE/systemd and Docker instructions are in
+[LIVE_OPERATIONS.md](e_platform/LIVE_OPERATIONS.md).
+
+```powershell
+uv venv --python 3.12 .venv
+uv pip install --python .venv/Scripts/python.exe -r e_platform/requirements-live.txt
+# Configure FIRMS_MAP_KEY in the ignored .env file first.
+.venv/Scripts/python.exe -m e_platform.live_service
+```
+
+Open **http://127.0.0.1:8001**. The live page checks for complete new snapshots
+every minute. Keep the service running, or install its logon/boot service as
+documented. `make live` starts it; `make live-once` runs one complete refresh.
+Existing mock/historical commands remain available for offline demos.
+
 IBM Z Datathon 2026. Predict surface hotspot emergence in Indonesian peatland cells over 24, 48 and 72 hours, then simulate notifications and dispatches.
 
 Read [TEAM_PLAYBOOK.md](TEAM_PLAYBOOK.md) first. The original [PDF](TEAM_PLAYBOOK.md.pdf) is retained. Shared interfaces are documented in [contracts/CONTRACTS.md](contracts/CONTRACTS.md).
@@ -74,7 +94,10 @@ data/demo/           Separate mock pipeline outputs
 | `make model-test` | Run the existing Role B tests (install B dependencies first) |
 | `docker compose up --build` | Run the mock pipeline and viewer in a container |
 
-`make pipeline` deliberately fails at the first unimplemented live adapter. A's `refresh.py` and C's `agent.py` currently support `--mock` only. Replace those adapters in the owning folders when ready. B's existing inference remains available with `python -m b_model.predict`; use explicit `--input` and `--output` paths for experiments. Training is separate from the refresh pipeline.
+`make pipeline` runs the complete live pipeline once into separate runtime
+storage. It requires live dependencies and a private FIRMS key. It retains the
+last complete published snapshot on failure and never substitutes mocks for a
+failed live stage. Training remains separate from refresh and inference.
 
 ## Shared decisions
 

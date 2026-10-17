@@ -1,5 +1,6 @@
 .venv/
 .venv*/
+data/runtime/
 venv/
 .env
 .env.*

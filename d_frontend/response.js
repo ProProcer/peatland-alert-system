@@ -151,7 +151,23 @@
     target.append(more);
   }
   function renderMessage(){const target=$('response-message');target.replaceChildren();const row=current(),language=$('response-language').value,kind=$('response-preview').value;if(kind==='batch'){if(bundle){target.append(el('h3',bundle.email.subject[language]),el('pre',bundle.email.body[language]));}else target.append(el('p','Connect the local engine to generate email templates.'));return;}if(!row){target.append(el('p','Select an incident to preview its messages.','response-empty'));return;}if(kind==='audience'){for(const audience of row.audiences){const text=row.messages[audience][language];const card=el('article',null,'audience-message');card.append(el('h3',titles[audience]),el('p',text));if(audience==='mpa')card.append(el('small',`${text.length}/160 characters · ${text.length<=160?'Within SMS limit':'Exceeds SMS limit'}`));target.append(card);}}else if(!bundle){target.append(el('p','Start the local demo server to generate social and email previews.'));}else if(kind==='email'){const email=bundle.individual_emails.find(r=>r.dispatch_id===row.dispatch_id);if(email)target.append(el('h3',email.subject[language]),el('pre',email.body[language]));}else{const index=bundle.dispatches.findIndex(r=>r.dispatch_id===row.dispatch_id);const text=bundle.social[kind][index]?.[language];target.append(el('p',text||'Preview unavailable.'));if(kind==='twitter'&&text)target.append(el('small',`${text.length}/280 characters`));}}
-  async function refresh(){const ticket=++version;try{const response=await fetch('/response/status',{cache:'no-store'});if(!response.ok)throw new Error('Local engine unavailable');const data=await response.json();if(ticket!==version)return;const ids=new Set(snapshot?.features?.map(r=>r.cell_id)||[]);if(data.dispatches.some(r=>!ids.has(r.cell_id)))throw new Error('Response feed refers to different monitoring cells');bundle=data;records=data.dispatches;online=true;$('response-connection').textContent='Local engine connected · simulation only';}catch(error){if(ticket!==version)return;bundle=null;online=false;records=snapshot?.dispatch||[];$('response-connection').textContent='Saved snapshot · local engine unavailable';}$('response-run').disabled=!online;render();}
+  async function refresh(){
+    const ticket=++version;
+    try{
+      const query=snapshot?.generation?`?generation=${encodeURIComponent(snapshot.generation)}`:'';
+      const response=await fetch('/response/status'+query,{cache:'no-store'});
+      if(!response.ok)throw new Error('Local engine unavailable');
+      const data=await response.json();if(ticket!==version)return;
+      const ids=new Set(snapshot?.features?.map(r=>r.cell_id)||[]);
+      if(data.dispatches.some(r=>!ids.has(r.cell_id)))throw new Error('Response feed refers to different monitoring cells');
+      bundle=data;records=data.dispatches;online=true;
+      $('response-connection').textContent=data.engine?.automatic?'Automatic live responses · simulation only':'Local engine connected · simulation only';
+    }catch(error){
+      if(ticket!==version)return;bundle=null;online=false;records=snapshot?.dispatch||[];
+      $('response-connection').textContent='Saved snapshot · local engine unavailable';
+    }
+    $('response-run').disabled=!online||!!bundle?.engine?.automatic;render();
+  }
   window.addEventListener('response-feeds',event=>{snapshot=event.detail;records=snapshot.dispatch||[];render();refresh();});
   $('response-refresh').onclick=refresh;
   $('response-run').onclick=async()=>{const cooldown=$('response-cooldown'),water=$('response-water');if(!cooldown.reportValidity()||!water.reportValidity())return;const button=$('response-run');button.disabled=true;$('response-feedback').textContent='Generating simulated responses...';try{const response=await fetch('/response/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cooldown_hours:Number(cooldown.value),max_water_km:Number(water.value),use_llm:$('response-llm').checked})});const data=await response.json();if(!response.ok)throw new Error(data.error||'Generation failed');bundle=data;records=data.dispatches;render();$('response-feedback').textContent=`Updated ${records.length} response records. Notifications remain simulated.`;window.dispatchEvent(new Event('refresh-dashboard'));}catch(error){$('response-feedback').textContent=`Could not generate responses: ${error.message}`;}finally{button.disabled=!online;}};
