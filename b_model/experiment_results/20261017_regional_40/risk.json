@@ -50,7 +50,7 @@
     "cell_id": "-3.25_114.25",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.39125500911877115,
+    "risk_score": 0.39125500911877126,
     "risk_level": "MODERATE",
     "top_factors": [
       {
@@ -280,7 +280,7 @@
     "cell_id": "3.55_117.25",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.10984129612700265,
+    "risk_score": 0.10984129612700269,
     "risk_level": "LOW",
     "top_factors": [
       {
@@ -464,7 +464,7 @@
     "cell_id": "-2.75_114.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.16838912331107153,
+    "risk_score": 0.1683891233110715,
     "risk_level": "LOW",
     "top_factors": [
       {
@@ -648,7 +648,7 @@
     "cell_id": "-2.05_114.15",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.7648594199727973,
+    "risk_score": 0.7648594199727974,
     "risk_level": "HIGH",
     "top_factors": [
       {
@@ -809,7 +809,7 @@
     "cell_id": "-2.55_114.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.5876313940770341,
+    "risk_score": 0.5876313940770344,
     "risk_level": "MODERATE",
     "top_factors": [
       {
@@ -855,7 +855,7 @@
     "cell_id": "-2.65_114.95",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 24,
-    "risk_score": 0.42524847454710873,
+    "risk_score": 0.4252484745471088,
     "risk_level": "MODERATE",
     "top_factors": [
       {
@@ -1384,7 +1384,7 @@
     "cell_id": "-2.75_114.85",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.19516637432050693,
+    "risk_score": 0.19516637432050687,
     "risk_level": "LOW",
     "top_factors": [
       {
@@ -1522,7 +1522,7 @@
     "cell_id": "-1.55_110.15",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.18745404847376573,
+    "risk_score": 0.18745404847376568,
     "risk_level": "LOW",
     "top_factors": [
       {
@@ -1591,7 +1591,7 @@
     "cell_id": "-2.25_115.05",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 48,
-    "risk_score": 0.14985689375190678,
+    "risk_score": 0.14985689375190683,
     "risk_level": "LOW",
     "top_factors": [
       {
@@ -2235,7 +2235,7 @@
     "cell_id": "1.35_118.55",
     "ts": "2026-10-16T00:00:00Z",
     "horizon_h": 72,
-    "risk_score": 0.12435369433640325,
+    "risk_score": 0.12435369433640323,
     "risk_level": "LOW",
     "top_factors": [
       {
