@@ -286,6 +286,13 @@ body.sidebar-closed .main-shell { margin-left: 0; }
 /* Floating explanation card for the selected monitoring point. */
 .cell-explanation { position: absolute; z-index: 8; width: 365px; max-width: calc(100% - 20px); max-height: calc(100% - 24px); overflow-y: auto; overscroll-behavior: contain; padding: 20px; border: 1px solid #dfe6d9; border-radius: 16px; background: #fffffff7; color: var(--ink); box-shadow: 0 12px 40px #183a2930; font-size: 12px; line-height: 1.6; backdrop-filter: blur(12px); }
 .cell-explanation[hidden] { display: none; }
+.cell-explanation { display: flex; flex-direction: column; overflow: hidden; max-height: calc(100% - 20px); }
+.cell-explanation .explain-header { flex-shrink: 0; cursor: grab; touch-action: none; user-select: none; }
+.cell-explanation.is-adjusting .explain-header { cursor: grabbing; }
+.explain-header:focus-visible, .explain-resize:focus-visible { outline: 2px solid #538d75; outline-offset: 2px; }
+.explain-body { min-height: 0; flex: 1; overflow-y: auto; overflow-x: hidden; overflow-wrap: anywhere; overscroll-behavior: contain; padding-right: 5px; }
+.explain-window-tools { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0; padding-top: 8px; color: #78836f; font-size: 10px; }
+.explain-resize { display: grid; place-items: center; flex-shrink: 0; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 7px; background: #edf2e9; color: #52674d; cursor: nwse-resize; touch-action: none; font-size: 20px; }
 .cell-explanation:focus-visible { outline: 3px solid #538d75; outline-offset: -3px; }
 .explain-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .explain-eyebrow { font-size: 8px; font-weight: 650; letter-spacing: .15em; color: #78866e; }

@@ -9,6 +9,7 @@ let focusedDataset = null;
 const mapBounds = { west: 108, east: 119.5, south: -4.5, north: 4.5 };
 const mapColors = { LOW: "#32945b", MODERATE: "#e9c643", HIGH: "#e78b38", CRITICAL: "#d64b57" };
 let mapView;
+let mapAnimationFrame;
 let selectedCell;
 let peatland;
 let peatlandPaths = [];
@@ -43,7 +44,8 @@ const project = ([lon, lat]) => [256 * 64 * (lon + 180) / 360, 256 * 64 * (1 - M
 const mapNW = project([mapBounds.west, mapBounds.north]);
 const mapSE = project([mapBounds.east, mapBounds.south]);
 const regionView = [mapNW[0], mapNW[1], mapSE[0] - mapNW[0], mapSE[1] - mapNW[1]];
-function setMapView(view) {
+function setMapView(view, animationStep = false) {
+  if (!animationStep) cancelAnimationFrame(mapAnimationFrame);
   const width = Math.min(regionView[2], Math.max(20, view[2]));
   const height = width * regionView[3] / regionView[2];
   mapView = [Math.max(regionView[0], Math.min(view[0], mapSE[0] - width)), Math.max(regionView[1], Math.min(view[1], mapSE[1] - height)), width, height];
@@ -51,17 +53,41 @@ function setMapView(view) {
   updateRiskLabels();
   clearTimeout(tileTimer);
   tileTimer = setTimeout(updateMapTiles, 160);
+  window.dispatchEvent(new Event('map-view-change'));
 }
-function focusMonitoringCell(cellId) {
-  const feature = regionalCells().find(row => row.properties.cell_id === cellId);
-  if (!feature) return false;
+function animateMapView(target) {
+  cancelAnimationFrame(mapAnimationFrame);
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !mapView) {
+    setMapView(target);
+    return;
+  }
+  const start = mapView.slice();
+  const started = performance.now();
+  const step = now => {
+    const progress = Math.min(1, Math.max(0, (now - started) / 750));
+    const eased = progress * progress * (3 - 2 * progress);
+    const width = start[2] * Math.pow(target[2] / start[2], eased);
+    const height = width * regionView[3] / regionView[2];
+    const cx = start[0] + start[2] / 2 + (target[0] + target[2] / 2 - start[0] - start[2] / 2) * eased;
+    const cy = start[1] + start[3] / 2 + (target[1] + target[3] / 2 - start[1] - start[3] / 2) * eased;
+    setMapView(progress === 1 ? target : [cx - width / 2, cy - height / 2, width, height], true);
+    mapAnimationFrame = progress < 1 ? requestAnimationFrame(step) : undefined;
+  };
+  mapAnimationFrame = requestAnimationFrame(step);
+}
+function zoomToMonitoringCell(feature) {
   const points = feature.geometry.coordinates[0].map(project);
   const xs = points.map(point => point[0]), ys = points.map(point => point[1]);
   const left = Math.min(...xs), right = Math.max(...xs);
   const top = Math.min(...ys), bottom = Math.max(...ys);
   const width = Math.max(20, (right - left) * 3, (bottom - top) * 3 * regionView[2] / regionView[3]);
   const height = width * regionView[3] / regionView[2];
-  setMapView([(left + right - width) / 2, (top + bottom - height) / 2, width, height]);
+  animateMapView([(left + right - width) / 2, (top + bottom - height) / 2, width, height]);
+}
+function focusMonitoringCell(cellId) {
+  const feature = regionalCells().find(row => row.properties.cell_id === cellId);
+  if (!feature) return false;
+  zoomToMonitoringCell(feature);
   const marker = [...document.querySelectorAll('.risk-map-marker')].find(node => node.dataset.cellId === cellId);
   if (marker) {
     marker.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 }));
@@ -168,6 +194,7 @@ function renderMap(horizon) {
     const select = (event) => {
       selectedCell = id;
       selectedOutline.setAttribute("d", path);
+      zoomToMonitoringCell(feature);
       for (const other of map.querySelectorAll(".map-cell")) other.setAttribute("aria-pressed", other === cell);
       for (const other of map.querySelectorAll('.risk-map-marker')) other.setAttribute('aria-pressed', other === marker);
       document.querySelector("#map-detail").textContent = description;
@@ -234,6 +261,7 @@ mapElement.addEventListener("wheel", event => {
 }, { passive: false });
 mapElement.addEventListener("pointerdown", event => {
   if (event.button !== 0 || mapDrag) return;
+  cancelAnimationFrame(mapAnimationFrame);
   const inverse = mapElement.getScreenCTM()?.inverse();
   const point = pointerOnMap(event, inverse);
   if (!point) return;

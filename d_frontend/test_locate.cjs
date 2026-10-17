@@ -6,7 +6,25 @@ const cells=JSON.parse(fs.readFileSync(__dirname+'/../data/demo/role_a_real/regi
 let view, selected, scrolled=false;
 const context={window:{addEventListener(){},dispatchEvent(){}},Event:class {},MouseEvent:class {},matchMedia:()=>({matches:true}),regionalCells:()=>cells,project:([x,y])=>[x*50,-y*50],regionView:[0,0,900,650],setMapView:v=>view=v,document:{querySelectorAll:()=>cells.map(row=>({dataset:{cellId:row.properties.cell_id},dispatchEvent(){selected=row.properties.cell_id;},focus(){}})),querySelector:()=>({scrollIntoView(){scrolled=true;}})}};
 vm.createContext(context);
-vm.runInContext(source.slice(source.indexOf('function focusMonitoringCell('),source.indexOf('function mapPixelScale(')),context);
+context.cancelAnimationFrame=()=>{};
+vm.runInContext('let mapAnimationFrame;'+source.slice(source.indexOf('function animateMapView('),source.indexOf('function zoomToMonitoringCell(')),context);
+vm.runInContext(source.slice(source.indexOf('function zoomToMonitoringCell('),source.indexOf('function mapPixelScale(')),context);
+const selectionHandler=source.slice(source.indexOf('const select = (event)'),source.indexOf('cell.addEventListener("click", select)'));
+assert(selectionHandler.includes('zoomToMonitoringCell(feature)'));
+assert(selectionHandler.indexOf('zoomToMonitoringCell(feature)')<selectionHandler.indexOf("new CustomEvent('cell-explain'"));
 for(const cell of cells){assert(context.focusMonitoringCell(cell.properties.cell_id));assert.equal(selected,cell.properties.cell_id);const points=cell.geometry.coordinates[0].map(context.project);for(const [x,y] of points){assert(x>=view[0]&&x<=view[0]+view[2]);assert(y>=view[1]&&y<=view[1]+view[3]);}const cellWidth=Math.max(...points.map(p=>p[0]))-Math.min(...points.map(p=>p[0]));assert(cellWidth/view[2]*650>65);}
 assert(scrolled);assert.equal(context.focusMonitoringCell('missing'),false);
+let nextFrame;
+context.mapView=[0,0,900,650];
+context.matchMedia=()=>({matches:false});
+context.performance={now:()=>0};
+context.requestAnimationFrame=callback=>{nextFrame=callback;return 1;};
+const target=[100,100,90,65];
+context.animateMapView(target);
+nextFrame(0);
+assert.equal(view[2],900);
+nextFrame(375);
+assert(view[2]>90&&view[2]<900,'Zoom passes through an intermediate scale');
+nextFrame(750);
+assert.deepEqual(view,target,'Animation finishes at the exact selected-cell bounds');
 console.log('PASS: locate centers all 40 cells, fits each square at visible zoom, selects its marker and scrolls to map.');

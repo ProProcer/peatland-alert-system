@@ -1,6 +1,16 @@
 ﻿const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const {measurement, explanation} = require('./explain.js');
+const {measurement, explanation, fitWindow} = require('./explain.js');
+for(const bounds of [{width:900,height:525},{width:310,height:470}]) {
+  for(const rect of [{left:-100,top:-50,width:365,height:480},{left:850,top:500,width:1200,height:900},{left:30,top:40,width:100,height:80}]) {
+    const fitted=fitWindow(bounds,rect);
+    assert(fitted.left>=10&&fitted.top>=10);
+    assert(fitted.left+fitted.width<=bounds.width-10);
+    assert(fitted.top+fitted.height<=bounds.height-10);
+    assert(fitted.width>=Math.min(280,bounds.width-20));
+    assert(fitted.height>=Math.min(220,bounds.height-20));
+  }
+}
 const snapshot = JSON.parse(fs.readFileSync(__dirname + '/assets/coverage-snapshot.json', 'utf8'));
 const features = snapshot.feeds['features.json'];
 const risks = snapshot.feeds['risk.json'];
