@@ -45,7 +45,7 @@ d_frontend/          D: starter handoff viewer, static mocks
 e_platform/          E: server, Dockerfiles, evidence and submission folders
 scripts/             Setup and pipeline commands (E)
 config/              Shared demo decisions (E)
-data/raw/            Cached source downloads (ignored)
+data/raw/            Bundled peat/FIRMS sources; other downloads ignored
 data/processed/      Existing/generated role outputs
 data/demo/           Disposable mock pipeline outputs (ignored)
 ```
