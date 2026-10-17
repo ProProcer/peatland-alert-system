@@ -1,0 +1,28 @@
+{
+  "published_at": "2026-10-17T07:07:21.595682Z",
+  "mode": "historical_replay",
+  "is_mock": false,
+  "snapshot": "2026-10-16T00:00:00Z",
+  "cell_count": 33,
+  "history_rows": 541728,
+  "risk_records": 99,
+  "source_bundle": "data/demo/role_a_real/hackathon",
+  "source_handoff": "a_data/REAL_HANDOFF.md",
+  "training_input": "data/demo/role_a_real/hackathon/history_2025.parquet",
+  "training_sha256": "4e64ca1a7ad7a2384993ea3c6a54a3058dba12c66dcdae2f25bd93afff113b43",
+  "model_dir": "b_model/model_real_2025",
+  "training_rows": 289080,
+  "inference_config": "b_model/conf/replay_role_a.yaml",
+  "model_quality": "First real candidate; validation recall is zero at cutoff 0.50 for all horizons. All replay predictions are LOW. Not an accepted operational model.",
+  "dispatch": "Existing C deterministic policy; empty result from LOW risks. Explicit empty water catalogue; no mock water sources used. Real mapped-water integration remains with C.",
+  "coverage_limitation": "FIRMS export completeness is human-declared, not an independent satellite-observation availability audit.",
+  "development_backup": "b_model/runs/before_real_publication_20261017_070632",
+  "files": {
+    "features.json": "0298b1cebd48c8046cd860d5d61d7553e52061d34cd48606b26e9a71ab65445c",
+    "features.parquet": "f4447cc0f1320a69a9db567f444adfb3c4d2636c137270aea26c3c4d696380fb",
+    "history.parquet": "444152463a2aa952a6154c965d7c3876e48e4ffea1c86370ca811dafa76bfb40",
+    "cells.geojson": "4a68469ed5b935dd2d63975ab596727c3f235920f5774e8d9e0cb16b4b7d5e6c",
+    "risk.json": "47453843bd22b8ec8110ea316096bb92d1e35180bf03816a0162e1e502677a9d",
+    "dispatch.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  }
+}
