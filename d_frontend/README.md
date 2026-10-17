@@ -45,3 +45,27 @@ Role E should include this dataset in the root dependency/source inventory.
 Map navigation: drag to pan within the regional bounds; scroll over the map to
 zoom around the pointer. Zoom buttons remain available. A drag does not select a
 risk cell; click or use Enter/Space to select one.
+
+Basemap tiles now adapt to the visible zoom and screen density (up to 2×),
+loading only the current viewport after navigation pauses. Previous tiles remain
+visible during loading. Risk boundaries remain vector shapes, with colored
+markers at regional scale and explicit risk-level/score labels when zoomed in.
+Risk indicates predicted surface hotspot emergence, not confirmed burning.
+
+## Peat-only risk shading
+
+`assets/peatland.geojson` is a display-only extract of the bundled
+`data/raw/Indonesia_Peat_Lands.geojson`, described in the team playbook as the
+[Global Forest Watch Indonesian peat layer](https://www.globalforestwatch.org/).
+Exact upstream layer URL, survey date, and license remain unverified in the
+bundled source metadata. It is not a complete contemporary land classification.
+Rebuild with `python d_frontend/extract_peatland.py` from repository root.
+The extraction retains source polygon rings and holes, drops the Z coordinate,
+and selects polygons intersecting the regional viewport without simplifying them.
+No processed handoff data is changed. The static extract is about 10 MB.
+
+Risk-cell fills, markers, and labels are SVG-clipped to these peat polygons.
+Gray means outside the supplied mapped peat extent (not proof of absence);
+pale sage means mapped peatland without a selected-horizon prediction.
+No risk shading is shown if the peat dataset cannot load. Mock grid cells and
+risk values remain synthetic and may not overlap the real peat polygons.
