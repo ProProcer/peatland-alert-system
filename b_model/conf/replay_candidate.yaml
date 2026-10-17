@@ -1,0 +1,8 @@
+# Opt-in improved candidate. Its default output is separate from shared feeds.
+defaults:
+  - replay_role_a
+  - _self_
+
+paths:
+  model_dir: b_model/model_candidate_2026
+  output: b_model/experiment_results/20261017/risk.json

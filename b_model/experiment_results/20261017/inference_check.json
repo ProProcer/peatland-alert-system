@@ -1,0 +1,16 @@
+{
+  "fresh_cli_seconds": 2.4217385970005125,
+  "records": 99,
+  "cell_count": 33,
+  "timestamp": [
+    "2026-10-16T00:00:00Z"
+  ],
+  "levels": {
+    "CRITICAL": 57,
+    "MODERATE": 20,
+    "LOW": 9,
+    "HIGH": 13
+  },
+  "runner_sha256": "751d4c6140d8adc31653b2f9b1ae96924f9583094968f83c3acae12aa4d117c7",
+  "selection_saved_before_final_results": true
+}

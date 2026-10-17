@@ -1,5 +1,29 @@
 # PIC 2 → PIC 1: training and inference agreement
 
+## Improved candidate available for replay integration
+
+The completed chronological experiment selected balanced Logistic Regression
+with sigmoid calibration for all horizons. Portable artifacts and their manifest
+are in `b_model/model_candidate_2026/`; the opt-in profile is `replay_candidate`.
+Run `python -m b_model.predict --config-name replay_candidate` to write matching
+candidate risk to `b_model/experiment_results/20261017/risk.json` (33 cells,
+`2026-10-16T00:00:00Z`, three horizons). All 27 canonical predictors and schema 1.0
+are preserved. This uses the actual existing PIC 1 consumer.
+
+See [EXPERIMENT_RESULTS.md](EXPERIMENT_RESULTS.md) for the frozen development
+selection, separate final evaluation, prior-model/baseline comparisons and source
+audit. Overall performance improved, but 24-hour quiet-case recall is about 30%
+at cutoff 0.50. This is a historical replay candidate; overall metrics include
+ongoing hotspots and a high-prevalence final period.
+
+E/C should select this model directory explicitly for the next isolated
+integration run, retain A's matching features/geometry, and regenerate simulated
+dispatch from the new candidate risk. Existing published risk/dispatch remain
+the earlier run. The generic inference and `replay_role_a` profiles retain their
+previous model selections. No C or E implementation was edited.
+
+## Existing training and inference agreement
+
 This is a handoff note for the teammate; no external message has been sent. Training changes stay in PIC 2 files. PIC 1's `config.py`, `features.py`, `predict.py`, `conf/config.yaml` and `tests/test_contract.py` remain unchanged by this work.
 
 Install `requirements-training.txt` for the shared tested environment. It retains
