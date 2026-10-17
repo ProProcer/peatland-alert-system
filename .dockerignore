@@ -1,0 +1,17 @@
+.git
+.agents
+.codex
+.aws
+.venv
+venv
+.env
+.env.*
+__pycache__
+**/__pycache__
+**/.pytest_cache
+node_modules
+data/raw
+data/demo
+e_platform/evidence
+*.pem
+*.key

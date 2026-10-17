@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Peatland team workspace</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">IBM Z Datathon 2026 · Central Kalimantan</p>
+      <h1>Peatland team workspace</h1>
+      <p>Development handoff viewer. All alerts are simulated. Role D will build the command-center map and audience views here.</p>
+      <div class="toolbar">
+        <label for="horizon">Prediction horizon</label>
+        <select id="horizon"><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option></select>
+        <button id="reload" type="button">Refresh files</button>
+      </div>
+      <p id="status" role="status">Loading handoffs…</p>
+      <ul id="sources" aria-label="Data sources"></ul>
+      <section>
+        <h2>Risk handoff</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Cell</th><th>Level</th><th>Score</th><th>Top factors</th></tr></thead>
+          <tbody id="risk"></tbody>
+        </table></div>
+      </section>
+      <section><h2>Simulated dispatches</h2><div id="dispatch"></div></section>
+      <p class="note">Soil moisture is modeled data. FIRMS observes thermal surface anomalies; underground smoldering is not directly observed. Water-source data may be unavailable.</p>
+    </main>
+  </body>
+</html>

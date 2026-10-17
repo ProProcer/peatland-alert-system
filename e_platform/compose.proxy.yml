@@ -1,0 +1,13 @@
+# Optional managed-environment build trust. Use with the root Compose file.
+services:
+  demo:
+    build:
+      secrets:
+        - proxy_ca
+  model:
+    build:
+      secrets:
+        - proxy_ca
+secrets:
+  proxy_ca:
+    file: ${PROXY_CA_BUNDLE:-/etc/ssl/certs/ca-certificates.crt}

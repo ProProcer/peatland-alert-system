@@ -1,0 +1,11 @@
+{
+  "province": "Central Kalimantan",
+  "bbox": {"south": -3.5, "west": 113.0, "north": -1.0, "east": 115.5},
+  "grid_size_deg": 0.1,
+  "minimum_peat_fraction": 0.05,
+  "max_cells": 300,
+  "schema_version": "1.0",
+  "horizons_h": [24, 48, 72],
+  "water_source_mode": "unavailable",
+  "alerts_mode": "simulated"
+}

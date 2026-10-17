@@ -1,0 +1,46 @@
+[
+  {
+    "schema_version": "1.0",
+    "dispatch_id": "d_20261017_0001",
+    "cell_id": "-2.35_114.05",
+    "ts": "2026-10-17T09:05:00Z",
+    "action": "DISPATCH",
+    "priority": 1,
+    "target": {
+      "lat": -2.35,
+      "lon": 114.05
+    },
+    "audiences": [
+      "manggala_agni",
+      "mpa",
+      "bpbd",
+      "brgm",
+      "leadership"
+    ],
+    "messages": {
+      "manggala_agni": {
+        "id": "Simulasi: siapkan patroli ke -2.35, 114.05; risiko 0.87 dalam 48 jam.",
+        "en": "Simulation: prepare a patrol to -2.35, 114.05; risk 0.87 over 48 hours."
+      },
+      "mpa": {
+        "id": "Simulasi: warga di sekitar -2.35, 114.05 diminta waspada dan tidak membakar lahan.",
+        "en": "Simulation: communities near -2.35, 114.05 should remain alert and avoid land burning."
+      },
+      "bpbd": {
+        "id": "Simulasi: koordinasikan kesiapsiagaan pada -2.35, 114.05; sumber air belum tersedia.",
+        "en": "Simulation: coordinate readiness at -2.35, 114.05; water-source data is unavailable."
+      },
+      "brgm": {
+        "id": "Simulasi: tinjau kebutuhan pembasahan pada -2.35, 114.05; kelembapan gambut dalam 0.14 m³/m³.",
+        "en": "Simulation: assess rewetting needs at -2.35, 114.05; deep soil moisture is 0.14 m³/m³."
+      },
+      "leadership": {
+        "id": "Simulasi: satu sel berisiko kritis pada horizon 48 jam; koordinasikan kesiapsiagaan.",
+        "en": "Simulation: one cell is critical at the 48-hour horizon; coordinate readiness."
+      }
+    },
+    "water_source": null,
+    "rationale": "Synthetic fixture: risk 0.87 for 48h; 22 days since rain; deep soil moisture 0.14 m³/m³. No actual dispatch.",
+    "status": "PENDING"
+  }
+]

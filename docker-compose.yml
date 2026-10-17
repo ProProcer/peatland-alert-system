@@ -1,0 +1,17 @@
+services:
+  demo:
+    build:
+      context: .
+      dockerfile: e_platform/Dockerfile
+    ports:
+      - "127.0.0.1:${PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/data/risk.json', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  model:
+    profiles: ["model"]
+    build:
+      context: .
+      dockerfile: e_platform/docker/model.Dockerfile

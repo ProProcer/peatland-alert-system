@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "risk.json — playbook schema 1.0",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "schema_version": {
+        "const": "1.0"
+      },
+      "cell_id": {
+        "type": "string",
+        "pattern": "^-?\\d+\\.\\d{2}_-?\\d+\\.\\d{2}$"
+      },
+      "ts": {
+        "type": "string",
+        "format": "date-time",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+      },
+      "horizon_h": {
+        "type": "integer",
+        "enum": [
+          24,
+          48,
+          72
+        ]
+      },
+      "risk_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1,
+        "not": {
+          "enum": [
+            -999
+          ]
+        }
+      },
+      "risk_level": {
+        "enum": [
+          "LOW",
+          "MODERATE",
+          "HIGH",
+          "CRITICAL"
+        ]
+      },
+      "top_factors": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "properties": {
+            "feature": {
+              "enum": [
+                "peat_fraction",
+                "peat_area_km2",
+                "temp_c",
+                "precip_mm",
+                "wind_kmh",
+                "wind_dir_deg",
+                "sm_0_1",
+                "sm_1_3",
+                "sm_3_9",
+                "sm_9_27",
+                "sm_27_81",
+                "vpd_kpa",
+                "soil_temp_0_c",
+                "soil_temp_18_c",
+                "et_mm",
+                "et0_mm",
+                "rain_24h_mm",
+                "rain_7d_mm",
+                "rain_30d_mm",
+                "days_since_rain",
+                "sm_27_81_delta_7d",
+                "vpd_mean_24h",
+                "soil_air_temp_gap_c",
+                "hotspots_in_cell_24h",
+                "hotspots_10km_7d",
+                "frp_sum_10km_7d",
+                "nearest_hotspot_km"
+              ]
+            },
+            "contribution": {
+              "type": "number",
+              "not": {
+                "enum": [
+                  -999
+                ]
+              }
+            }
+          },
+          "required": [
+            "feature",
+            "contribution"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "model_version": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "required": [
+      "schema_version",
+      "cell_id",
+      "ts",
+      "horizon_h",
+      "risk_score",
+      "risk_level",
+      "top_factors",
+      "model_version"
+    ],
+    "additionalProperties": false
+  }
+}

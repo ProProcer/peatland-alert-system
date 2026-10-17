@@ -1,0 +1,2 @@
+-r ../contracts/requirements.txt
+# Add an LLM SDK only when the team selects a provider; deterministic policy comes first.

@@ -1,0 +1,2 @@
+# Shared tooling only; install individual role dependencies with scripts/setup.sh.
+-r contracts/requirements.txt
