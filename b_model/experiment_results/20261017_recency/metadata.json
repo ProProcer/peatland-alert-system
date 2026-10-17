@@ -1,0 +1,13 @@
+{
+  "source_sha256": "83c226e5c9fd72c00bbfd487c0fa488147ac7ac90fe939ae64a25f2e0074f945",
+  "complete_rows": 653760,
+  "incomplete_labels_excluded": 2880,
+  "evaluation_status": "Retrospective; dates and final results previously inspected. No fresh unseen test or automatic promotion.",
+  "coverage_status": "Human confirms export query parameters/identical spatial coverage are unverified; no source overlap.",
+  "weighting": "Decay and class balancing combined once in training loss; mean weight 1; no calibration reweighting.",
+  "calibration": "First calibration slice fits sigmoid, then 72h purge, then separate policy calibration; final remains later.",
+  "policy": "Daily 00Z, independently per horizon/pool; top-five cap then a calibration-only F1 threshold.",
+  "risk_contract": "No changes to risk probabilities, fixed levels, horizons or C dispatch.",
+  "runtime_seconds": 221.06892082500053,
+  "completed_models": 60
+}

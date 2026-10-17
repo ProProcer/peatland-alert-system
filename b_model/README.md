@@ -1,5 +1,35 @@
 # Role B — ML lead
 
+## Recency, calibrated alert operating points, and source audit
+
+[RECENCY_RESULTS.md](RECENCY_RESULTS.md) compares full history, recent 180/365-day
+windows and 90/180-day decay weights across four dated periods. Probability
+calibration and policy calibration are distinct, with a 72-hour internal purge.
+Training-only decay/class balancing is applied once and normalized to mean one.
+The separate research alert policy ranks up to five eligible cells per daily
+00:00 UTC snapshot, then applies a threshold chosen only on policy-calibration
+labels. Shared risk levels and C's dispatch policy stay unchanged.
+
+```bash
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 \
+  python -m b_model.recency_study
+python -m b_model.recency_handoff
+python -m b_model.predict --config-name replay_recency
+```
+
+Existing output/model directories are refused. Use fresh paths in a copy of
+`conf/recency_study.yaml` for a repeated study; the review candidate is separate
+from `CURRENT_HANDOFF.json`. Its calibration-only settings are in
+`model_recency_candidate/operating_points.json`. Calibration-chosen filters can
+send fewer actual alerts than the fixed-five reference; compare both counts
+before claiming an improvement at equal workload.
+
+[SOURCE_CONSISTENCY.md](SOURCE_CONSISTENCY.md) records the read-only audit and the
+exact evidence request for Role A. The local files do not overlap in time and
+original export filters were not saved. Source attribution remains unresolved;
+class weighting does not repair unverified coverage. No new dependencies were
+added for these studies.
+
 ## Current handoff: updated 40-cell regional scope
 
 Use [REGIONAL_RESULTS.md](REGIONAL_RESULTS.md) and `conf/replay_regional.yaml`

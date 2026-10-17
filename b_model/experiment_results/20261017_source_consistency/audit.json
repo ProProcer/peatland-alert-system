@@ -1,0 +1,646 @@
+{
+  "status": "UNRESOLVED_EXPORT_COVERAGE_AND_SOURCE_ATTRIBUTION",
+  "files": [
+    {
+      "path": "data/raw/DL_FIRE_J1V-C2_824564/fire_archive_J1V-C2_824564.csv",
+      "sha256": "cdfa607938c18eab9523af4d9b06705f0438ed8f6d6ff08679a8837b5af7680a",
+      "hash_matches_manifest": true,
+      "rows": 1342756,
+      "product": "archive",
+      "observed_date_min": "2018-04-01",
+      "observed_date_max": "2026-06-30",
+      "distinct_detection_dates": 3006,
+      "observed_detection_bounds_west_south_east_north": [
+        95.03899,
+        -10.97582,
+        140.97749,
+        5.86308
+      ],
+      "bounds_note": "Envelope of observed detections only, not proof of original query box or completeness.",
+      "confidence": {
+        "l": 90950,
+        "n": 1214271,
+        "h": 37535
+      },
+      "satellite": {
+        "N20": 1342756
+      },
+      "instrument": {
+        "VIIRS": 1342756
+      },
+      "version": {
+        "2": 1342756
+      },
+      "type": {
+        "0": 1230451,
+        "2": 78550,
+        "1": 26194,
+        "3": 7561
+      }
+    },
+    {
+      "path": "data/raw/DL_FIRE_J1V-C2_824564/fire_nrt_J1V-C2_824564.csv",
+      "sha256": "ff9fd1ecc0a8fe51c9dbf9277595b17c9f7430781fbbca8b917982fdcdb11e3e",
+      "hash_matches_manifest": true,
+      "rows": 520571,
+      "product": "nrt",
+      "observed_date_min": "2026-07-01",
+      "observed_date_max": "2026-10-16",
+      "distinct_detection_dates": 108,
+      "observed_detection_bounds_west_south_east_north": [
+        95.22462,
+        -10.90876,
+        140.97719,
+        5.82452
+      ],
+      "bounds_note": "Envelope of observed detections only, not proof of original query box or completeness.",
+      "confidence": {
+        "n": 474621,
+        "l": 28397,
+        "h": 17553
+      },
+      "satellite": {
+        "N20": 520571
+      },
+      "instrument": {
+        "VIIRS": 520571
+      },
+      "version": {
+        "2.0NRT": 520571
+      },
+      "type": {
+        "unavailable": 520571
+      }
+    },
+    {
+      "path": "data/raw/DL_FIRE_J2V-C2_824565/fire_archive_J2V-C2_824565.csv",
+      "sha256": "0b6ff69e0ea317950ccaf9f1af9906276dd3113c0caccfda56aec1f79d33124e",
+      "hash_matches_manifest": true,
+      "rows": 489095,
+      "product": "archive",
+      "observed_date_min": "2023-03-01",
+      "observed_date_max": "2026-06-30",
+      "distinct_detection_dates": 1216,
+      "observed_detection_bounds_west_south_east_north": [
+        95.04768,
+        -10.97613,
+        140.97748,
+        5.80126
+      ],
+      "bounds_note": "Envelope of observed detections only, not proof of original query box or completeness.",
+      "confidence": {
+        "n": 441171,
+        "l": 32608,
+        "h": 15316
+      },
+      "satellite": {
+        "N21": 489095
+      },
+      "instrument": {
+        "VIIRS": 489095
+      },
+      "version": {
+        "2": 489095
+      },
+      "type": {
+        "0": 433265,
+        "2": 42707,
+        "1": 10442,
+        "3": 2681
+      }
+    },
+    {
+      "path": "data/raw/DL_FIRE_J2V-C2_824565/fire_nrt_J2V-C2_824565.csv",
+      "sha256": "eb46dbc371fdfdf6343f20521cccc358729d1a9e44c92fbf0c8d1dff67e3be03",
+      "hash_matches_manifest": true,
+      "rows": 515983,
+      "product": "nrt",
+      "observed_date_min": "2026-07-01",
+      "observed_date_max": "2026-10-16",
+      "distinct_detection_dates": 108,
+      "observed_detection_bounds_west_south_east_north": [
+        95.27709,
+        -10.86713,
+        140.97755,
+        5.79467
+      ],
+      "bounds_note": "Envelope of observed detections only, not proof of original query box or completeness.",
+      "confidence": {
+        "n": 466179,
+        "l": 29513,
+        "h": 20291
+      },
+      "satellite": {
+        "N21": 515983
+      },
+      "instrument": {
+        "VIIRS": 515983
+      },
+      "version": {
+        "2.0NRT": 515983
+      },
+      "type": {
+        "unavailable": 515983
+      }
+    }
+  ],
+  "product_date_overlap": {
+    "N20": {
+      "archive_end": "2026-06-30",
+      "nrt_start": "2026-07-01",
+      "date_ranges_overlap": false
+    },
+    "N21": {
+      "archive_end": "2026-06-30",
+      "nrt_start": "2026-07-01",
+      "date_ranges_overlap": false
+    }
+  },
+  "regional_40_monthly_detections": [
+    {
+      "month": "2024-11",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 2,
+      "eligible": 2
+    },
+    {
+      "month": "2024-11",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 15,
+      "eligible": 14
+    },
+    {
+      "month": "2024-12",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 1,
+      "eligible": 1
+    },
+    {
+      "month": "2025-02",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 1,
+      "eligible": 1
+    },
+    {
+      "month": "2025-03",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 3,
+      "eligible": 3
+    },
+    {
+      "month": "2025-03",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 1,
+      "eligible": 1
+    },
+    {
+      "month": "2025-05",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 11,
+      "eligible": 11
+    },
+    {
+      "month": "2025-05",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 23,
+      "eligible": 22
+    },
+    {
+      "month": "2025-06",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 2,
+      "eligible": 2
+    },
+    {
+      "month": "2025-06",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 2,
+      "eligible": 2
+    },
+    {
+      "month": "2025-07",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 321,
+      "eligible": 294
+    },
+    {
+      "month": "2025-07",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 329,
+      "eligible": 321
+    },
+    {
+      "month": "2025-08",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 9,
+      "eligible": 9
+    },
+    {
+      "month": "2025-08",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 15,
+      "eligible": 15
+    },
+    {
+      "month": "2025-09",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 32,
+      "eligible": 30
+    },
+    {
+      "month": "2025-09",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 22,
+      "eligible": 21
+    },
+    {
+      "month": "2025-10",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 20,
+      "eligible": 20
+    },
+    {
+      "month": "2025-10",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 13,
+      "eligible": 13
+    },
+    {
+      "month": "2025-11",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 9,
+      "eligible": 9
+    },
+    {
+      "month": "2025-11",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 11,
+      "eligible": 11
+    },
+    {
+      "month": "2025-12",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 2,
+      "eligible": 2
+    },
+    {
+      "month": "2026-01",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 19,
+      "eligible": 19
+    },
+    {
+      "month": "2026-01",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 19,
+      "eligible": 19
+    },
+    {
+      "month": "2026-02",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 9,
+      "eligible": 9
+    },
+    {
+      "month": "2026-02",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 15,
+      "eligible": 14
+    },
+    {
+      "month": "2026-03",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 14,
+      "eligible": 14
+    },
+    {
+      "month": "2026-03",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 20,
+      "eligible": 18
+    },
+    {
+      "month": "2026-04",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 24,
+      "eligible": 22
+    },
+    {
+      "month": "2026-04",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 20,
+      "eligible": 20
+    },
+    {
+      "month": "2026-05",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 2,
+      "eligible": 2
+    },
+    {
+      "month": "2026-06",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 9,
+      "eligible": 9
+    },
+    {
+      "month": "2026-06",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 8,
+      "eligible": 8
+    },
+    {
+      "month": "2026-07",
+      "product": "nrt",
+      "satellite": "N20",
+      "detections": 48,
+      "eligible": 48
+    },
+    {
+      "month": "2026-07",
+      "product": "nrt",
+      "satellite": "N21",
+      "detections": 37,
+      "eligible": 36
+    },
+    {
+      "month": "2026-08",
+      "product": "nrt",
+      "satellite": "N20",
+      "detections": 2600,
+      "eligible": 2463
+    },
+    {
+      "month": "2026-08",
+      "product": "nrt",
+      "satellite": "N21",
+      "detections": 2126,
+      "eligible": 2024
+    },
+    {
+      "month": "2026-09",
+      "product": "nrt",
+      "satellite": "N20",
+      "detections": 3620,
+      "eligible": 3449
+    },
+    {
+      "month": "2026-09",
+      "product": "nrt",
+      "satellite": "N21",
+      "detections": 3699,
+      "eligible": 3584
+    },
+    {
+      "month": "2026-10",
+      "product": "nrt",
+      "satellite": "N20",
+      "detections": 2283,
+      "eligible": 2198
+    },
+    {
+      "month": "2026-10",
+      "product": "nrt",
+      "satellite": "N21",
+      "detections": 2075,
+      "eligible": 1990
+    }
+  ],
+  "regional_40_type_availability": [
+    {
+      "product": "archive",
+      "type": "0",
+      "detections": 1003
+    },
+    {
+      "product": "nrt",
+      "type": "unavailable",
+      "detections": 16488
+    }
+  ],
+  "regional_40_label_rates": [
+    {
+      "month": "2024-12",
+      "rows": 28800,
+      "observed_24h": 28800,
+      "positive_24h": 24,
+      "positive_rate_24h": 0.0008333333333333334
+    },
+    {
+      "month": "2025-01",
+      "rows": 29760,
+      "observed_24h": 29760,
+      "positive_24h": 0,
+      "positive_rate_24h": 0.0
+    },
+    {
+      "month": "2025-02",
+      "rows": 26880,
+      "observed_24h": 26880,
+      "positive_24h": 24,
+      "positive_rate_24h": 0.0008928571428571428
+    },
+    {
+      "month": "2025-03",
+      "rows": 29760,
+      "observed_24h": 29760,
+      "positive_24h": 72,
+      "positive_rate_24h": 0.0024193548387096775
+    },
+    {
+      "month": "2025-04",
+      "rows": 28800,
+      "observed_24h": 28800,
+      "positive_24h": 17,
+      "positive_rate_24h": 0.0005902777777777778
+    },
+    {
+      "month": "2025-05",
+      "rows": 29760,
+      "observed_24h": 29760,
+      "positive_24h": 273,
+      "positive_rate_24h": 0.009173387096774193
+    },
+    {
+      "month": "2025-06",
+      "rows": 28800,
+      "observed_24h": 28800,
+      "positive_24h": 96,
+      "positive_rate_24h": 0.0033333333333333335
+    },
+    {
+      "month": "2025-07",
+      "rows": 29760,
+      "observed_24h": 29760,
+      "positive_24h": 1247,
+      "positive_rate_24h": 0.041901881720430106
+    },
+    {
+      "month": "2025-08",
+      "rows": 29760,
+      "observed_24h": 29760,
+      "positive_24h": 352,
+      "positive_rate_24h": 0.011827956989247311
+    },
+    {
+      "month": "2025-09",
+      "rows": 28800,
+      "observed_24h": 28800,
+      "positive_24h": 504,
+      "positive_rate_24h": 0.0175
+    },
+    {
+      "month": "2025-10",
+      "rows": 29760,
+      "observed_24h": 29760,
+      "positive_24h": 443,
+      "positive_rate_24h": 0.014885752688172042
+    },
+    {
+      "month": "2025-11",
+      "rows": 28800,
+      "observed_24h": 28800,
+      "positive_24h": 213,
+      "positive_rate_24h": 0.007395833333333333
+    },
+    {
+      "month": "2025-12",
+      "rows": 29760,
+      "observed_24h": 29760,
+      "positive_24h": 24,
+      "positive_rate_24h": 0.0008064516129032258
+    },
+    {
+      "month": "2026-01",
+      "rows": 29760,
+      "observed_24h": 29760,
+      "positive_24h": 206,
+      "positive_rate_24h": 0.006922043010752688
+    },
+    {
+      "month": "2026-02",
+      "rows": 26880,
+      "observed_24h": 26880,
+      "positive_24h": 184,
+      "positive_rate_24h": 0.006845238095238095
+    },
+    {
+      "month": "2026-03",
+      "rows": 29760,
+      "observed_24h": 29760,
+      "positive_24h": 508,
+      "positive_rate_24h": 0.01706989247311828
+    },
+    {
+      "month": "2026-04",
+      "rows": 28800,
+      "observed_24h": 28800,
+      "positive_24h": 415,
+      "positive_rate_24h": 0.014409722222222223
+    },
+    {
+      "month": "2026-05",
+      "rows": 29760,
+      "observed_24h": 29760,
+      "positive_24h": 48,
+      "positive_rate_24h": 0.0016129032258064516
+    },
+    {
+      "month": "2026-06",
+      "rows": 28800,
+      "observed_24h": 28800,
+      "positive_24h": 337,
+      "positive_rate_24h": 0.01170138888888889
+    },
+    {
+      "month": "2026-07",
+      "rows": 29760,
+      "observed_24h": 29760,
+      "positive_24h": 1180,
+      "positive_rate_24h": 0.0396505376344086
+    },
+    {
+      "month": "2026-08",
+      "rows": 29760,
+      "observed_24h": 29760,
+      "positive_24h": 7941,
+      "positive_rate_24h": 0.26683467741935485
+    },
+    {
+      "month": "2026-09",
+      "rows": 28800,
+      "observed_24h": 28800,
+      "positive_24h": 9794,
+      "positive_rate_24h": 0.3400694444444444
+    },
+    {
+      "month": "2026-10",
+      "rows": 15360,
+      "observed_24h": 14400,
+      "positive_24h": 5271,
+      "positive_rate_24h": 0.36604166666666665
+    }
+  ],
+  "duplicate_normalized_acquisition_keys": 0,
+  "producer_confirmation": {
+    "overlapping_exports": false,
+    "original_query_parameters_saved": false,
+    "identical_spatial_export_filters_verified": false,
+    "statement": "Human relayed Role A confirmation: files switch on July 1; no saved bbox/filter/download parameters prove equal export coverage."
+  },
+  "established": [
+    "Both products contain VIIRS N20/N21 observations; no satellite switch explains the boundary.",
+    "Existing A normalization applies the same confidence n/h test and geometric scope to both products.",
+    "A common downstream region filter cannot recover detections omitted by an upstream export.",
+    "Observed bounds, detections on a date and zero rows cannot establish observation/export completeness.",
+    "The July product switch alone cannot distinguish seasonality from source/export effects."
+  ],
+  "not_established": [
+    "How much of the increase is actual fire activity.",
+    "Whether upstream spatial/type filters were identical.",
+    "Continuous observation availability or false-negative label validity independent of the human declaration."
+  ],
+  "label_action": "No labels, class definitions, producer files or missing values changed.",
+  "official_sources": [
+    {
+      "url": "https://firms.modaps.eosdis.nasa.gov/content/academy/data_api/firms_api_use.html",
+      "supports": "NRT/SP distinction, multi-month SP availability lag, MAP_KEY requirement and data-availability endpoint."
+    },
+    {
+      "url": "https://firms.modaps.eosdis.nasa.gov/api/data_availability/",
+      "supports": "Check actual product date availability before requesting a controlled comparison."
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "records": 120,
+  "cells": 40,
+  "seconds": 2.5224640289998206,
+  "schema_scope_and_latency": "passed",
+  "command": [
+    ".venv/bin/python",
+    "-m",
+    "b_model.predict",
+    "--config-name",
+    "replay_recency"
+  ],
+  "current_handoff_changed": false
+}

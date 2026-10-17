@@ -1,0 +1,2762 @@
+[
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.05_110.25",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.0613374206140746,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.05064007096305228
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.04483148568160253
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.03231492724594429
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.25_112.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.9999305871963525,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 4.71519694750336
+      },
+      {
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.45768569132888864
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.29095268164923943
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.25_114.25",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.34259406332972797,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.16078850735445527
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.14363808833819997
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.14309265802834245
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.05_116.65",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.18563401479642846,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.2360333904127155
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.13036398840678776
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1189885868282183
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.05_116.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.2829444458842742,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.5212536707296982
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.14016689902834054
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.09196498038741457
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.15_111.65",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.03119867168538826,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.28962516180510683
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.059627994400561296
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": -0.04730413952965109
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.15_116.55",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.15360774012955952,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.12316417440315539
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1104174683522754
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.10346621787101927
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.25_109.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.058315178481843116,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": -0.05940728523907927
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.0511660343668305
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.028633031359313783
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.05_114.95",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.8323803850614042,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.3166567059798757
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.22417072014633957
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.14816892834283762
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.75_112.95",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.006700487973352376,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.7504132580375852
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": -0.17302856699876032
+      },
+      {
+        "feature": "rain_30d_mm",
+        "contribution": -0.03897826564608642
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "1.45_109.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.04343836104074239,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.11442968771671636
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": -0.04561230195736545
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.04486848819044343
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.55_117.05",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.10836374620719139,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.13996374041163095
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.08516267488253434
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.07229576269577336
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.55_117.25",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.1067085343486145,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.13516386440920927
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.08322763623977301
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.035630262870642075
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.65_117.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.08623413515362771,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.12556411240436596
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.061884454558630925
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.04449950053519049
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.65_117.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.0881599660431803,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.12076423640194447
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.045975451156202274
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.028590167476303517
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.75_116.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.08466793025742815,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.1423636784128417
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1306095756968406
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": -0.0687797096274642
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.75_117.05",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.045392173554201345,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.14236367841284184
+      },
+      {
+        "feature": "sm_3_9",
+        "contribution": -0.05153312120569667
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.04055101154879798
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "1.35_118.55",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.10035186752615581,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.08716510438499286
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.07034364242005914
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.049296340053478785
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.95_110.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.2840306775001629,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.4035359869822854
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.16935128437983285
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.1447636164140527
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.85_110.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.7471637528747049,
+    "risk_level": "HIGH",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.9992989292891482
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.37726654907124135
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.17501889614494393
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.75_114.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.1568708078617947,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.12214557070624332
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.1213590522920574
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.10748340491773734
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.05_116.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.452863318271303,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.2576646303735216
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.16528775443376534
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.1516724624316361
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.15_116.55",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.1965552947535063,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.15059765442435794
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.13756380241042018
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.12838668528462857
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.15_116.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.16670502747022256,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.12316417440315526
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.11560796230809979
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.10704350360348645
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.25_116.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.12322899973074565,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.13190050178091417
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.11121326635565837
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.10876454639589027
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.85_109.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.07380312183624468,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.051166034366830426
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.028544192403857985
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": -0.02739251271736607
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-1.55_110.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.163015735173405,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.31637713134707685
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.14770288755800431
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.11836429840073366
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-1.55_114.75",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.38421619760270415,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.6136489728042137
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.14975354432012472
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.14236367841284187
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.05_114.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.7510164143961442,
+    "risk_level": "HIGH",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.461275439661726
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.17483551087445426
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.09541979696009714
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.25_115.05",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.13667442228343138,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.15621211891247344
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.12355215310460962
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.10470095927262942
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.25_115.25",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.14389558988861373,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.14069684236007624
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.1274756958226286
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.04818937708771995
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.35_115.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.21724775993826048,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.28423963497333227
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1627462518035081
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.11732467038891474
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.45_111.65",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.8588342668091263,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.87074894379417
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.4440231268433758
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.176589686972806
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.45_115.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.2279463392169086,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.14745521624373115
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.10912576523091498
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.10636460839467957
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.55_113.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.9959184974477824,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 2.4575378272478066
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.550513696254721
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.14874211966081546
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.55_114.95",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.5569660853623302,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.9430583106350954
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1715563875426528
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.08778258354977285
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.65_114.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.9275910306691953,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.6541004179041932
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.3641551997848668
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1479033897783558
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.65_114.95",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.40111270566822543,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.7421989582991919
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1715466959019586
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.1019679908866295
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.85_117.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.06815052615988387,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.12796405040557687
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.045975451156202274
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.028544192403857985
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.95_117.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 24,
+    "risk_score": 0.07379932071156652,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.13516386440920938
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.04174223988731551
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.03675075977487859
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.05_110.25",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.06793337454218291,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.05661585783439631
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.031369196885476715
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.03115008524661482
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.25_112.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.9999999529373944,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 5.141883155204198
+      },
+      {
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.679321336810621
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.3606584626418535
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.25_114.25",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.5388345536283511,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.15663614374856324
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1549926346003406
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.1093353423749241
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.05_116.65",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.2676691748844902,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.2573924541734135
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.11469945746321977
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.0912174458850624
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.05_116.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.46832693688540694,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.5684228037457772
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.13511436433868015
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": -0.06571037825221904
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.15_111.65",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.03184577879105519,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.2026546429484218
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.06703692787871479
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.037241249358471125
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.15_116.55",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.2076042397447149,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.11282905225949788
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.10643729833309312
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.08617963864791703
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.25_109.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.05947106905145691,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": -0.04539237694426625
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.03580156627646253
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.032190760019344684
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.05_114.95",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.9751175517492081,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.435803215229271
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.17128609374758183
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1428279480145889
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.75_112.95",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.004670861027414472,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.52507430612573
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": -0.1667914821868412
+      },
+      {
+        "feature": "rain_30d_mm",
+        "contribution": -0.050587240682141425
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "1.45_109.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.04084246357168472,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.08006800017788257
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.05044351461234808
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.03719975778188653
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.55_117.05",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.1259545886372436,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.09793452220125626
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.08209285331916172
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.05524030425818913
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.55_117.25",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.12485811051874583,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.09457598404315928
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.06359321455562617
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.03983481576789745
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.65_117.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.09327335569008596,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.08785890772696534
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.05002867928068891
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.04728515159396346
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.65_117.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.0995379777590617,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.0845003695688685
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.05168802060732558
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.031963953180100715
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.75_116.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.09464878308750058,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.12590154964657688
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.09961379128030468
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": -0.07732576753867576
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.75_117.05",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.03790215673412516,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.09961379128030477
+      },
+      {
+        "feature": "sm_3_9",
+        "contribution": -0.04584132214621637
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.04533623790856809
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "1.35_118.55",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.11458433178125876,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.06099060246218972
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.05542153859225809
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.053748713133646805
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.95_110.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.46389208099472,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.5002142199230508
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.16324675296050936
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.10129306035935327
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.85_110.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.9530660001270893,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.0897271924656549
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.46765120989077147
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.16871006681185294
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.75_114.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.21719223143553246,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.11774264292900201
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.11720976140840442
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.09272896118835285
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.05_116.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.6608341406617654,
+    "risk_level": "HIGH",
+    "top_factors": [
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.23494987285313587
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.1653975620463763
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.15932969929491397
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.15_116.55",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.27120582299181956,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1451691268730228
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.0980986892367052
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.09625525312220781
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.15_116.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.22148991490507308,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.11144069283141313
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.08617963864791696
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.08179062627504247
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.25_116.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.14675532852118173,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.10720441055512595
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.10078355326088138
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.07610402417362604
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.85_109.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.08283824728081184,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.03580156627646248
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.027515272428395927
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": -0.020930282501772146
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-1.55_110.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.2376847385391638,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.34500663715154417
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.14237870639737998
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.08282110048982003
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-1.55_114.75",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.6293793899471314,
+    "risk_level": "HIGH",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.6691791141706276
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1443554440352348
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.0996137912803048
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.05_114.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.9536987692956107,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.593508744589906
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.16853329194972033
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.10727595504965413
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.25_115.05",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.1765255896898549,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1505812092239382
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.13473259800403056
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.08000071692559171
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.25_115.25",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.18541926055742222,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.13562520503573025
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.09740261337858545
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.054177032597280586
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.35_115.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.3266465535723286,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.3099609639602919
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.15687980909449753
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.08964633953096542
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.45_111.65",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.9740590571454544,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.9495444997006457
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.4048796959228422
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.17022423603216721
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.45_115.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.3161930552362796,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.14213996278226884
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.08929573879338765
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.08338165680788764
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.55_113.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.9999089392259821,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 2.6799246135187262
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.5019824519626743
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.14338047775670273
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.55_114.95",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.8380083791383975,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.0283972643809633
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.1653723697374446
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.06707359384622491
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.65_114.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.9940566639601742,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.8037827837374198
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.332052628892968
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.14257198120219539
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.65_114.95",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.6853955703964215,
+    "risk_level": "HIGH",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.8093618069356366
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.16536302744706882
+      },
+      {
+        "feature": "vpd_mean_24h",
+        "contribution": 0.07791248935123245
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.85_117.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.06747882969962106,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.08953817680601388
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.05168802060732558
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.027515272428395927
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.95_117.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 48,
+    "risk_score": 0.0758886991438533,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.09457598404315935
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.04131713731584636
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.04023757568687441
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.05_110.25",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.09874198960120474,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.06048086093716037
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": -0.031439563312547034
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.02873726607337283
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.25_112.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.9999796930485424,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 5.992394853598064
+      },
+      {
+        "feature": "frp_sum_10km_7d",
+        "contribution": 1.853488290278317
+      },
+      {
+        "feature": "sm_9_27",
+        "contribution": 0.0733903662455889
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.25_114.25",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.7510338793345318,
+    "risk_level": "HIGH",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.16816072747718436
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.07535743660907472
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.06993409490678841
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.05_116.65",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.44814240010017453,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.2858737194813849
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.046902321294285766
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.03468047065011739
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.05_116.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.743434494739833,
+    "risk_level": "HIGH",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.649248607842178
+      },
+      {
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.07541554210256796
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.05857158013371231
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.15_111.65",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.05430105539326077,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.0872089362936639
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.039783603211738267
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": -0.031439563312547034
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.15_116.55",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.31015466143142095,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.11698116573622759
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.04217963144563051
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.032590937959652594
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.25_109.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.09961724261876403,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": -0.031439563312547034
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.02757970033761085
+      },
+      {
+        "feature": "sm_27_81_delta_7d",
+        "contribution": -0.023863666042294535
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-3.05_114.95",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.9980246007222767,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.6626039303131221
+      },
+      {
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.18895261630840623
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.07535743660907472
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "0.75_112.95",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.007137545151444323,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.2209390284834125
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": -0.11399925203977748
+      },
+      {
+        "feature": "rain_30d_mm",
+        "contribution": -0.05919239651526726
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "1.45_109.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.08651708475000065,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.03973927912358582
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.03799779195946866
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": -0.036363640825686515
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.55_117.05",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.1646643321994204,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.037466514237403784
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": -0.031439563312547034
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.028264229729483985
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.55_117.25",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.17702927760348772,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.0425542250011074
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.03607349244376056
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": -0.031439563312547034
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.65_117.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.1391182126348281,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.03328744885647413
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": -0.031439563312547034
+      },
+      {
+        "feature": "sm_9_27",
+        "contribution": 0.026051011667614914
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.65_117.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.15529768647698688,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.03414604107814259
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.031894427062830966
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": -0.031439563312547034
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.75_116.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.1297258721999046,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "sm_9_27",
+        "contribution": -0.09040960910396525
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.053305490999058826
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.03816302513422537
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.75_117.05",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.0487428579358075,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "sm_9_27",
+        "contribution": -0.08634365226904724
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.0484312135370714
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.03816302513422541
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "1.35_118.55",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.21164781279580777,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "sm_9_27",
+        "contribution": 0.05712653890591685
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.05558196687331923
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": -0.031439563312547034
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.95_110.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.39606082543350124,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.09566578351817306
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.07465218861270936
+      },
+      {
+        "feature": "sm_9_27",
+        "contribution": 0.06729143099321187
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.85_110.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.9848341821607154,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.2582853925595634
+      },
+      {
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.1822069194883512
+      },
+      {
+        "feature": "days_since_rain",
+        "contribution": 0.08936117603379168
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.75_114.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.3512452845220234,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.12209912191032327
+      },
+      {
+        "feature": "sm_9_27",
+        "contribution": 0.06729143099321187
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.04864182072542353
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.05_116.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.9451453442138074,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.2977941854861502
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.1783966398253757
+      },
+      {
+        "feature": "sm_9_27",
+        "contribution": 0.07309994075738047
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.15_116.55",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.3748604114722271,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.0643189306995506
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.06068364782117514
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.0367700033405822
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.15_116.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.31241517557848797,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "sm_9_27",
+        "contribution": 0.06700100550500344
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.045039595776246256
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": -0.04040568695505668
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.25_116.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.1925119841981985,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.042618116476808826
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.030524405495566658
+      },
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.028411872578722908
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-0.85_109.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.15260746069702058,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": -0.031439563312547034
+      },
+      {
+        "feature": "sm_9_27",
+        "contribution": 0.026051011667614914
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": -0.01997259862395765
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-1.55_110.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.5529342362436059,
+    "risk_level": "MODERATE",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.38823284296329846
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.0627239129510125
+      },
+      {
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.03845574638224375
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-1.55_114.75",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.8182604300731285,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.7669615998463786
+      },
+      {
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.11501807003711524
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.06385382568069004
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.05_114.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.9985068243639447,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.8468503525805664
+      },
+      {
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.15552109241653897
+      },
+      {
+        "feature": "sm_9_27",
+        "contribution": 0.08878291712063567
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.25_115.05",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.32227031451415133,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.142570946606706
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.06741250296997024
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.027347891167269826
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.25_115.25",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.26438078304554263,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.05886357913012981
+      },
+      {
+        "feature": "sm_9_27",
+        "contribution": 0.05102760365353984
+      },
+      {
+        "feature": "sm_27_81",
+        "contribution": 0.02530916677961094
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.35_115.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.6070998285884157,
+    "risk_level": "HIGH",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.34728919357053306
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.07101281291328357
+      },
+      {
+        "feature": "peat_fraction",
+        "contribution": 0.04476008456038736
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.45_111.65",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.9998955107639407,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.0945107949885018
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.5202309343632259
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.07864055145499915
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.45_115.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.6202619821027985,
+    "risk_level": "HIGH",
+    "top_factors": [
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.1071341150200855
+      },
+      {
+        "feature": "sm_9_27",
+        "contribution": 0.07019568587529618
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.06258744595373505
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.55_113.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.999999980776428,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 3.116103483756294
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.647337648007269
+      },
+      {
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.3299083042873431
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.55_114.95",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.988281796731469,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 1.1866340061222238
+      },
+      {
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.09677638126498211
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.07586720137347297
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.65_114.85",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.9999847617737053,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 2.092512248937159
+      },
+      {
+        "feature": "hotspots_in_cell_24h",
+        "contribution": 0.4249008991301934
+      },
+      {
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.21214649042619593
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "-2.65_114.95",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.9236693400888734,
+    "risk_level": "CRITICAL",
+    "top_factors": [
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": 0.9307361974174402
+      },
+      {
+        "feature": "frp_sum_10km_7d",
+        "contribution": 0.11104115328952519
+      },
+      {
+        "feature": "nearest_hotspot_km",
+        "contribution": 0.07586186127541555
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.85_117.35",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.10726737465410341,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.03398395975329577
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": -0.031439563312547034
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.024685785998205905
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  },
+  {
+    "schema_version": "1.0",
+    "cell_id": "3.95_117.15",
+    "ts": "2026-10-16T00:00:00Z",
+    "horizon_h": 72,
+    "risk_score": 0.1041621576433805,
+    "risk_level": "LOW",
+    "top_factors": [
+      {
+        "feature": "rain_24h_mm",
+        "contribution": 0.036073492443760596
+      },
+      {
+        "feature": "hotspots_10km_7d",
+        "contribution": -0.031439563312547034
+      },
+      {
+        "feature": "vpd_kpa",
+        "contribution": -0.027000917469729862
+      }
+    ],
+    "model_version": "v1-recency-review-20261017"
+  }
+]
