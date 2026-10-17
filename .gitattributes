@@ -1,2 +1,2 @@
-data/raw/DL_FIRE_J1V-C2_824564/*.csv filter=lfs diff=lfs merge=lfs -text
-data/raw/DL_FIRE_J2V-C2_824565/*.csv filter=lfs diff=lfs merge=lfs -text
+data/raw/**/*.csv filter=lfs diff=lfs merge=lfs -text
+data/raw/**/*.osm.pbf filter=lfs diff=lfs merge=lfs -text
