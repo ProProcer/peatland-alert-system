@@ -15,6 +15,7 @@ htmlcov/
 .ruff_cache/
 .ipynb_checkpoints/
 .DS_Store
+/Participant Guidebook*.pdf
 node_modules/
 dist/
 c_agent/state/

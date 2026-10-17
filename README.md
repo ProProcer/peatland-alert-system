@@ -118,3 +118,8 @@ Keep this inventory current as dependencies or datasets are added. Suggested rol
 Store download timestamps, exact source URLs and licenses beside cached datasets. Do not commit a FIRMS MAP_KEY; copy `.env.example` to `.env` locally. The setup script creates that file if absent, but does not load credentials or contact a data provider. Live adapter configuration and authentication belong to A.
 
 LinuxONE / `s390x` installation, model execution, screenshots and IBM lab completion still require verification on the team's instance. See [e_platform/README.md](e_platform/README.md) for the evidence and submission checklist.
+
+For the observed Parquet reader byte-order failure on the team's LinuxONE VM,
+Role E provides an [exact-value CSV transport and regional training runner](e_platform/README.md#portable-historical-training-inputs).
+It preserves the original Parquet and current model artifacts and requires
+destination value verification before training the frozen regional LR models.
