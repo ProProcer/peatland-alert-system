@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peat Fire Simulator - Easter Egg</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 60%, #8B4513 60%, #8B4513 100%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .game-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+
+        /* Sky and ground */
+        .sky {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(to bottom, #87CEEB, #E0F6FF);
+        }
+
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to bottom, #8B4513, #654321);
+        }
+
+        /* Tree */
+        .tree {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 300px;
+        }
+
+        .trunk {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 100px;
+            background: #8B4513;
+            border-radius: 5px;
+        }
+
+        .foliage {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 220px;
+            background: #228B22;
+            border-radius: 50% 50% 50% 50%;
+            transition: background 0.5s;
+        }
+
+        .foliage.burning {
+            background: linear-gradient(45deg, #FF4500, #FF6347, #FFD700, #FF4500);
+            animation: burn 0.5s infinite;
+        }
+
+        @keyframes burn {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Flames */
+        .flames {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 200px;
+            pointer-events: none;
+        }
+
+        .flame {
+            position: absolute;
+            bottom: 0;
+            width: 30px;
+            height: 60px;
+            background: linear-gradient(to top, #FF4500, #FFD700);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: flicker 0.3s infinite alternate;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .flame.active {
+            opacity: 1;
+        }
+
+        @keyframes flicker {
+            0% { transform: scaleY(1) scaleX(1); }
+            100% { transform: scaleY(1.2) scaleX(0.9); }
+        }
+
+        /* Hose */
+        .hose-container {
+            position: absolute;
+            bottom: 10%;
+            left: 10%;
+            width: 300px;
+            height: 100px;
+        }
+
+        .hose {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 200px;
+            height: 20px;
+            background: #4169E1;
+            border-radius: 10px;
+            transform-origin: left center;
+            transition: transform 0.1s;
+            cursor: grab;
+        }
+
+        .hose:active {
+            cursor: grabbing;
+        }
+
+        .nozzle {
+            position: absolute;
+            right: -20px;
+            top: -10px;
+            width: 30px;
+            height: 40px;
+            background: #2F4F4F;
+            border-radius: 5px;
+        }
+
+        /* Water spray */
+        .water-spray {
+            position: absolute;
+            right: -200px;
+            top: -50px;
+            width: 200px;
+            height: 100px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .water-spray.active {
+            opacity: 1;
+        }
+
+        .water-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #00BFFF;
+            border-radius: 50%;
+            animation: spray 0.5s infinite;
+        }
+
+        @keyframes spray {
+            0% { transform: translateX(0) translateY(0); opacity: 1; }
+            100% { transform: translateX(150px) translateY(-50px); opacity: 0; }
+        }
+
+        /* Valve */
+        .valve {
+            position: absolute;
+            bottom: 0;
+            left: 50px;
+            width: 60px;
+            height: 60px;
+            background: #2F4F4F;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 5px solid #1a1a1a;
+            transition: transform 0.3s;
+        }
+
+        .valve-handle {
+            width: 40px;
+            height: 8px;
+            background: #FFD700;
+            border-radius: 4px;
+        }
+
+        .valve.on {
+            transform: rotate(90deg);
+        }
+
+        /* Instructions */
+        .instructions {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            max-width: 300px;
+        }
+
+        .instructions h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .instructions p {
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Win message */
+        .win-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 255, 0, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            display: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .win-message.show {
+            display: block;
+            animation: popIn 0.5s;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .win-message h1 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 36px;
+        }
+
+        .win-message p {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .reset-btn {
+            background: white;
+            color: #333;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .reset-btn:hover {
+            background: #f0f0f0;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 200px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #FF4500, #FFD700);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .progress-label {
+            margin-top: 10px;
+            text-align: center;
+            color: #333;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="sky"></div>
+        <div class="ground"></div>
+
+        <!-- Tree -->
+        <div class="tree">
+            <div class="trunk"></div>
+            <div class="foliage" id="foliage"></div>
+        </div>
+
+        <!-- Flames -->
+        <div class="flames" id="flames">
+            <div class="flame active" style="left: 30%;"></div>
+            <div class="flame active" style="left: 50%;"></div>
+            <div class="flame active" style="left: 70%;"></div>
+        </div>
+
+        <!-- Hose -->
+        <div class="hose-container">
+            <div class="hose" id="hose">
+                <div class="nozzle"></div>
+                <div class="water-spray" id="waterSpray">
+                    <div class="water-particle" style="left: 0; animation-delay: 0s;"></div>
+                    <div class="water-particle" style="left: 20%; animation-delay: 0.1s;"></div>
+                    <div class="water-particle" style="left: 40%; animation-delay: 0.2s;"></div>
+                    <div class="water-particle" style="left: 60%; animation-delay: 0.3s;"></div>
+                    <div class="water-particle" style="left: 80%; animation-delay: 0.4s;"></div>
+                </div>
+            </div>
+            <div class="valve" id="valve">
+                <div class="valve-handle"></div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h2>🔥 Peat Fire Simulator</h2>
+            <p>1. Click the valve to turn on water</p>
+            <p>2. Drag the hose to aim at the fire</p>
+            <p>3. Extinguish the fire to save the tree!</p>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-label" id="progressLabel">Fire Intensity: 100%</div>
+        </div>
+
+        <!-- Win Message -->
+        <div class="win-message" id="winMessage">
+            <h1>🌍 Good for Earth! 🌍</h1>
+            <p>You saved the peatland forest!</p>
+            <p>Every tree protected helps fight climate change.</p>
+            <button class="reset-btn" onclick="resetGame()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        const valve = document.getElementById('valve');
+        const hose = document.getElementById('hose');
+        const waterSpray = document.getElementById('waterSpray');
+        const foliage = document.getElementById('foliage');
+        const flames = document.querySelectorAll('.flame');
+        const progressFill = document.getElementById('progressFill');
+        const progressLabel = document.getElementById('progressLabel');
+        const winMessage = document.getElementById('winMessage');
+
+        let isValveOn = false;
+        let hoseAngle = 0;
+        let fireIntensity = 100;
+        let isExtinguishing = false;
+        let gameWon = false;
+
+        // Valve click handler
+        valve.addEventListener('click', () => {
+            if (gameWon) return;
+            isValveOn = !isValveOn;
+            valve.classList.toggle('on', isValveOn);
+            
+            if (isValveOn) {
+                waterSpray.classList.add('active');
+            } else {
+                waterSpray.classList.remove('active');
+            }
+        });
+
+        // Hose drag handler
+        let isDragging = false;
+        let startX, startY;
+
+        hose.addEventListener('mousedown', (e) => {
+            if (gameWon) return;
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            hose.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging || gameWon) return;
+            
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+            
+            // Calculate angle
+            const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+            hoseAngle = Math.max(-60, Math.min(60, angle));
+            hose.style.transform = `rotate(${hoseAngle}deg)`;
+            
+            // Check if aiming at fire
+            checkAiming();
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            hose.style.cursor = 'grab';
+        });
+
+        function checkAiming() {
+            // Check if hose is pointing toward the tree (roughly -45 to -15 degrees)
+            const isAimingAtFire = hoseAngle >= -45 && hoseAngle <= -15;
+            
+            if (isValveOn && isAimingAtFire) {
+                isExtinguishing = true;
+                startExtinguishing();
+            } else {
+                isExtinguishing = false;
+            }
+        }
+
+        function startExtinguishing() {
+            if (!isExtinguishing || gameWon) return;
+            
+            fireIntensity -= 2;
+            progressFill.style.width = fireIntensity + '%';
+            progressLabel.textContent = `Fire Intensity: ${fireIntensity}%`;
+            
+            // Gradually extinguish flames
+            if (fireIntensity < 70) {
+                flames[2].classList.remove('active');
+            }
+            if (fireIntensity < 40) {
+                flames[1].classList.remove('active');
+            }
+            if (fireIntensity < 15) {
+                flames[0].classList.remove('active');
+                foliage.classList.remove('burning');
+            }
+            
+            if (fireIntensity <= 0) {
+                winGame();
+            } else {
+                setTimeout(startExtinguishing, 100);
+            }
+        }
+
+        function winGame() {
+            gameWon = true;
+            fireIntensity = 0;
+            progressFill.style.width = '0%';
+            progressLabel.textContent = 'Fire Intensity: 0% (Extinguished!)';
+            waterSpray.classList.remove('active');
+            winMessage.classList.add('show');
+        }
+
+        function resetGame() {
+            gameWon = false;
+            isValveOn = false;
+            fireIntensity = 100;
+            hoseAngle = 0;
+            isExtinguishing = false;
+            
+            valve.classList.remove('on');
+            waterSpray.classList.remove('active');
+            hose.style.transform = 'rotate(0deg)';
+            foliage.classList.add('burning');
+            
+            flames.forEach(flame => flame.classList.add('active'));
+            
+            progressFill.style.width = '100%';
+            progressLabel.textContent = 'Fire Intensity: 100%';
+            
+            winMessage.classList.remove('show');
+        }
+
+        // Initialize
+        foliage.classList.add('burning');
+    </script>
+</body>
+</html>
