@@ -47,7 +47,9 @@ directory. Override them with Hydra arguments or environment variables
 should use forward slashes and quote the whole argument when it contains spaces.
 The configured output basename must be `risk.json`. The existing argparse
 `--input` / `--output` command and surge flags remain supported; use one CLI style
-per invocation. Hydra logging creates no files and does not change directories.
+per invocation. Both CLI styles compose the same YAML and environment defaults,
+then use the same validation and execution functions. Hydra logging creates no
+files and does not change directories. Legacy `--history` overrides `paths.history`.
 
 `paths.history` reads only Parquet schema metadata to align predictor column order
 and dtypes. Targets (`target_24h`, `target_48h`, `target_72h`) are excluded because
@@ -65,12 +67,65 @@ columns. Zero filling is a changed missing-data assumption and should be evaluat
 before operational use. Neither setting modifies the source JSON or emits sentinels.
 Missing input, duplicate records/keys, malformed timestamps, coordinate mismatches,
 nonfinite values, and `-999` measurements fail explicitly instead of creating mocks.
+Required keys and nested object types are checked before access. Unexpected keys
+are rejected; missing measurements must be explicit nulls. Errors identify the
+zero-based record index and field path. Integer casts check signed/unsigned bounds,
+preserve nullable unsigned types, and reject fractional values or overflow.
 
 Output is the frozen Contract 3.2 array with all three horizons and each cell's
 latest timestamp, validated before atomic replacement. `summarize_predictions`
 provides an internal `scores` / `levels` / `top_factors` mapping without changing
-the handoff. Existing artifact probability clipping and heuristic directional
-attributions are preserved; those factors are not SHAP values or a causal explanation.
+the handoff. The calibrated model probability is saved without rounding or clipping,
+and the fixed risk thresholds are applied to that same value. Display rounding
+belongs in the frontend. Contributions are exact signed weights multiplied by
+standardized feature values, ranked by absolute magnitude without sign filtering,
+clipping, or fabricated fallbacks. These remain heuristic directional factors,
+not SHAP values or a causal explanation. Saved model bundles are unchanged.
+
+Inference never overwrites the source features or history, including during a
+failed run. A synthetic demo feed requires an explicit separate path:
+
+```bash
+python -m b_model.predict paths.features=a_data/mock_output.json paths.output=b_model/.test-output/risk.json surge_cell=-2.35_114.05 paths.demo_features_out=b_model/.test-output/surged_features.json
+```
+
+Unknown surge cells and input/output collisions are rejected. The legacy
+`--write-surged-features` flag requires `--surge-output-features`; there is no
+fallback to modifying the input. The demo feed uses the same transformation as
+inference. Each output is replaced atomically; the two files are not a single
+filesystem transaction. Serialization or replacement failures preserve that
+destination's previous complete file and remove temporary files.
+
+## PIC 2 artifact manifest
+
+The model directory must include `artifact_manifest.json`, with schema version
+`1.0` and a `models` object containing exactly `24`, `48`, and `72` entries. The
+checked-in manifest describes the existing unmodified bundles. Each entry has:
+
+```json
+{
+  "filename": "model_24h.joblib",
+  "format": "joblib",
+  "model_version": "v1",
+  "feature_order": ["peat_fraction", "peat_area_km2", "...all 27 canonical features..."],
+  "positive_class": 1
+}
+```
+
+The abbreviated feature list above is illustrative; copy the complete checked-in
+manifest when exporting a compatible bundle. `format` is `joblib` or `pickle`;
+filenames can be customized, including `.pkl`. Paths must remain inside the model
+directory. Each feature occurs exactly once; inference reorders the predictor
+projection to that order. Artifact metadata must agree with the manifest, and the
+output `model_version` comes from the verified entry. Probability column selection
+uses the model's binary `classes_`, allowing reversed class order.
+
+Bundles contain `horizon_h`, `schema_version`, `model_version`, `feature_columns`,
+a fitted median `imputer`, fitted `scaler`, `primary_model` (or `model`), and
+`signed_feature_weights` (or `feature_weights`) in the declared order. PIC 2 must
+publish the manifest with newly trained bundles; `train.py` is unchanged by this
+PIC 1 update. Only load trusted training artifacts: both pickle and Joblib execute
+deserialization code, and a manifest is not a security sandbox.
 
 `max_seconds` defaults to 60 and rejects an over-budget result before publishing.
 It is a latency check, not a hard cancellation mechanism for native model code.
