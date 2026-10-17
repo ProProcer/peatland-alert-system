@@ -1,0 +1,14 @@
+{
+  "started_at": "2026-10-17T07:23:01.876775Z",
+  "history_sha256": "444152463a2aa952a6154c965d7c3876e48e4ffea1c86370ca811dafa76bfb40",
+  "history_rows_used": 539352,
+  "rows_with_incomplete_targets_dropped": 2376,
+  "selection_rule": "Per horizon: largest mean calibrated development AP, then smallest mean Brier, then name. Baseline is a reference, not an eligible 27-feature primary.",
+  "test_status": "Final-period metrics do not select candidates; aggregate source/monthly label counts were previously inspected.",
+  "library_versions": {
+    "numpy": "2.5.4",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.6.1",
+    "joblib": "1.6.0"
+  }
+}

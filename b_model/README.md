@@ -270,3 +270,55 @@ and the candidate's poor validation performance. A successful schema/latency che
 does not establish useful prediction quality. The current live platform script
 still calls A without `--replay` and therefore stops; use A's explicit replay export
 and the named B replay configuration until E adds replay orchestration.
+
+## Chronological experiments (PIC 2)
+
+The completed real-data comparison is documented in
+[EXPERIMENT_RESULTS.md](EXPERIMENT_RESULTS.md), with reviewable protocol and
+metrics in `experiment_results/20261017/`.
+
+Portable selected artifacts are tracked in `model_candidate_2026/`, together
+with their manifest and provenance. Run the opt-in profile after pulling:
+
+```bash
+python -m b_model.predict --config-name replay_candidate
+python -m contracts.validate --kind risk b_model/experiment_results/20261017/risk.json
+```
+
+That profile writes the separate candidate replay, preserving shared feeds.
+
+`experiment.py` compares three regularized 27-feature Logistic Regressions and
+three simpler boosting settings, each with sigmoid/isotonic calibration. The
+logistic/dryness baseline is calibrated under the same protocol. It uses the
+existing training dependencies; no new package or source data is required.
+
+```bash
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 python -m b_model.experiment
+# Use a fresh directory for another explicitly planned experiment.
+python -m b_model.experiment --output-dir b_model/runs/another_experiment
+```
+
+The fixed boundaries and candidates are in `conf/experiment.yaml`. Three
+development evaluations cover archive data and the archive-to-NRT transition.
+All development evaluations finish before the final model's training cutoff;
+separate final calibration and evaluation follow, with 72-hour embargoes.
+Candidates are selected per horizon by mean calibrated development PR-AUC
+(average precision), then Brier score. The selection is saved before any final
+prediction metrics are calculated. Aggregate source/label counts had already
+been inspected, so this is a retrospective temporal evaluation.
+
+The output directory contains the protocol, input fingerprint, source audit,
+partition dates/counts, full development results, frozen selection, final results,
+consumer-compatible model bundles and an isolated `risk.json`. Evaluation also
+compares the earlier published candidate, a past-hotspot persistence rule, and
+the subgroup with no hotspots in the preceding 24 hours. High performance on
+ongoing hotspots alone does not establish useful early warning.
+
+Existing output directories are rejected to discourage repeated tuning against
+the final period. Experiment outputs stay under ignored `b_model/runs/`; they
+do not replace shared feeds or deployed artifacts. To test a completed candidate:
+
+```bash
+python -m b_model.predict --config-name replay_role_a paths.model_dir=b_model/runs/chronological_experiment/model paths.output=b_model/.test-output/experiment/risk.json
+python -m contracts.validate --kind risk b_model/.test-output/experiment/risk.json
+```

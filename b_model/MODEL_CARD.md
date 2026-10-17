@@ -85,6 +85,8 @@ The pre-existing `b_model/model/` artifacts remain legacy demo artifacts. A firs
 
 Earlier hardware timing claims are not retained as measured evidence. Real replay inference took 2.552 seconds in a fresh local process with native thread counts set to two; this does not establish LinuxONE performance. Synthetic acceptance tests demonstrate software behavior, not prediction quality. A documents source provenance and declares FIRMS export completeness; independent satellite observation availability has not been established.
 
+A subsequent isolated chronological experiment selected regularized 27-feature Logistic Regression with sigmoid calibration for all horizons. On a separate September 22–October 13, 2026 evaluation, PR-AUC was 0.901/0.941/0.958 and recall at cutoff 0.50 was 0.787/0.873/0.888. Positive prevalence was 0.687/0.794/0.850; performance on quiet-hour records is substantially weaker. The earlier candidate was reevaluated on that same period for comparison. See [EXPERIMENT_RESULTS.md](EXPERIMENT_RESULTS.md) for the protocol, baselines, source audit, subgroup results and reproducible evidence. Portable selected bundles are tracked in `b_model/model_candidate_2026/` and selected by `--config-name replay_candidate`; the original run is under ignored `b_model/runs/chronological_experiment/`. Shared feeds and earlier published model directories remain unchanged.
+
 ## Deployment and scientific limits
 
 Open-Meteo soil moisture is numerically modeled data, not physical sensor telemetry. In-situ readings could populate compatible weather fields, but units, depths, distributions and calibration would need validation before using the saved models. Schema compatibility does not establish model compatibility without retraining or evaluation.

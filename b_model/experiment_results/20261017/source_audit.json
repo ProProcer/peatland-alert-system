@@ -1,0 +1,370 @@
+{
+  "source": "/home/matthew/projects/peatland-alert-system/data/demo/role_a_real/firms_normalized.parquet",
+  "instruments": {
+    "VIIRS": 29294
+  },
+  "satellites": {
+    "N20": 14738,
+    "N21": 14556
+  },
+  "duplicate_acquisition_keys": 0,
+  "detections_2025": 34,
+  "monthly_events": [
+    {
+      "month": "2024-11",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 3,
+      "eligible": 3
+    },
+    {
+      "month": "2024-11",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 6,
+      "eligible": 6
+    },
+    {
+      "month": "2025-03",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 1,
+      "eligible": 1
+    },
+    {
+      "month": "2025-04",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 5,
+      "eligible": 5
+    },
+    {
+      "month": "2025-04",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 3,
+      "eligible": 3
+    },
+    {
+      "month": "2025-05",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 1,
+      "eligible": 1
+    },
+    {
+      "month": "2025-06",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 1,
+      "eligible": 1
+    },
+    {
+      "month": "2025-06",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 2,
+      "eligible": 2
+    },
+    {
+      "month": "2025-07",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 8,
+      "eligible": 8
+    },
+    {
+      "month": "2025-07",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 2,
+      "eligible": 2
+    },
+    {
+      "month": "2025-10",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 5,
+      "eligible": 5
+    },
+    {
+      "month": "2025-10",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 6,
+      "eligible": 6
+    },
+    {
+      "month": "2026-01",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 1,
+      "eligible": 1
+    },
+    {
+      "month": "2026-01",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 6,
+      "eligible": 6
+    },
+    {
+      "month": "2026-03",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 4,
+      "eligible": 4
+    },
+    {
+      "month": "2026-03",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 6,
+      "eligible": 4
+    },
+    {
+      "month": "2026-04",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 2,
+      "eligible": 2
+    },
+    {
+      "month": "2026-04",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 1,
+      "eligible": 1
+    },
+    {
+      "month": "2026-05",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 1,
+      "eligible": 1
+    },
+    {
+      "month": "2026-06",
+      "product": "archive",
+      "satellite": "N20",
+      "detections": 4,
+      "eligible": 4
+    },
+    {
+      "month": "2026-06",
+      "product": "archive",
+      "satellite": "N21",
+      "detections": 4,
+      "eligible": 4
+    },
+    {
+      "month": "2026-07",
+      "product": "nrt",
+      "satellite": "N20",
+      "detections": 54,
+      "eligible": 54
+    },
+    {
+      "month": "2026-07",
+      "product": "nrt",
+      "satellite": "N21",
+      "detections": 62,
+      "eligible": 62
+    },
+    {
+      "month": "2026-08",
+      "product": "nrt",
+      "satellite": "N20",
+      "detections": 925,
+      "eligible": 894
+    },
+    {
+      "month": "2026-08",
+      "product": "nrt",
+      "satellite": "N21",
+      "detections": 868,
+      "eligible": 808
+    },
+    {
+      "month": "2026-09",
+      "product": "nrt",
+      "satellite": "N20",
+      "detections": 7561,
+      "eligible": 7160
+    },
+    {
+      "month": "2026-09",
+      "product": "nrt",
+      "satellite": "N21",
+      "detections": 7749,
+      "eligible": 7380
+    },
+    {
+      "month": "2026-10",
+      "product": "nrt",
+      "satellite": "N20",
+      "detections": 6164,
+      "eligible": 5788
+    },
+    {
+      "month": "2026-10",
+      "product": "nrt",
+      "satellite": "N21",
+      "detections": 5839,
+      "eligible": 5566
+    }
+  ],
+  "monthly_label_rates": [
+    {
+      "month": "2024-12",
+      "rows": 23760,
+      "positive_24h": 0,
+      "rate_24h": 0.0
+    },
+    {
+      "month": "2025-01",
+      "rows": 24552,
+      "positive_24h": 0,
+      "rate_24h": 0.0
+    },
+    {
+      "month": "2025-02",
+      "rows": 22176,
+      "positive_24h": 0,
+      "rate_24h": 0.0
+    },
+    {
+      "month": "2025-03",
+      "rows": 24552,
+      "positive_24h": 24,
+      "rate_24h": 0.0009775171065493646
+    },
+    {
+      "month": "2025-04",
+      "rows": 23760,
+      "positive_24h": 74,
+      "rate_24h": 0.0031144781144781144
+    },
+    {
+      "month": "2025-05",
+      "rows": 24552,
+      "positive_24h": 24,
+      "rate_24h": 0.0009775171065493646
+    },
+    {
+      "month": "2025-06",
+      "rows": 23760,
+      "positive_24h": 72,
+      "rate_24h": 0.0030303030303030303
+    },
+    {
+      "month": "2025-07",
+      "rows": 24552,
+      "positive_24h": 169,
+      "rate_24h": 0.006883349625285109
+    },
+    {
+      "month": "2025-08",
+      "rows": 24552,
+      "positive_24h": 0,
+      "rate_24h": 0.0
+    },
+    {
+      "month": "2025-09",
+      "rows": 23760,
+      "positive_24h": 0,
+      "rate_24h": 0.0
+    },
+    {
+      "month": "2025-10",
+      "rows": 24552,
+      "positive_24h": 96,
+      "rate_24h": 0.0039100684261974585
+    },
+    {
+      "month": "2025-11",
+      "rows": 23760,
+      "positive_24h": 0,
+      "rate_24h": 0.0
+    },
+    {
+      "month": "2025-12",
+      "rows": 24552,
+      "positive_24h": 0,
+      "rate_24h": 0.0
+    },
+    {
+      "month": "2026-01",
+      "rows": 24552,
+      "positive_24h": 49,
+      "rate_24h": 0.001995764092538286
+    },
+    {
+      "month": "2026-02",
+      "rows": 22176,
+      "positive_24h": 0,
+      "rate_24h": 0.0
+    },
+    {
+      "month": "2026-03",
+      "rows": 24552,
+      "positive_24h": 210,
+      "rate_24h": 0.00855327468230694
+    },
+    {
+      "month": "2026-04",
+      "rows": 23760,
+      "positive_24h": 54,
+      "rate_24h": 0.0022727272727272726
+    },
+    {
+      "month": "2026-05",
+      "rows": 24552,
+      "positive_24h": 42,
+      "rate_24h": 0.001710654936461388
+    },
+    {
+      "month": "2026-06",
+      "rows": 23760,
+      "positive_24h": 174,
+      "rate_24h": 0.0073232323232323236
+    },
+    {
+      "month": "2026-07",
+      "rows": 24552,
+      "positive_24h": 1093,
+      "rate_24h": 0.044517758227435644
+    },
+    {
+      "month": "2026-08",
+      "rows": 24552,
+      "positive_24h": 5569,
+      "rate_24h": 0.22682469859889215
+    },
+    {
+      "month": "2026-09",
+      "rows": 23760,
+      "positive_24h": 13521,
+      "rate_24h": 0.5690656565656566
+    },
+    {
+      "month": "2026-10",
+      "rows": 10296,
+      "positive_24h": 7949,
+      "rate_24h": 0.772047397047397
+    }
+  ],
+  "fire_type_availability": [
+    {
+      "product": "archive",
+      "type": "0",
+      "rows": 72
+    },
+    {
+      "product": "nrt",
+      "type": "unavailable",
+      "rows": 29222
+    }
+  ],
+  "conclusion": "Both sources identify VIIRS N20/N21. The increase follows the archive/NRT boundary; its cause is not established. Labels and confidence filtering are unchanged. Export completeness is human-declared."
+}
