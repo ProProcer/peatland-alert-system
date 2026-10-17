@@ -10,6 +10,8 @@ Use the explicit `replay_regional` profile and the machine-readable
 [CURRENT_HANDOFF.json](CURRENT_HANDOFF.json). It identifies the matching inputs,
 model artifacts, risk feed, source hashes and quality report for **40 cells across
 five Indonesian Kalimantan provinces**, at **2026-10-16T00:00:00Z**.
+Handoff SHA-256 values hash binary files as stored and normalize CRLF to LF for
+JSON/GeoJSON, so Git's Windows text checkout does not create false mismatches.
 
 ```bash
 python -m b_model.predict --config-name replay_regional

@@ -29,5 +29,6 @@
     "features.parquet": "1e97585142f99204df1ce79c3fcb53f3d5bbf98af65bc03b6b53741e3e53aec6",
     "cells.geojson": "62d1bd5737fb7cb8ca1014d263c1b52a87a8d4b62ee9ae1b82805a2e3436b816"
   },
-  "risk_sha256": "f6efa735f78660318fa5f5b800c61e31b13156ed259d72a11d9ae16b9f9306dd"
+  "risk_sha256": "3d500e81c07854663d302c2a4b2f356f8b3fab8a8d273c1a81a7e20b07510f26",
+  "fingerprint_convention": "SHA-256 of raw binary files; JSON/GeoJSON use UTF-8 bytes with CRLF normalized to LF for cross-platform verification."
 }
