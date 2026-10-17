@@ -2,6 +2,18 @@
 
 Read `TEAM_PLAYBOOK.md` and `contracts/CONTRACTS.md`. Own this folder and `data/processed/{features.json,features.parquet,history.parquet,cells.geojson}`. B, C and D can start using your mocks immediately.
 
+## Mock handoff ready
+
+Share [mock_output.json](mock_output.json) and [fixtures/cells.geojson](fixtures/cells.geojson) together. The three synthetic Kalimantan cells cover dry conditions, wet conditions with measured zero fire counts, and partial data with nulls. All 27 canonical numeric input fields are present. See [MOCK_HANDOFF.md](MOCK_HANDOFF.md) for scenario details, units, and loader commands, and [HANDOFF_PLAN.md](HANDOFF_PLAN.md) for the proposed agreement with B.
+
+Create an isolated feature/geometry bundle from the repository root:
+
+```bash
+python -m a_data.refresh --mock --output-dir data/demo/role_a_mock
+```
+
+## Setup and real ingestion
+
 ```bash
 bash scripts/setup.sh a
 source .venv/bin/activate
