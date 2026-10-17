@@ -1,5 +1,7 @@
 # Role A water-source mock for Role C
 
+**Real catalogue available:** 21,883 mapped candidates have now been extracted to `data/demo/role_a_real/water_sources.geojson`. See [REAL_HANDOFF.md](REAL_HANDOFF.md) for the production lookup helper, provenance, and real examples. The mock bundle below remains a separate synthetic fixture.
+
 This bundle supplies three synthetic candidate water points near our existing Central Kalimantan mock cells, plus five expected lookup examples. Every source and example is explicitly marked `is_mock: true`. Coordinates and water features are invented for integration. Water presence, access, intermittency, and seasonality are unknown and remain `null`.
 
 The raw file `data/raw/kalimantan-261016.osm.pbf` is present with an OSM header. Its Git LFS tracking rule is already configured. These mocks have not been extracted from that file. Real water-feature extraction is the next data-processing step.

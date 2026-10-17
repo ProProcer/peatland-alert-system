@@ -2,6 +2,10 @@
 
 Reviewed: 2026-10-17. Status: proposed handoff for team confirmation.
 
+**Current delivery:** [REAL_HANDOFF.md](REAL_HANDOFF.md) describes real features and labeled history for the cached Central Kalimantan subset selected for the today-only deadline. Raw-event labels, schema validation, and B loader compatibility have been checked on the first real sample. The broader scope described below is deferred.
+
+Scope update: the human has selected **all Indonesian Kalimantan**, replacing the earlier Central Kalimantan-only delivery scope. [PROCESSING_PLAN.md](PROCESSING_PLAN.md) is the current implementation sequence. Coordinate the expanded shared configuration and cell budget with E; the small real sample remains the first delivery.
+
 Our responsibility is to provide traceable inference features and labeled training history so Role B can develop, train, and evaluate its model. Role A owns ingestion, spatial processing, feature calculations, labels agreed with B, and data quality. Role B owns model preprocessing, training, calibration, evaluation, and `risk.json`.
 
 ## Comparison with the proposed plan
@@ -16,7 +20,7 @@ The additional decisions needed are the exact label calculation, incomplete-wind
 - `a_data/fixtures/cells.geojson` matches the three-cell Role A mock. Deliver these together so consumers use consistent cell IDs.
 - `data/processed/features.json` contains nine synthetic cells, and `risk.json` contains 27 predictions for those cells across three horizons. These are a separate fixture set from the three-cell handoff.
 - `history.parquet` exists, but its real-source provenance has not been established. B's repository includes a synthetic history generator. The existing file is not accepted as real training evidence by this plan.
-- Role A's current refresh command supports mocks only. It has no Open-Meteo ingestion.
+- Role A now has cached ICON ingestion, real feature/label assembly, and an explicit replay exporter. Current-hour live refresh awaits fresh FIRMS coverage and platform integration.
 - Raw data contains 1,524 peat polygon features and four extracted FIRMS CSV files with 2,868,405 rows in total. J1 archive coverage starts on 2018-04-01; J2 starts on 2023-03-01. Both have archive data through 2026-06-30 and NRT data dated 2026-07-01 through 2026-10-16. Date ranges alone do not establish uninterrupted coverage.
 - The shared configuration selects a working Central Kalimantan bounding box, 0.1-degree cells, a minimum peat fraction of 0.05, and at most 300 cells. The box is not an administrative province boundary.
 
@@ -28,7 +32,7 @@ The additional decisions needed are the exact label calculation, incomplete-wind
 | 2. Agreed interface | The feature list below, label rules, missing-value policy, and proposed split | B confirms compatibility and chooses final dated split boundaries with A once coverage is known. |
 | 3. First real sample | Real `features.json`, `features.parquet`, and `cells.geojson` for a few qualifying cells, built in an isolated directory under `data/demo/` | Traceable peat, weather, and fire inputs; no all-null weather record; schemas pass; B confirms its loader accepts the sample. |
 | 4. Historical sample | A short, labeled `history.parquet` for those cells, with a coverage and missingness report | B verifies column types and supplied targets. Any sample training is development work, not evidence of evaluated model quality. |
-| 5. Full handoff | A's four owned outputs in `data/processed/`: `features.json`, `features.parquet`, `history.parquet`, `cells.geojson` | Up to 300 demo cells; at least one year of usable hourly training coverage; source manifest and exclusions report; agreed split boundaries. |
+| 5. Full handoff | A's four owned outputs in `data/processed/`: `features.json`, `features.parquet`, `history.parquet`, `cells.geojson` | Qualifying peat cells across all Indonesian Kalimantan; measured cell count and expanded budget agreed with E; at least one year of usable hourly training coverage; source manifest and exclusions report; agreed split boundaries. |
 | 6. Repeatable refresh | Live ingestion through `a_data/refresh.py`, raw caching, atomic file replacement, and documented commands | Cached incremental refresh is measured against the playbook's two-minute target. Initial historical ingestion is a separate batch job. |
 
 ## Interface to confirm with B
@@ -60,16 +64,16 @@ target_h = 1 if at least one n/h-confidence FIRMS detection is inside
 
 The exact column names are `target_24h`, `target_48h`, and `target_72h`. A computes these from raw detection timestamps. Feature windows use observations at or before `t`; future detections are used only for labels.
 
-Proposed compatibility policy: the delivered training Parquet includes only rows with complete future coverage for all three targets. Record excluded tail rows and internal coverage gaps in A's quality report. An unobserved future window is not a negative label. B currently casts targets to integers, so nullable labels would require an agreed loader change before delivery.
+Proposed compatibility policy: preserve null targets where future coverage is incomplete, and report the affected tail rows and internal coverage gaps. An unobserved future window is not a negative label. B's current configured trainer drops rows missing any of the three targets before fitting and requires remaining targets to be binary 0/1. Confirm the concrete nullable Parquet dtypes using the short historical sample.
 
-B's current `ensure_target_labels()` fallback uses `hotspots_in_cell_24h` and row-based forward windows when target columns are absent. That rolling feature cannot establish the required raw-event labels. Real training must use A's supplied target columns and explicit real input paths. B should confirm that production runs fail when the real inputs or supplied labels are missing, rather than generating synthetic replacements.
+B's configured training path now fails when the input history or producer-supplied target columns are absent. An older unconfigured `ensure_target_labels()` fallback remains in the repository; it uses `hotspots_in_cell_24h` and row-based windows, which cannot establish the required raw-event labels. Real training uses the configured path, A's supplied targets, and explicit real input paths.
 
 ### Missing feature measurements
 
 - A preserves missing measurements as JSON `null` and Parquet nulls. Actual measured or coverage-supported zeros remain zero.
 - A does not fill unknown measurements or missing fire coverage with invented zero values. No feature record has all-null weather.
 - B's current loader converts JSON nulls to `NaN`; its training pipeline fits median imputation and scaling on the training partition, then applies them to calibration and validation.
-- A supplies per-column missingness and identifies columns that are entirely absent. B must confirm how to handle an entirely missing training column while retaining the agreed feature interface.
+- A supplies per-column missingness and identifies columns that are entirely absent. B's current trainer rejects an entirely missing training column; resolve source coverage before training rather than inventing values.
 
 ### Time split
 
@@ -80,7 +84,7 @@ A delivers the chronological dataset and coverage report; B applies the split an
 ## Implementation sequence inside Role A
 
 1. Prepare a source manifest and coverage inventory. Start with the files already downloaded. Record source URLs, licenses, time ranges, units, download information where available, and modeled weather provenance; identify unknown metadata explicitly.
-2. Prepare the peat grid. Remove geometry Z coordinates, check geometry validity, filter to the configured box, and compute overlap areas in an appropriate projected CRS. Avoid double-counting overlapping peat polygons. Retain cells meeting the fixed threshold and use reproducible selection if more than 300 qualify.
+2. Prepare the full-region peat grid. Remove geometry Z coordinates, check geometry validity, filter using a verified Indonesian Kalimantan boundary, and compute overlap areas using geodesic area or a suitable equal-area projection. Avoid double-counting overlapping peat polygons. Retain cells meeting the fixed threshold and report their actual count; coordinate the expanded configuration with E.
 3. Normalize FIRMS. Parse zero-padded acquisition times in UTC, preserve satellite identity, remove exact duplicate source records, and build spatial/time indexes. Keep low-confidence provenance while excluding `l` detections from alert features and labels. Preserve nearby observations needed for 10 km features.
 4. Check Open-Meteo compatibility using official documentation and a small cached request. Verify live and historical support for each contracted variable, especially soil depths. An incompatible depth must not be relabeled as a supported one. Resolve source gaps through the agreed contract process where necessary.
 5. Build the first real sample. Join by cell and UTC hour; compute features using only data through that hour. Fetch at least 30 days of weather lookback for the longest rainfall window, and retain unknown values where history is insufficient. Select an explicit historical replay time if the source files cannot support a current snapshot.
@@ -105,9 +109,9 @@ A's implementation changes stay in `a_data/`, plus its owned shared output files
 > Please confirm these handoff details:
 >
 > 1. The 27 canonical numeric features in `b_model/config.py`, schema 1.0, nested JSON for inference, and flat canonical Parquet columns for training.
-> 2. Targets `target_24h`, `target_48h`, and `target_72h`: at least one n/h-confidence FIRMS detection in the same cell during `(t, t + horizon]`, calculated by A from raw acquisition times. We propose excluding training rows with incomplete coverage for any target and reporting exclusions separately.
+> 2. Targets `target_24h`, `target_48h`, and `target_72h`: at least one n/h-confidence FIRMS detection in the same cell during `(t, t + horizon]`, calculated by A from raw acquisition times. Incomplete future windows remain null; your configured trainer drops rows missing any target. We will report affected rows and confirm nullable Parquet dtypes with a short sample.
 > 3. Missing feature measurements remain null. Your training preprocessing performs imputation fitted on training only. Please confirm handling for any entirely missing training column.
 > 4. Your current chronological 55% / 20% / 25% train, calibration, and validation split with 72-hour gaps. We will agree actual UTC cutoffs after confirming historical coverage.
 > 5. Real training uses our supplied target columns and explicit real input paths, and fails if these are missing. Please confirm the lookback for `nearest_hotspot_km` and soil temperature used for `soil_air_temp_gap_c` as well.
 >
-> Delivery order: mock immediately, a small real feature sample plus geometry, a labeled historical sample, then the full demo grid and at least one year of hourly history. Open-Meteo ingestion is pending, so historical variable compatibility is an early check. We can prepare the peat grid and FIRMS data while these confirmations are pending.
+> Delivery order: mock immediately, a small real feature sample plus geometry, a labeled historical sample, then qualifying peat cells across all Indonesian Kalimantan and at least one year of hourly history. Open-Meteo ingestion is pending; ICON Global has been checked at one sample location, with full-region coverage checks still required. We can prepare the peat grid and FIRMS data while these confirmations are pending.

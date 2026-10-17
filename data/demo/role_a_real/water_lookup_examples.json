@@ -1,0 +1,176 @@
+{
+  "is_mock": false,
+  "distance_method": "Straight-line distance in local LAEA projection to mapped line, point, or polygon shoreline; not road routing or verified access.",
+  "examples": [
+    {
+      "case_id": "-1.85_116.35_center",
+      "is_mock": false,
+      "cell_id": "-1.85_116.35",
+      "ts": "2026-10-16T00:00:00Z",
+      "target": {
+        "lat": -1.85,
+        "lon": 116.35
+      },
+      "source_id": "osm:relation/19024696",
+      "water_source": {
+        "lat": -1.8605998552341627,
+        "lon": 116.35029333733965,
+        "distance_km": 1.173,
+        "kind": "river"
+      }
+    },
+    {
+      "case_id": "-1.85_116.35_shifted",
+      "is_mock": false,
+      "cell_id": "-1.85_116.35",
+      "ts": "2026-10-16T00:00:00Z",
+      "target": {
+        "lat": -1.83,
+        "lon": 116.36999999999999
+      },
+      "source_id": "osm:relation/19024696",
+      "water_source": {
+        "lat": -1.8594986979289145,
+        "lon": 116.36512910000002,
+        "distance_km": 3.307,
+        "kind": "river"
+      }
+    },
+    {
+      "case_id": "-2.95_110.75_center",
+      "is_mock": false,
+      "cell_id": "-2.95_110.75",
+      "ts": "2026-10-16T00:00:00Z",
+      "target": {
+        "lat": -2.95,
+        "lon": 110.75
+      },
+      "source_id": "osm:way/59195316",
+      "water_source": {
+        "lat": -2.9502011689113763,
+        "lon": 110.75037194183925,
+        "distance_km": 0.047,
+        "kind": "river"
+      }
+    },
+    {
+      "case_id": "-2.95_110.75_shifted",
+      "is_mock": false,
+      "cell_id": "-2.95_110.75",
+      "ts": "2026-10-16T00:00:00Z",
+      "target": {
+        "lat": -2.93,
+        "lon": 110.77
+      },
+      "source_id": "osm:relation/16530949",
+      "water_source": {
+        "lat": -2.930403799877479,
+        "lon": 110.77039804336817,
+        "distance_km": 0.063,
+        "kind": "river"
+      }
+    },
+    {
+      "case_id": "-3.15_114.95_center",
+      "is_mock": false,
+      "cell_id": "-3.15_114.95",
+      "ts": "2026-10-16T00:00:00Z",
+      "target": {
+        "lat": -3.15,
+        "lon": 114.95
+      },
+      "source_id": "osm:way/843748375",
+      "water_source": {
+        "lat": -3.147754896519352,
+        "lon": 114.9741142,
+        "distance_km": 2.693,
+        "kind": "canal"
+      }
+    },
+    {
+      "case_id": "-3.15_114.95_shifted",
+      "is_mock": false,
+      "cell_id": "-3.15_114.95",
+      "ts": "2026-10-16T00:00:00Z",
+      "target": {
+        "lat": -3.13,
+        "lon": 114.97
+      },
+      "source_id": "osm:way/843197687",
+      "water_source": {
+        "lat": -3.136285696531773,
+        "lon": 114.97447590000002,
+        "distance_km": 0.854,
+        "kind": "canal"
+      }
+    },
+    {
+      "case_id": "-3.45_111.85_center",
+      "is_mock": false,
+      "cell_id": "-3.45_111.85",
+      "ts": "2026-10-16T00:00:00Z",
+      "target": {
+        "lat": -3.45,
+        "lon": 111.85
+      },
+      "source_id": "osm:way/854545725",
+      "water_source": {
+        "lat": -3.42209339622366,
+        "lon": 111.8197527,
+        "distance_km": 4.566,
+        "kind": "canal"
+      }
+    },
+    {
+      "case_id": "-3.45_111.85_shifted",
+      "is_mock": false,
+      "cell_id": "-3.45_111.85",
+      "ts": "2026-10-16T00:00:00Z",
+      "target": {
+        "lat": -3.43,
+        "lon": 111.86999999999999
+      },
+      "source_id": "osm:way/854545725",
+      "water_source": {
+        "lat": -3.420149496225718,
+        "lon": 111.8201658,
+        "distance_km": 5.646,
+        "kind": "canal"
+      }
+    },
+    {
+      "case_id": "3.45_117.05_center",
+      "is_mock": false,
+      "cell_id": "3.45_117.05",
+      "ts": "2026-10-16T00:00:00Z",
+      "target": {
+        "lat": 3.45,
+        "lon": 117.05
+      },
+      "source_id": "osm:way/92952175",
+      "water_source": {
+        "lat": 3.466076836346467,
+        "lon": 117.07718354747168,
+        "distance_km": 3.503,
+        "kind": "river"
+      }
+    },
+    {
+      "case_id": "3.45_117.05_shifted",
+      "is_mock": false,
+      "cell_id": "3.45_117.05",
+      "ts": "2026-10-16T00:00:00Z",
+      "target": {
+        "lat": 3.47,
+        "lon": 117.07
+      },
+      "source_id": "osm:way/92952175",
+      "water_source": {
+        "lat": 3.474790016457628,
+        "lon": 117.07378953979139,
+        "distance_km": 0.676,
+        "kind": "river"
+      }
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "generated_at": "2026-10-17T06:46:27Z",
+  "is_mock": false,
+  "source": "kalimantan-261016.osm.pbf",
+  "source_sha256": "f32829b902d66abd7eef1f9463333a413bc36e176255037bfe612ccc09fae462",
+  "attribution": "OpenStreetMap contributors / Geofabrik",
+  "license": "ODbL-1.0",
+  "license_url": "https://www.openstreetmap.org/copyright",
+  "counts": {
+    "outside_region_or_empty": 1183,
+    "retained": 21883,
+    "geometry_failures": 1
+  },
+  "geometry_failures": [
+    {
+      "source_id": "osm:way/761208649",
+      "error": "invalid area (area_id=1522417298)"
+    }
+  ],
+  "by_kind": {
+    "stream": 3975,
+    "river": 6327,
+    "water_well": 5,
+    "fire_hydrant": 2,
+    "water_tap": 5,
+    "water": 1408,
+    "reservoir": 322,
+    "basin": 222,
+    "lake": 287,
+    "oxbow": 102,
+    "canal": 8535,
+    "pond": 669,
+    "shelter": 1,
+    "drain": 4,
+    "wastewater": 10,
+    "lagoon": 1,
+    "lake;pond": 3,
+    "Danau Kecil": 3,
+    "harbour": 1,
+    "wetland": 1
+  },
+  "by_osm_type": {
+    "node": 14,
+    "relation": 516,
+    "way": 21353
+  },
+  "availability": "Mapped candidates only. Presence, suitability and access are not verified.",
+  "temporal_use": "2026-10-16 OSM snapshot; supporting dispatch data, excluded from historical model features."
+}

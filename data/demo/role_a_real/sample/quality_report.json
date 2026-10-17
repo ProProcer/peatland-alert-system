@@ -1,0 +1,122 @@
+{
+  "generated_at": "2026-10-17T06:38:46Z",
+  "is_mock": false,
+  "mode": "historical_replay",
+  "snapshot": "2026-10-16T00:00:00Z",
+  "history_rows": 82080,
+  "cells": 5,
+  "first_hour": "2024-12-02T00:00:00Z",
+  "last_hour": "2026-10-16T23:00:00Z",
+  "missing_values": {
+    "peat_fraction": 0,
+    "peat_area_km2": 0,
+    "temp_c": 0,
+    "precip_mm": 0,
+    "wind_kmh": 0,
+    "wind_dir_deg": 0,
+    "sm_0_1": 0,
+    "sm_1_3": 0,
+    "sm_3_9": 0,
+    "sm_9_27": 0,
+    "sm_27_81": 0,
+    "vpd_kpa": 0,
+    "soil_temp_0_c": 0,
+    "soil_temp_18_c": 0,
+    "et_mm": 0,
+    "et0_mm": 0,
+    "rain_24h_mm": 0,
+    "rain_7d_mm": 0,
+    "rain_30d_mm": 0,
+    "days_since_rain": 0,
+    "sm_27_81_delta_7d": 0,
+    "vpd_mean_24h": 0,
+    "soil_air_temp_gap_c": 0,
+    "hotspots_in_cell_24h": 120,
+    "hotspots_10km_7d": 49584,
+    "frp_sum_10km_7d": 49584,
+    "nearest_hotspot_km": 53461,
+    "target_24h": 120,
+    "target_48h": 240,
+    "target_72h": 360
+  },
+  "entirely_missing_features": [],
+  "rows_with_all_targets": 81720,
+  "target_counts": {
+    "target_24h": {
+      "0": 77024,
+      "1": 4936,
+      "<NA>": 120
+    },
+    "target_48h": {
+      "0": 75496,
+      "1": 6344,
+      "<NA>": 240
+    },
+    "target_72h": {
+      "0": 74491,
+      "1": 7229,
+      "<NA>": 360
+    }
+  },
+  "spatial_coverage": [
+    {
+      "cell_id": "-1.85_116.35",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 7.958928936940326
+    },
+    {
+      "cell_id": "-2.95_110.75",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 4.009166394271777
+    },
+    {
+      "cell_id": "-3.15_114.95",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 62.81884077030058
+    },
+    {
+      "cell_id": "-3.45_111.85",
+      "complete_10km_geographic_coverage": false,
+      "distance_to_declared_coverage_boundary_km": 5.057542042602024
+    },
+    {
+      "cell_id": "3.45_117.05",
+      "complete_10km_geographic_coverage": true,
+      "distance_to_declared_coverage_boundary_km": 29.2888034428385
+    }
+  ],
+  "definitions": {
+    "schema_version": "1.0",
+    "scope": "All Indonesian Kalimantan",
+    "start_date": "2024-12-02",
+    "end_date": "2026-10-17",
+    "grid_size_deg": 0.1,
+    "minimum_peat_fraction": 0.05,
+    "horizons_h": [
+      24,
+      48,
+      72
+    ],
+    "weather_model": "icon_global",
+    "nearest_hotspot_lookback_h": 168,
+    "soil_air_temp_gap_formula": "soil_temp_18_c - temp_c",
+    "definitions_status": "Human approved on 2026-10-17; human will confirm with Role B",
+    "firms_export_coverage": {
+      "start": "2024-12-02T00:00:00Z",
+      "end_exclusive": "2026-10-17T00:00:00Z",
+      "scope": "All Indonesian Kalimantan",
+      "status": "human_declared_complete_local_J1V_J2V_exports",
+      "confirmation_date": "2026-10-17",
+      "confirmation": "Yes, use that as the declared export coverage",
+      "limitation": "Declared export completeness, not independently audited satellite observation availability. Geographic coverage outside Kalimantan is unconfirmed."
+    },
+    "replay_snapshot": "2026-10-16T00:00:00Z",
+    "weather_daily_budget": 8000
+  },
+  "notes": [
+    "Coverage is human-declared export completeness; satellite observation availability is not independently verified.",
+    "10km features stay null where the required disk crosses the declared regional boundary.",
+    "Nearest distance stays null when an unobserved source outside the declared region could be nearer.",
+    "Incomplete future windows remain null. No model has been trained or evaluated by Role A."
+  ]
+}

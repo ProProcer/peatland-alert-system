@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "scope": "All Indonesian Kalimantan",
+  "start_date": "2024-12-02",
+  "end_date": "2026-10-17",
+  "grid_size_deg": 0.1,
+  "minimum_peat_fraction": 0.05,
+  "horizons_h": [24, 48, 72],
+  "weather_model": "icon_global",
+  "weather_historical_end_date": "2026-10-16",
+  "nearest_hotspot_lookback_h": 168,
+  "soil_air_temp_gap_formula": "soil_temp_18_c - temp_c",
+  "definitions_status": "Human approved on 2026-10-17; human will confirm with Role B",
+  "firms_export_coverage": {
+    "start": "2024-12-02T00:00:00Z",
+    "end_exclusive": "2026-10-17T00:00:00Z",
+    "scope": "All Indonesian Kalimantan",
+    "status": "human_declared_complete_local_J1V_J2V_exports",
+    "confirmation_date": "2026-10-17",
+    "confirmation": "Yes, use that as the declared export coverage",
+    "limitation": "Declared export completeness, not independently audited satellite observation availability. Geographic coverage outside Kalimantan is unconfirmed."
+  },
+  "replay_snapshot": "2026-10-16T00:00:00Z",
+  "weather_daily_budget": 8000
+}

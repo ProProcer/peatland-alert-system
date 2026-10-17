@@ -1,6 +1,8 @@
 numpy>=1.26.0
-pandas>=2.1.0
+pandas>=2.1.0,<3
 pyarrow>=14.0.0
 geopandas>=1.0.0
 shapely>=2.0.0
 requests>=2.31.0
+pyproj>=3.6.0
+osmium>=4.0,<5
