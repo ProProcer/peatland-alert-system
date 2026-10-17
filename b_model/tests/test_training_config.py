@@ -18,7 +18,7 @@ import pytest
 from b_model.config import FEATURE_COLUMNS, HORIZONS, PROJECT_ROOT
 from b_model.features import compute_dryness_index, generate_mock_data_if_missing
 from b_model.predict import run_predictions, validate_risk_contract
-from b_model.train import compute_lead_time_hours, run_configured_training, temporal_train_calib_val_split
+from b_model.train import compute_lead_time_hours, optimal_f1_threshold, run_configured_training, temporal_train_calib_val_split, temporal_train_val_split
 from b_model.training_config import DrynessSettings, TrainingConfig, compute_training_dryness, validate_training_config
 
 
@@ -42,7 +42,7 @@ def test_composes_model_choices_with_typed_defaults(backend):
     "dryness.rain_weight=0.9", "dryness.vpd_reference_kpa=0",
     "explanation.top_k=5", "explanation.importance_split=validation",
     "explanation.z_score_clip=3", "explanation.contribution_clip=0.6",
-    "model.class_weight=unknown", "horizons=[24]", "seed=-1", "+unknown_setting=1",
+    "model.class_weight=unknown", "model.class_weight=null", "horizons=[24]", "seed=-1", "+unknown_setting=1",
     "+model.unknown_setting=1", "dryness.rain_weight=nan",
 ])
 def test_rejects_invalid_or_incompatible_settings(override):
@@ -69,6 +69,34 @@ def test_strict_split_preserves_both_embargoes_and_rejects_short_history():
     assert validation.ts.min() - calibration.ts.max() >= pd.Timedelta(hours=72)
     with pytest.raises(ValueError, match="too short"):
         temporal_train_calib_val_split(frame.iloc[:240], strict_embargo=True)
+
+
+def test_threshold_matches_exhaustive_f1_and_handles_single_class():
+    from sklearn.metrics import f1_score
+    labels = np.array([0, 1, 0, 0, 1, 0])
+    probabilities = np.array([0.001, 0.02, 0.015, 0.03, 0.04, 0.005])
+    result = optimal_f1_threshold(labels, probabilities)
+    best = max(f1_score(labels, probabilities >= value) for value in np.unique(probabilities))
+    assert result["f1"] == pytest.approx(best)
+    assert f1_score(labels, probabilities >= result["optimal_threshold"]) == pytest.approx(best)
+    assert result["optimal_threshold"] < 0.5
+    assert optimal_f1_threshold(np.zeros(6), probabilities)["optimal_threshold"] is None
+    assert optimal_f1_threshold(np.ones(6), probabilities)["f1"] is None
+
+
+def test_unsorted_multicell_split_keeps_hours_together_and_full_embargo():
+    hours = pd.date_range("2025-01-01", periods=720, freq="h", tz="UTC")
+    frame = pd.DataFrame({"ts": list(hours) * 2, "cell_id": ["a"] * 720 + ["b"] * 720})
+    frame = frame.sample(frac=1, random_state=3)
+    parts = temporal_train_calib_val_split(frame)
+    for earlier, later in zip(parts, parts[1:]):
+        assert later.ts.min() - earlier.ts.max() > pd.Timedelta(hours=72)
+        assert set(earlier.ts).isdisjoint(later.ts)
+    assert all(part.groupby("ts").size().eq(2).all() for part in parts)
+    with pytest.raises(ValueError, match="short"):
+        temporal_train_val_split(frame[frame.ts < hours[48]])
+    with pytest.raises(ValueError, match="short"):
+        temporal_train_calib_val_split(frame.iloc[:1])
 
 
 @pytest.fixture(scope="module")
@@ -104,11 +132,16 @@ def test_training_overrides_are_saved_and_existing_inference_consumes_artifacts(
     assert metrics["model_backend"] == backend
     assert metrics["training_config"]["split"]["strict_embargo"] is True
     assert set(metrics["horizons"]) == {"24", "48", "72"}
+    assert metrics["primary_metric"] == "average_precision"
     manifest = json.loads((model_dir / "artifact_manifest.json").read_text())
     assert set(manifest["models"]) == {"24", "48", "72"}
     assert manifest["models"]["24"]["feature_order"] == FEATURE_COLUMNS
     for horizon in HORIZONS:
         artifact = joblib.load(model_dir / f"model_{horizon}h.joblib")
+        horizon_metrics = metrics["horizons"][str(horizon)]
+        assert artifact["optimal_threshold"] == horizon_metrics["optimal_threshold"]
+        assert artifact["threshold_selection_split"] == "validation"
+        assert horizon_metrics["classification_threshold"] == 0.5
         assert artifact["feature_columns"] == FEATURE_COLUMNS
         assert artifact["baseline_feature_columns"] == ["dryness_index", "temp_c", "precip_mm"]
         assert artifact["baseline_model"].n_features_in_ == 3
@@ -127,6 +160,20 @@ def test_training_overrides_are_saved_and_existing_inference_consumes_artifacts(
     validate_risk_contract(predictions)
     assert len(predictions) == 6 * 3
     assert hashlib.sha256(history.read_bytes()).hexdigest() == before
+
+
+def test_native_parquet_datetime_training(historical_handoff, tmp_path):
+    history, _ = historical_handoff
+    frame = pd.read_parquet(history)
+    frame["ts"] = pd.to_datetime(frame["ts"], utc=True)
+    native = tmp_path / "native.parquet"
+    frame.to_parquet(native, index=False)
+    settings = TrainingConfig()
+    settings.paths.history = str(native)
+    settings.paths.model_dir = str(tmp_path / "models")
+    settings.model.backend = "logistic_regression"
+    metrics = run_configured_training(settings)
+    assert metrics["split_ranges"]["validation"]["start"].endswith("Z")
 
 
 def test_missing_history_does_not_generate_mocks(tmp_path):
