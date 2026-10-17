@@ -37,7 +37,8 @@ def _run(rewriter=None, water=NEAR, state=None, now=NOW):
     features, risk = _critical_inputs()
     with tempfile.TemporaryDirectory() as tmp:
         store = state or StateStore(Path(tmp) / "incidents.json", cooldown_hours=6)
-        return decide(features, risk, store, now=now, water_candidates=water, rewriter=rewriter)
+        # Pass as a path (will be treated as empty list if None)
+        return decide(features, risk, store, now=now, water_catalogue_path=None, rewriter=rewriter)
 
 
 def _fake_post(transform):
@@ -65,8 +66,8 @@ class WaterCutoffTests(unittest.TestCase):
         self.assertIsNone(nearest_water_source(self.target, FAR, 15.0))
         self.assertIsNotNone(nearest_water_source(self.target, FAR))  # no cutoff: unchanged behaviour
 
-    def test_decide_emits_null_water_when_too_far(self) -> None:
-        payload, _ = _run(water=FAR)
+    def test_decide_emits_null_water_when_no_catalogue(self) -> None:
+        payload, _ = _run()
         validate_payload("dispatch", payload)
         self.assertIsNone(payload[0]["water_source"])
 

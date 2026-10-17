@@ -101,7 +101,6 @@ class PolicyUnitTests(unittest.TestCase):
             _risk("-2.35_114.05", 48, 0.87, "CRITICAL"),
             _risk("-2.35_114.05", 72, 0.91, "CRITICAL"),
         ]
-        water = load_water_catalogue(A_WATER)
         with tempfile.TemporaryDirectory() as tmp:
             state = StateStore(Path(tmp) / "incidents.json", cooldown_hours=6)
             payload, created = decide(
@@ -109,7 +108,7 @@ class PolicyUnitTests(unittest.TestCase):
                 risk,
                 state,
                 now=datetime(2026, 10, 17, 9, 5, tzinfo=timezone.utc),
-                water_candidates=water,
+                water_catalogue_path=A_WATER,
             )
         validate_payload("dispatch", payload)
         self.assertEqual(len(payload), 1)
@@ -132,6 +131,22 @@ class PolicyUnitTests(unittest.TestCase):
             result = nearest_water_source(case["target"], candidates)
             self.assertEqual(result, case["water_source"], case["case_id"])
 
+    def test_uses_water_catalogue_path(self) -> None:
+        features = [_feature("-2.35_114.05", sm_delta=-0.06, days_since_rain=22)]
+        risk = [_risk("-2.35_114.05", 48, 0.87, "CRITICAL")]
+        with tempfile.TemporaryDirectory() as tmp:
+            state = StateStore(Path(tmp) / "incidents.json", cooldown_hours=6)
+            payload, created = decide(
+                features,
+                risk,
+                state,
+                now=datetime(2026, 10, 17, 9, 5, tzinfo=timezone.utc),
+                water_catalogue_path=A_WATER,
+            )
+        validate_payload("dispatch", payload)
+        self.assertEqual(len(payload), 1)
+        self.assertEqual(payload[0]["water_source"]["kind"], "canal")
+
     def test_high_falling_moisture_emits_sms_and_rewet(self) -> None:
         features = [_feature("-2.45_114.15", sm_delta=-0.05)]
         risk = [_risk("-2.45_114.15", 72, 0.65, "HIGH")]
@@ -142,6 +157,7 @@ class PolicyUnitTests(unittest.TestCase):
                 risk,
                 state,
                 now=datetime(2026, 10, 17, 9, 5, tzinfo=timezone.utc),
+                water_catalogue_path=None,
             )
         validate_payload("dispatch", payload)
         self.assertEqual([row["action"] for row in payload], ["SMS_WARN", "REWET"])
@@ -157,6 +173,7 @@ class PolicyUnitTests(unittest.TestCase):
                 risk,
                 state,
                 now=datetime(2026, 10, 17, 9, 5, tzinfo=timezone.utc),
+                water_catalogue_path=None,
             )
         self.assertEqual(payload, [])
         self.assertEqual(created, [])
@@ -177,6 +194,7 @@ class PolicyUnitTests(unittest.TestCase):
                 risk,
                 state,
                 now=datetime(2026, 10, 17, 9, 5, tzinfo=timezone.utc),
+                water_catalogue_path=None,
             )
         validate_payload("dispatch", payload)
         actions = sorted(row["action"] for row in payload)
@@ -190,8 +208,8 @@ class PolicyUnitTests(unittest.TestCase):
         now = datetime(2026, 10, 17, 9, 5, tzinfo=timezone.utc)
         with tempfile.TemporaryDirectory() as tmp:
             state = StateStore(Path(tmp) / "incidents.json", cooldown_hours=6)
-            first, created1 = decide(features, risk, state, now=now)
-            second, created2 = decide(features, risk, state, now=now)
+            first, created1 = decide(features, risk, state, now=now, water_catalogue_path=None)
+            second, created2 = decide(features, risk, state, now=now, water_catalogue_path=None)
         self.assertEqual(len(created1), 1)
         self.assertEqual(created2, [])
         self.assertEqual(first[0]["dispatch_id"], second[0]["dispatch_id"])
@@ -203,8 +221,8 @@ class PolicyUnitTests(unittest.TestCase):
         now = datetime(2026, 10, 17, 9, 5, tzinfo=timezone.utc)
         with tempfile.TemporaryDirectory() as tmp:
             state = StateStore(Path(tmp) / "incidents.json", cooldown_hours=6)
-            first, _ = decide(features, high, state, now=now)
-            second, created = decide(features, critical, state, now=now)
+            first, _ = decide(features, high, state, now=now, water_catalogue_path=None)
+            second, created = decide(features, critical, state, now=now, water_catalogue_path=None)
         self.assertEqual(first[0]["action"], "SMS_WARN")
         self.assertEqual(second[0]["action"], "DISPATCH")
         self.assertEqual(len(created), 1)

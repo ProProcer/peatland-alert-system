@@ -12,7 +12,7 @@ from contracts.validate import ROOT, validate_file, validate_payload
 from c_agent import llm
 from c_agent.policy import decide, dispatch_timestamp
 from c_agent.state_store import StateStore, format_ts
-from c_agent.water import DEFAULT_MAX_WATER_KM, load_water_catalogue, resolve_water_catalogue_path
+from c_agent.water import DEFAULT_MAX_WATER_KM, resolve_water_catalogue_path
 
 PACKAGE = Path(__file__).resolve().parent
 
@@ -78,11 +78,10 @@ def dispatch_live(
     validate_file("cells", data_dir / "cells.geojson")
 
     catalogue_path = resolve_water_catalogue_path(water_sources, data_dir)
-    water_candidates = load_water_catalogue(catalogue_path)
     if catalogue_path is None:
         print("C: no water catalogue found; water_source will be null")
     else:
-        print(f"C: loaded {len(water_candidates)} water candidate(s) from {catalogue_path}")
+        print(f"C: using water catalogue from {catalogue_path}")
 
     store = StateStore(state_path or PACKAGE / "state" / "incidents.json", cooldown_hours=cooldown_hours)
     if now is None and risk_rows:
@@ -100,7 +99,7 @@ def dispatch_live(
         risk_rows,
         store,
         now=now,
-        water_candidates=water_candidates,
+        water_catalogue_path=catalogue_path,
         max_water_km=max_water_km,
         rewriter=rewriter,
     )

@@ -1,4 +1,9 @@
-"""Nearest water-source lookup against Role A's catalogue (schema 1.0 four-field output)."""
+"""Nearest water-source lookup against Role A's catalogue (schema 1.0 four-field output).
+
+Supports two modes:
+1. GeoJSON with Role A's WaterIndex (spatial index, metric projection, line/polygon shorelines)
+2. Simple JSON array with Haversine distance (fallback for mocks and catalogues without geometry)
+"""
 
 from __future__ import annotations
 
@@ -14,6 +19,15 @@ EARTH_RADIUS_KM = 6371.0088
 DEFAULT_WATER_CATALOGUE = ROOT / "a_data" / "mock_water_sources.json"
 # A source farther than this from the target is not useful to a field team: report null.
 DEFAULT_MAX_WATER_KM = 15.0
+
+# Try to import Role A's WaterIndex; if dependencies are missing, fall back to simple mode
+_WATER_INDEX_AVAILABLE = False
+try:
+    from a_data.water import WaterIndex
+    _WATER_INDEX_AVAILABLE = True
+except ImportError:
+    # Role A's dependencies (osmium, shapely, pyproj) may not be installed in C's environment
+    WaterIndex = None  # type: ignore[assignment]
 
 
 def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
@@ -34,11 +48,16 @@ def load_water_catalogue(path: Path | None) -> list[dict[str, Any]]:
 
 
 def resolve_water_catalogue_path(explicit: Path | None, data_dir: Path | None = None) -> Path | None:
-    """Prefer CLI path, then data-dir export, then Role A's mock catalogue."""
+    """Prefer CLI path, then data-dir export, then Role A's mock catalogue.
+
+    Checks for both GeoJSON (water_sources.geojson) and JSON array (water_sources.json).
+    """
     candidates = []
     if explicit is not None:
         candidates.append(explicit)
     if data_dir is not None:
+        # Prefer GeoJSON if available (Role A's WaterIndex format)
+        candidates.append(data_dir / "water_sources.geojson")
         candidates.append(data_dir / "water_sources.json")
     candidates.append(DEFAULT_WATER_CATALOGUE)
     for path in candidates:
@@ -47,13 +66,25 @@ def resolve_water_catalogue_path(explicit: Path | None, data_dir: Path | None = 
     return None
 
 
-def nearest_water_source(
+def is_geojson_catalogue(path: Path) -> bool:
+    """Detect if the catalogue is a GeoJSON FeatureCollection (WaterIndex) vs simple JSON array."""
+    if not path.exists():
+        return False
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        return isinstance(payload, dict) and payload.get("type") == "FeatureCollection"
+    except (json.JSONDecodeError, IOError):
+        return False
+
+
+def nearest_water_source_simple(
     target: dict[str, float],
     candidates: list[dict[str, Any]],
     max_km: float | None = None,
 ) -> dict[str, Any] | None:
-    """Return contract water_source {lat, lon, distance_km, kind} or null.
+    """Return contract water_source {lat, lon, distance_km, kind} or null using Haversine.
 
+    Used when WaterIndex is unavailable (mock catalogues, missing dependencies).
     Distance is computed before rounding; output distance is rounded to 3 decimals
     per Role A's WATER_HANDOFF.md. If ``max_km`` is set and the nearest source is
     farther than that, return ``None`` (never attach a distant source).
@@ -75,3 +106,45 @@ def nearest_water_source(
         "distance_km": round(best_distance, 3),
         "kind": str(best["kind"]),
     }
+
+
+def nearest_water_source_from_index(
+    target: dict[str, float],
+    geojson_path: Path,
+    max_km: float | None = None,
+) -> dict[str, Any] | None:
+    """Return contract water_source using Role A's WaterIndex (spatial index, metric projection).
+
+    Requires Role A's dependencies (osmium, shapely, pyproj). Falls back to None if unavailable.
+    """
+    if not _WATER_INDEX_AVAILABLE or WaterIndex is None:
+        return None
+    try:
+        index = WaterIndex(geojson_path)
+        result = index.nearest(target["lat"], target["lon"], max_distance_km=max_km)
+        return result.get("water_source")
+    except Exception:
+        # If WaterIndex fails (e.g., missing dependencies, file format issue), return None
+        return None
+
+
+def nearest_water_source(
+    target: dict[str, float],
+    candidates_or_path: list[dict[str, Any]] | Path,
+    max_km: float | None = None,
+) -> dict[str, Any] | None:
+    """Return contract water_source {lat, lon, distance_km, kind} or null.
+
+    Auto-detects input type:
+    - If Path: tries WaterIndex for GeoJSON, else loads as JSON array
+    - If list: uses simple Haversine distance
+    """
+    if isinstance(candidates_or_path, Path):
+        if is_geojson_catalogue(candidates_or_path):
+            return nearest_water_source_from_index(target, candidates_or_path, max_km)
+        # Not a GeoJSON, load as simple JSON array
+        candidates = load_water_catalogue(candidates_or_path)
+        return nearest_water_source_simple(target, candidates, max_km)
+    else:
+        # Assume it's a list of candidates
+        return nearest_water_source_simple(target, candidates_or_path, max_km)

@@ -2,7 +2,13 @@
 
 Status: **live deterministic policy implemented** in `policy.py`. Messages are templated from structured fields only (no LLM). Alerts are simulated to `logs/`; no real SMS is sent.
 
-Water candidates are owned by Role A (`a_data/mock_water_sources.json`, see `a_data/WATER_HANDOFF.md`). Role C only computes nearest-to-`target` Haversine distance (R = 6371.0088 km) and emits the schema 1.0 four-field `water_source`. If the catalogue is missing or empty → `water_source: null`.
+Water candidates are owned by Role A (`a_data/mock_water_sources.json`, see `a_data/WATER_HANDOFF.md`). Role C supports two modes:
+
+1. **WaterIndex mode** (preferred, when Role A's dependencies are available): Uses `a_data.water.WaterIndex` with spatial indexing and metric projection for accurate line/polygon shoreline distances. Requires `water_sources.geojson` (FeatureCollection format).
+
+2. **Simple mode** (fallback): Uses Haversine distance (R = 6371.0088 km) for point-to-point lookup. Works with JSON array catalogues (`water_sources.json` or `mock_water_sources.json`).
+
+Role C emits the schema 1.0 four-field `water_source`. If the catalogue is missing or empty → `water_source: null`.
 
 ## Horizon resolution
 
