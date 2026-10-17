@@ -1,14 +1,36 @@
-# Decision policy — implementation specification
+# Decision policy — Role C (schema 1.0)
 
-Status: examples from the team playbook; **the live policy is not implemented**. Role C must agree on cooldown duration, horizon precedence and cluster adjacency before claiming these behaviors.
+Status: **live deterministic policy implemented** in `policy.py`. Messages are templated from structured fields only (no LLM). Alerts are simulated to `logs/`; no real SMS is sent. `water_source` is always `null` until a water dataset is agreed.
 
-| Condition | Example action | Audiences |
-| --- | --- | --- |
-| CRITICAL | DISPATCH, highest priority | Manggala Agni, BPBD; CRITICAL demo includes messages for all five audiences |
-| HIGH plus falling deep soil moisture | SMS_WARN and REWET, represented as policy allows under one active incident | MPA, BRGM |
-| Adjacent CRITICAL cluster | BRIEF alongside a clustered incident | Leadership |
-| Lower risk | MONITOR if the policy requires an action | Defined by C |
+## Horizon resolution
 
-Resolve multiple horizons deterministically. Keep one active incident per cell; determine whether multiple action records belong to one incident without adding fields to schema 1.0 silently. Escalate on a level rise. Cluster targeting uses validated cell geometry; structured coordinates and numbers never come from an LLM.
+For each `cell_id`, pick one driving risk row:
 
-The mock is a single fixed dispatch for the 48-hour CRITICAL fixture. It has no cooldown or clustering behavior. Water-source data is unavailable, so its field is null. All messages are simulated and explicitly labeled as such.
+1. Highest `risk_level` (CRITICAL > HIGH > MODERATE > LOW)
+2. Then highest `risk_score`
+3. Then shortest `horizon_h` (24 before 48 before 72)
+
+## Actions
+
+| Condition | Action(s) | Priority | Audiences |
+| --- | --- | --- | --- |
+| Driving level CRITICAL | `DISPATCH` | 1 | All five: `manggala_agni`, `mpa`, `bpbd`, `brgm`, `leadership` |
+| CRITICAL cluster of 2+ edge-adjacent cells | additional `BRIEF` | 2 | `leadership` |
+| HIGH and `sm_27_81_delta_7d < 0` (not null) | `SMS_WARN` then `REWET` | 2 / 3 | `mpa` / `brgm` |
+| MODERATE or LOW, or HIGH without falling deep moisture | none | — | — |
+
+Edge-adjacent means centers differ by exactly `0.1°` on one axis and `0` on the other (4-connected on the peat grid). Cluster target is the mean of member cell centers (named `lat` / `lon`). Primary `cell_id` on the record is the member with the strongest driving risk.
+
+## Dedupe, cooldown, escalation
+
+State file: `c_agent/state/incidents.json` (gitignored). Default cooldown: **6 hours**.
+
+- One active incident per cell (cluster members share one incident).
+- Same severity inside cooldown → reuse prior dispatch IDs (no new mint, no new log lines).
+- Severity rise → mint new dispatch(es) and replace state.
+- Cooldown expired at same severity → mint again.
+- Severity fall / condition no longer met → clear state; no action this run.
+
+## Coordinates and nulls
+
+JSON uses `lat` / `lon`. GeoJSON from Role A stays `[lon, lat]` and is not rewritten here. Missing measurements remain `null`. Water routing is unavailable → `water_source: null`.
