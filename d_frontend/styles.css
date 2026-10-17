@@ -64,3 +64,7 @@ section:not(.intro){padding:18px}
 .peat-legend{background:#bdcdb8;color:#243c30}
 .nonpeat-legend{background:#d5d5d5;color:#343434}
 .map-cell{fill-opacity:.85}
+.province-boundary{fill:none;stroke:#d52c35;stroke-width:2.5;stroke-linejoin:round;vector-effect:non-scaling-stroke;pointer-events:none}
+.province-boundary path{vector-effect:non-scaling-stroke}
+.boundary-legend{display:inline-flex;align-items:center;gap:7px;background:#fff3f1;color:#9a2029}
+.boundary-legend::before{content:"";width:20px;border-top:3px solid #d52c35}

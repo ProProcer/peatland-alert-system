@@ -111,3 +111,22 @@ Gray means outside the supplied mapped peat extent (not proof of absence);
 pale sage means mapped peatland without a selected-horizon prediction.
 No risk shading is shown if the peat dataset cannot load. Mock grid cells and
 risk values remain synthetic and may not overlap the real peat polygons.
+
+
+## Central Kalimantan highlight scope
+
+The highlight mask now intersects the raw Indonesian peat polygons with the
+actual Central Kalimantan province boundary (`shapeISO: ID-KT`) from the cached
+geoBoundaries ADM1 file at
+`data/demo/role_a_real/cache/geoBoundaries-IDN-ADM1.geojson`. This supersedes the
+previous Kalimantan-wide viewport extract. Only the 122 nonempty source peat features
+intersecting that province are retained, preserving holes and clipping cross-border
+polygons. No rectangular bounding box is used for the mask.
+
+Rebuild with `.venv312/Scripts/python.exe d_frontend/extract_peatland.py`
+(Shapely is needed for extraction, not to serve the website). The frontend asset
+is about 3 MB. Basemap tiles remain grayscale throughout the map; sage peat
+shading and risk colors are restricted to this mask. Gray outside the province
+means outside the selected scope, not absence of peat in other provinces.
+Raw sources, model outputs, thresholds, and shared contracts are unchanged.
+Boundary provenance is retained in Role A's cache/metadata and root dataset inventory.

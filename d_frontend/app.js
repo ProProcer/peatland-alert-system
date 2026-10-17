@@ -12,16 +12,25 @@ let mapView;
 let selectedCell;
 let peatland;
 let peatlandPaths = [];
+let provincePaths = [];
 function polygonPath(polygon) {
   return polygon.map(ring => ring.map((point, index) => `${index ? "L" : "M"}${project(point).join(",")}`).join(" ") + " Z").join(" ");
+}
+function peatGeometryPaths(geometry) {
+  if (geometry.type === 'Polygon') return [polygonPath(geometry.coordinates)];
+  if (geometry.type === 'MultiPolygon') return geometry.coordinates.map(polygonPath);
+  if (geometry.type === 'GeometryCollection') return geometry.geometries.flatMap(peatGeometryPaths);
+  return [];
 }
 async function loadPeatland() {
   try {
     const response = await fetch("assets/peatland.geojson");
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     peatland = await response.json();
-    peatlandPaths = peatland.features.flatMap(feature => feature.geometry.coordinates.map(polygonPath));
-    document.querySelector("#peat-status").textContent = "Peatland boundaries: bundled Indonesian peatland dataset. Risk colors are restricted to mapped peatland.";
+    peatlandPaths = peatland.features.flatMap(feature => peatGeometryPaths(feature.geometry));
+    provincePaths = peatland.scope_boundary ? peatGeometryPaths(peatland.scope_boundary) : [];
+    if (!peatlandPaths.length) throw new Error('No polygon geometry found in the peatland dataset');
+    document.querySelector("#peat-status").textContent = "Highlighted peatland: source polygons clipped to the Central Kalimantan province boundary. Areas outside the province and non-peat areas remain gray.";
     if (feeds.risk) renderMap(Number(document.querySelector("#horizon").value));
   } catch (error) {
     document.querySelector("#peat-status").textContent = `Peatland boundaries unavailable (${error.message}). Risk shading is hidden to avoid showing non-peat areas as peatland.`;
@@ -148,6 +157,9 @@ function renderMap(horizon) {
     if (selectedCell === id) document.querySelector("#map-detail").textContent = description;
   }
   if (!regionalCells().length) document.querySelector("#map-detail").textContent = "No cell geometry is available within the Kalimantan regional bounds.";
+  const provinceLayer = svgElement('g', { class: 'province-boundary', role: 'img', 'aria-label': 'Central Kalimantan monitoring boundary' });
+  for (const d of provincePaths) provinceLayer.append(svgElement('path', { d }));
+  map.append(provinceLayer);
   updateRiskLabels();
   clearTimeout(tileTimer);
   updateMapTiles();

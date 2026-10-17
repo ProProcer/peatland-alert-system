@@ -8,6 +8,18 @@ const context = {
   fetch: async url => { requests.push(url); return { ok: true, json: async () => [] }; },
 };
 vm.createContext(context);
+context.project = ([lon, lat]) => [256 * 64 * (lon + 180) / 360, 256 * 64 * (1 - Math.asinh(Math.tan(lat * Math.PI / 180)) / Math.PI) / 2];
+vm.runInContext(source.slice(source.indexOf('function polygonPath('), source.indexOf('async function loadPeatland(')), context);
+const peat = JSON.parse(fs.readFileSync(__dirname + '/assets/peatland.geojson', 'utf8'));
+for (const feature of peat.features) {
+  context.geometry = feature.geometry;
+  const paths = vm.runInContext('peatGeometryPaths(geometry)', context);
+  assert(paths.length > 0, 'Every peat feature must produce a visible path');
+  assert(paths.every(path => path.startsWith('M') && !/NaN|undefined|Infinity/.test(path)));
+}
+context.geometry = { type: 'GeometryCollection', geometries: [peat.features[0].geometry, { type: 'LineString', coordinates: [[114, -2], [115, -2]] }] };
+assert(vm.runInContext('peatGeometryPaths(geometry).length', context) > 0, 'Collections must retain polygon parts');
+console.log(`PASS: ${peat.features.length} actual peat features produce finite SVG paths; mixed geometry collections supported.`);
 vm.runInContext(source.slice(source.indexOf('async function loadFeed('), source.indexOf('function render()')), context);
 context.entries = entries;
 vm.runInContext('validateFeedSet(entries)', context);
