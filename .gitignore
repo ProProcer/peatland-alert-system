@@ -27,3 +27,4 @@ e_platform/evidence/video/*
 !e_platform/evidence/video/.gitkeep
 *.ipynb
 DATA_PROCESSING_REPORT.md
+docs/

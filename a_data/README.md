@@ -31,14 +31,37 @@ python -m a_data.refresh --mock --output-dir data/demo
 python -m contracts.validate --kind features data/demo/features.json
 ```
 
-`refresh.py --mock` exports the synthetic fixtures. `refresh.py --replay --source-dir data/demo/role_a_real/regional_40` exports the new prepared real historical bundle; specify the source because its default still points to the earlier 33-cell bundle. Current-hour live refresh awaits fresh FIRMS coverage and E's integration. Real processing is implemented in `inventory.py`, `geography.py`, `firms.py`, `water.py`, `weather.py`, `assemble.py`, `hackathon.py`, and `regional.py`; `validate_real.py` audits the resulting sample against source records and B's loader.
+`refresh.py --mock` exports the synthetic fixtures. `refresh.py --replay --source-dir data/demo/role_a_real/regional_40` exports the new prepared real historical bundle; specify the source because its default still points to the earlier 33-cell bundle. `refresh.py --live` now fetches current Open-Meteo weather and NASA FIRMS NRT detections for the frozen 40-cell selection, then writes a separate handoff bundle to `data/demo/role_a_real/live/`.
+
+Before running live ingestion, set your private NASA key as `FIRMS_MAP_KEY` in the environment or in the ignored root `.env` file (the key is never written to outputs or logs). From the repository root:
+
+```powershell
+a_data/.venv/Scripts/python.exe -m a_data.refresh --live
+```
+
+The command reads the Forecast API URL from `data/raw/open-meteo_api.md`, changing only latitude and longitude for each selected cell. It makes 40 requests for the 14 canonical hourly variables with the URL's GMT, 30 past-day, and three forecast-day settings. The current URL pins `models=dwd_icon_global`; the historical bundle was requested with `models=icon_global`. The live manifest records the exact requested model and notes that it differs from the historical request identifier. The command requests both `VIIRS_NOAA20_NRT` and `VIIRS_NOAA21_NRT` from FIRMS in two adjacent five-day date windows, filters detections to Indonesian Kalimantan plus a 10 km border buffer, and excludes low-confidence detections from the feature feed. It picks one common latest weather hour no later than retrieval time. Although Open-Meteo returns forecast hours too, this adapter currently publishes only hours at or before retrieval time; Role B predicts future hotspot risk from the latest feature snapshot rather than receiving forecast-weather feature rows. The output includes `features.json`, `features.parquet`, matching cell geometry, and a `history.parquet` extended with contiguous post-training hours so B can calculate its causal indicators. All appended target columns are null. Raw response caches and `live_manifest.json` remain under the isolated live output directory; the dated source bundle is not changed.
+
+This is a one-shot refresh, not a continuously running service. Role A owns the data-fetching and feature-building adapter. Role E owns deployment and pipeline orchestration, including deciding how often to schedule this command and triggering B's inference and C's policy after a successful refresh. Until E adds a scheduler or long-running service, a person must run the command when a new snapshot is needed. Repeated runs replace the current files in the isolated `live/` handoff and preserve the historical source bundle.
+
+The currently saved live snapshot was generated before the Forecast API URL was pinned to `dwd_icon_global`; its manifest records that it used the provider default. Editing the URL does not update existing outputs. Run the refresh command again to generate a snapshot from the newly pinned model.
+
+Run B against the live handoff, then C against that same directory:
+
+```powershell
+a_data/.venv/Scripts/python.exe -m b_model.predict --config-name replay_regional paths.features=data/demo/role_a_real/live/features.json paths.history=data/demo/role_a_real/live/history.parquet paths.output=data/demo/role_a_real/live/risk.json
+a_data/.venv/Scripts/python.exe -m c_agent.agent --data-dir data/demo/role_a_real/live --water-sources data/demo/role_a_real/water_sources.geojson
+```
+
+FIRMS NRT request success is only provisional recent-feed coverage: satellite overpass timing, processing delay, and later revisions mean it is not proof that a zero count is ground truth. Weather is modeled, not station telemetry. The live adapter uses existing project libraries and does not change schema 1.0 or the historical training labels.
+
+Historical processing is implemented in `inventory.py`, `geography.py`, `firms.py`, `water.py`, `weather.py`, `assemble.py`, `hackathon.py`, and `regional.py`; `validate_real.py` audits the historical sample against source records and B's loader. Live fetching and isolated publishing are in `live.py`.
 
 The processing sequence is:
 
 1. Inventory sources and establish a verified boundary for all five Indonesian Kalimantan provinces. Coordinate the shared configuration and expanded cell budget with E. Record source URLs, licenses, and download/query manifests.
 2. Filter peat GeoJSON to the region, convert 3D `[lon, lat, z]` to 2D, simplify and index. Compute areas in a suitable projected CRS; source `shape_Area` is unverified. Use `globalid` as polygon ID. No depth field exists.
 3. Generate 0.1° peat-intersecting cells with centers on `.x5`, compute peat fractions, retain fractions >= 0.05, and write `cells.geojson`.
-4. Pull live and historical Open-Meteo using Indonesian cell centers, `models=icon_global`, `format=json`, and `timezone=GMT`. Cache raw responses per location, budget historical downloads, and preserve at least 30 days of feature lookback. Apply the exact canonical rename map. Cached CSV has metadata and hourly blocks; clean headers with `col.split(" (")[0]`.
+4. Pull live Open-Meteo using the model and settings in `data/raw/open-meteo_api.md` (currently `models=dwd_icon_global`), and historical Open-Meteo using the historical template (currently `models=icon_global`), with Indonesian cell centers, JSON responses, and GMT. Cache raw responses per location, budget historical downloads, and preserve at least 30 days of feature lookback. Apply the exact canonical rename map. Cached CSV has metadata and hourly blocks; clean headers with `col.split(" (")[0]`.
 5. Parse FIRMS `acq_date` plus zero-padded four-digit `acq_time` as UTC. Keep satellite codes; exclude VIIRS confidence `l` from the alert feed. Keep confidence provenance for historical labeling. Role A owns the MAP_KEY in the ignored local `.env`.
 6. Compute all derived/fire fields, use null for missing values, and never publish all-null weather. Agree with B on hourly historical coverage and the three target columns. Obtain at least a year of history; mark incomplete future label windows.
 7. Replace the live path in `refresh.py`; write JSON and Parquet atomically, with a refresh target under two minutes. Make `--output-dir` work for isolated integration runs.

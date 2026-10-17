@@ -88,7 +88,10 @@ def build_cell(cell: dict, weather: pd.DataFrame, detections: pd.DataFrame, conf
     nearby_times = event_times[nearby]
     coverage = config["firms_export_coverage"]
     coverage_start, coverage_end = pd.Timestamp(coverage["start"]).value, pd.Timestamp(coverage["end_exclusive"]).value
-    coverage_confirmed = coverage["status"] == "human_declared_complete_local_J1V_J2V_exports"
+    coverage_confirmed = coverage["status"] in {
+        "human_declared_complete_local_J1V_J2V_exports",
+        "live_nrt_api_request_succeeded",
+    }
     valid_24 = (hours - 24 * HOUR_NS >= coverage_start) & (hours < coverage_end) & coverage_confirmed
     valid_7d = (hours - 168 * HOUR_NS >= coverage_start) & (hours < coverage_end) & coverage_confirmed
     frame["hotspots_in_cell_24h"] = pd.array(np.where(valid_24, window_counts(cell_times, hours, 24), np.nan), dtype="Int64")
