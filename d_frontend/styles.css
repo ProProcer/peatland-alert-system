@@ -51,3 +51,5 @@ section:not(.intro){padding:18px}
 #map{display:block;width:100%;max-height:620px;border-radius:22px;background:#dce7dc;border:1px solid #ccd8c8;margin-top:16px}
 .map-controls,.map-legend{display:flex;gap:8px;flex-wrap:wrap}
 .map-credit{font-size:10px;color:#54664e}.map-cell{cursor:pointer;stroke:#fff;stroke-width:1.5;vector-effect:non-scaling-stroke;fill-opacity:.85}.map-cell:hover,.map-cell:focus{stroke:#182e24;stroke-width:4;outline:none}.map-cell[aria-pressed="true"]{stroke:#182e24;stroke-width:4}
+#map{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+#map.is-dragging,#map.is-dragging .map-cell{cursor:grabbing}
