@@ -13,8 +13,29 @@ def _fmt_num(value: Any, digits: int = 2) -> str:
     return f"{float(value):.{digits}f}"
 
 
+def _fmt_drop(value: Any) -> str:
+    """Magnitude of a decline, so "fell" is never followed by a minus sign."""
+    return "n/a" if value is None else _fmt_num(abs(float(value)))
+
+
 def _coord(lat: float, lon: float) -> str:
     return f"{_fmt_num(lat)}, {_fmt_num(lon)}"
+
+
+def _water_blurb(ctx: dict[str, Any]) -> tuple[str, str]:
+    water = ctx.get("water_source")
+    if not water:
+        return (
+            "sumber air belum tersedia",
+            "water-source data is unavailable",
+        )
+    where = _coord(water["lat"], water["lon"])
+    dist = _fmt_num(water["distance_km"], 3)
+    kind = water["kind"]
+    return (
+        f"sumber air terdekat: {kind} di {where} ({dist} km)",
+        f"nearest water source: {kind} at {where} ({dist} km)",
+    )
 
 
 def critical_messages(ctx: dict[str, Any]) -> dict[str, dict[str, str]]:
@@ -23,18 +44,19 @@ def critical_messages(ctx: dict[str, Any]) -> dict[str, dict[str, str]]:
     horizon = ctx["horizon_h"]
     days = _fmt_num(ctx.get("days_since_rain"), 0)
     sm = _fmt_num(ctx.get("sm_27_81"))
+    water_id, water_en = _water_blurb(ctx)
     return {
         "manggala_agni": {
-            "id": f"Simulasi: siapkan patroli ke {where}; risiko {score} dalam {horizon} jam.",
-            "en": f"Simulation: prepare a patrol to {where}; risk {score} over {horizon} hours.",
+            "id": f"Simulasi: siapkan patroli ke {where}; risiko {score} dalam {horizon} jam; {water_id}.",
+            "en": f"Simulation: prepare a patrol to {where}; risk {score} over {horizon} hours; {water_en}.",
         },
         "mpa": {
             "id": f"Simulasi: warga di sekitar {where} diminta waspada dan tidak membakar lahan.",
             "en": f"Simulation: communities near {where} should remain alert and avoid land burning.",
         },
         "bpbd": {
-            "id": f"Simulasi: koordinasikan kesiapsiagaan pada {where}; sumber air belum tersedia.",
-            "en": f"Simulation: coordinate readiness at {where}; water-source data is unavailable.",
+            "id": f"Simulasi: koordinasikan kesiapsiagaan pada {where}; {water_id}.",
+            "en": f"Simulation: coordinate readiness at {where}; {water_en}.",
         },
         "brgm": {
             "id": f"Simulasi: tinjau kebutuhan pembasahan pada {where}; kelembapan gambut dalam {sm} m³/m³.",
@@ -72,7 +94,7 @@ def brief_messages(ctx: dict[str, Any]) -> dict[str, dict[str, str]]:
 def sms_warn_messages(ctx: dict[str, Any]) -> dict[str, dict[str, str]]:
     where = _coord(ctx["lat"], ctx["lon"])
     score = _fmt_num(ctx["risk_score"])
-    delta = _fmt_num(ctx.get("sm_27_81_delta_7d"))
+    delta = _fmt_drop(ctx.get("sm_27_81_delta_7d"))
     return {
         "mpa": {
             "id": (
@@ -110,10 +132,11 @@ def critical_rationale(ctx: dict[str, Any]) -> str:
     sm = _fmt_num(ctx.get("sm_27_81"))
     delta = _fmt_num(ctx.get("sm_27_81_delta_7d"))
     factors = ", ".join(f"{item['feature']}={_fmt_num(item['contribution'])}" for item in ctx.get("top_factors", [])[:3])
+    water_id, _ = _water_blurb(ctx)
     return (
         f"Risk {_fmt_num(ctx['risk_score'])} for {ctx['horizon_h']}h on {ctx['cell_id']}; "
         f"{days} days since rain; deep soil moisture {sm} (Δ7d {delta}). "
-        f"Top factors: {factors}. Water source unavailable (null). Simulated alert only."
+        f"Top factors: {factors}. {water_id.capitalize()}. Simulated alert only."
     )
 
 

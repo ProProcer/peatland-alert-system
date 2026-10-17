@@ -53,3 +53,14 @@ section:not(.intro){padding:18px}
 .map-credit{font-size:10px;color:#54664e}.map-cell{cursor:pointer;stroke:#fff;stroke-width:1.5;vector-effect:non-scaling-stroke;fill-opacity:.85}.map-cell:hover,.map-cell:focus{stroke:#182e24;stroke-width:4;outline:none}.map-cell[aria-pressed="true"]{stroke:#182e24;stroke-width:4}
 #map{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
 #map.is-dragging,#map.is-dragging .map-cell{cursor:grabbing}
+.risk-map-label{font-weight:700;fill:#17271e;stroke:#fff;stroke-width:3px;paint-order:stroke;vector-effect:non-scaling-stroke;pointer-events:none}
+.risk-map-marker{stroke:#fff;stroke-width:1.5;vector-effect:non-scaling-stroke;pointer-events:none}
+.map-cell{fill-opacity:.48;stroke:#203b2b;stroke-width:2}
+#map-tiles{filter:saturate(.55);pointer-events:none}
+/* Gray is outside the source peat polygons; sage is peat without a risk prediction. */
+#map{background:#d5d5d5}
+#map-tiles{filter:grayscale(1) contrast(.8) brightness(1.06)}
+.peatland-layer{fill:#bdcdb8;fill-opacity:.95;pointer-events:none}
+.peat-legend{background:#bdcdb8;color:#243c30}
+.nonpeat-legend{background:#d5d5d5;color:#343434}
+.map-cell{fill-opacity:.85}

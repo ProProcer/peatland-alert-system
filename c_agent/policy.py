@@ -3,12 +3,25 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from typing import Any
+from typing import Any, Callable
 
 from c_agent import messages
 from c_agent.state_store import LEVEL_RANK, StateStore, format_ts, parse_ts
+from c_agent.water import DEFAULT_MAX_WATER_KM, nearest_water_source
+
+# rewriter(action, context, template_messages) -> messages; see c_agent/llm.py
+Rewriter = Callable[[str, dict[str, Any], dict[str, dict[str, str]]], dict[str, dict[str, str]]]
 
 ALL_AUDIENCES = ("manggala_agni", "mpa", "bpbd", "brgm", "leadership")
+
+
+def _phrase(
+    rewriter: Rewriter | None,
+    action: str,
+    ctx: dict[str, Any],
+    template: dict[str, dict[str, str]],
+) -> dict[str, dict[str, str]]:
+    return template if rewriter is None else rewriter(action, ctx, template)
 
 
 def parse_cell_id(cell_id: str) -> tuple[float, float]:
@@ -83,6 +96,7 @@ def _context(
     feature: dict[str, Any],
     target: dict[str, float],
     cluster_cell_ids: list[str],
+    water_source: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     return {
         "cell_id": cell_id,
@@ -97,6 +111,7 @@ def _context(
         "top_factors": risk.get("top_factors", []),
         "cluster_size": len(cluster_cell_ids),
         "cluster_cell_ids": list(cluster_cell_ids),
+        "water_source": water_source,
     }
 
 
@@ -111,6 +126,7 @@ def _base_record(
     audiences: list[str],
     message_map: dict[str, dict[str, str]],
     rationale: str,
+    water_source: dict[str, Any] | None,
 ) -> dict[str, Any]:
     return {
         "schema_version": "1.0",
@@ -122,7 +138,7 @@ def _base_record(
         "target": {"lat": target["lat"], "lon": target["lon"]},
         "audiences": audiences,
         "messages": {name: message_map[name] for name in audiences},
-        "water_source": None,
+        "water_source": water_source,
         "rationale": rationale,
         "status": "PENDING",
     }
@@ -140,12 +156,17 @@ def build_critical_records(
     selected: dict[str, dict[str, Any]],
     features_by_cell: dict[str, dict[str, Any]],
     when: datetime,
+    water_candidates: list[dict[str, Any]],
+    *,
+    max_water_km: float | None = DEFAULT_MAX_WATER_KM,
+    rewriter: Rewriter | None = None,
 ) -> list[dict[str, Any]]:
     primary = max(cluster, key=lambda cid: (LEVEL_RANK[selected[cid]["risk_level"]], selected[cid]["risk_score"], -selected[cid]["horizon_h"], cid))
     risk = selected[primary]
     feature = features_by_cell[primary]
     target = cluster_target(cluster, features_by_cell)
-    ctx = _context(primary, risk, feature, target, cluster)
+    water = nearest_water_source(target, water_candidates, max_water_km)
+    ctx = _context(primary, risk, feature, target, cluster, water)
     ts = format_ts(when)
     records = [
         _base_record(
@@ -156,8 +177,9 @@ def build_critical_records(
             priority=1,
             target=target,
             audiences=list(ALL_AUDIENCES),
-            message_map=messages.critical_messages(ctx),
+            message_map=_phrase(rewriter, "DISPATCH", ctx, messages.critical_messages(ctx)),
             rationale=messages.critical_rationale(ctx),
+            water_source=water,
         )
     ]
     if len(cluster) >= 2:
@@ -170,8 +192,9 @@ def build_critical_records(
                 priority=2,
                 target=target,
                 audiences=["leadership"],
-                message_map=messages.brief_messages(ctx),
+                message_map=_phrase(rewriter, "BRIEF", ctx, messages.brief_messages(ctx)),
                 rationale=messages.brief_rationale(ctx),
+                water_source=water,
             )
         )
     return records
@@ -183,9 +206,14 @@ def build_high_records(
     risk: dict[str, Any],
     feature: dict[str, Any],
     when: datetime,
+    water_candidates: list[dict[str, Any]],
+    *,
+    max_water_km: float | None = DEFAULT_MAX_WATER_KM,
+    rewriter: Rewriter | None = None,
 ) -> list[dict[str, Any]]:
     target = {"lat": feature["lat"], "lon": feature["lon"]}
-    ctx = _context(cell_id, risk, feature, target, [cell_id])
+    water = nearest_water_source(target, water_candidates, max_water_km)
+    ctx = _context(cell_id, risk, feature, target, [cell_id], water)
     ts = format_ts(when)
     return [
         _base_record(
@@ -196,8 +224,9 @@ def build_high_records(
             priority=2,
             target=target,
             audiences=["mpa"],
-            message_map=messages.sms_warn_messages(ctx),
+            message_map=_phrase(rewriter, "SMS_WARN", ctx, messages.sms_warn_messages(ctx)),
             rationale=messages.high_rationale(ctx, "SMS_WARN"),
+            water_source=water,
         ),
         _base_record(
             dispatch_id=state.allocate_dispatch_id(when),
@@ -207,8 +236,9 @@ def build_high_records(
             priority=3,
             target=target,
             audiences=["brgm"],
-            message_map=messages.rewet_messages(ctx),
+            message_map=_phrase(rewriter, "REWET", ctx, messages.rewet_messages(ctx)),
             rationale=messages.high_rationale(ctx, "REWET"),
+            water_source=water,
         ),
     ]
 
@@ -219,9 +249,13 @@ def decide(
     state: StateStore,
     *,
     now: datetime | None = None,
+    water_candidates: list[dict[str, Any]] | None = None,
+    max_water_km: float | None = DEFAULT_MAX_WATER_KM,
+    rewriter: Rewriter | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Produce (active dispatches, newly minted this run)."""
     when = now or datetime.now(timezone.utc)
+    candidates = water_candidates if water_candidates is not None else []
     features_by_cell = latest_features_by_cell(features)
     selected = select_risk_per_cell(risk_rows)
     output: list[dict[str, Any]] = []
@@ -234,7 +268,10 @@ def decide(
         if decision == "reuse":
             output.extend(reused)
         elif decision == "new":
-            records = build_critical_records(state, cluster, selected, features_by_cell, when)
+            records = build_critical_records(
+                state, cluster, selected, features_by_cell, when, candidates,
+                max_water_km=max_water_km, rewriter=rewriter,
+            )
             state.remember(cluster, records, "CRITICAL", cluster[0])
             output.extend(records)
             created.extend(records)
@@ -251,7 +288,10 @@ def decide(
             if decision == "reuse":
                 output.extend(reused)
             elif decision == "new":
-                records = build_high_records(state, cell_id, risk, feature, when)
+                records = build_high_records(
+                    state, cell_id, risk, feature, when, candidates,
+                    max_water_km=max_water_km, rewriter=rewriter,
+                )
                 state.remember([cell_id], records, "HIGH", cell_id)
                 output.extend(records)
                 created.extend(records)

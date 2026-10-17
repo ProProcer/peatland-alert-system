@@ -14,8 +14,11 @@ from contracts.validate import ROOT, validate_payload
 from c_agent.agent import dispatch_live, dispatch_mock
 from c_agent.policy import cells_adjacent, cluster_adjacent, decide, select_risk_per_cell
 from c_agent.state_store import StateStore
+from c_agent.water import load_water_catalogue, nearest_water_source
 
 EXAMPLES = ROOT / "contracts" / "examples"
+A_WATER = ROOT / "a_data" / "mock_water_sources.json"
+A_WATER_CASES = ROOT / "a_data" / "fixtures" / "water_lookup_examples.json"
 
 
 def _feature(cell_id: str, *, sm_delta: float, days_since_rain: int = 10, sm: float = 0.14) -> dict:
@@ -98,6 +101,7 @@ class PolicyUnitTests(unittest.TestCase):
             _risk("-2.35_114.05", 48, 0.87, "CRITICAL"),
             _risk("-2.35_114.05", 72, 0.91, "CRITICAL"),
         ]
+        water = load_water_catalogue(A_WATER)
         with tempfile.TemporaryDirectory() as tmp:
             state = StateStore(Path(tmp) / "incidents.json", cooldown_hours=6)
             payload, created = decide(
@@ -105,6 +109,7 @@ class PolicyUnitTests(unittest.TestCase):
                 risk,
                 state,
                 now=datetime(2026, 10, 17, 9, 5, tzinfo=timezone.utc),
+                water_candidates=water,
             )
         validate_payload("dispatch", payload)
         self.assertEqual(len(payload), 1)
@@ -112,9 +117,20 @@ class PolicyUnitTests(unittest.TestCase):
         row = payload[0]
         self.assertEqual(row["action"], "DISPATCH")
         self.assertEqual(row["priority"], 1)
-        self.assertIsNone(row["water_source"])
+        self.assertEqual(
+            row["water_source"],
+            {"lat": -2.33, "lon": 114.02, "distance_km": 4.007, "kind": "canal"},
+        )
         self.assertEqual(len(row["audiences"]), 5)
         self.assertEqual(set(row["messages"]), set(row["audiences"]))
+
+    def test_matches_role_a_water_lookup_examples(self) -> None:
+        catalogue = {row["source_id"]: row for row in load_water_catalogue(A_WATER)}
+        cases = json.loads(A_WATER_CASES.read_text(encoding="utf-8"))
+        for case in cases:
+            candidates = [catalogue[source_id] for source_id in case["candidate_source_ids"]]
+            result = nearest_water_source(case["target"], candidates)
+            self.assertEqual(result, case["water_source"], case["case_id"])
 
     def test_high_falling_moisture_emits_sms_and_rewet(self) -> None:
         features = [_feature("-2.45_114.15", sm_delta=-0.05)]
@@ -213,6 +229,7 @@ class AgentIntegrationTests(unittest.TestCase):
             self.assertGreaterEqual(len(payload), 1)
             self.assertEqual(payload[0]["action"], "DISPATCH")
             self.assertEqual(len(payload[0]["audiences"]), 5)
+            self.assertEqual(payload[0]["water_source"]["kind"], "canal")
             log_text = (folder / "notifications.log").read_text(encoding="utf-8")
             self.assertIn("SIMULATED", log_text)
             # Second run dedupes

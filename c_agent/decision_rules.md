@@ -1,6 +1,8 @@
 # Decision policy — Role C (schema 1.0)
 
-Status: **live deterministic policy implemented** in `policy.py`. Messages are templated from structured fields only (no LLM). Alerts are simulated to `logs/`; no real SMS is sent. `water_source` is always `null` until a water dataset is agreed.
+Status: **live deterministic policy implemented** in `policy.py`. Messages are templated from structured fields only (no LLM). Alerts are simulated to `logs/`; no real SMS is sent.
+
+Water candidates are owned by Role A (`a_data/mock_water_sources.json`, see `a_data/WATER_HANDOFF.md`). Role C only computes nearest-to-`target` Haversine distance (R = 6371.0088 km) and emits the schema 1.0 four-field `water_source`. If the catalogue is missing or empty → `water_source: null`.
 
 ## Horizon resolution
 
@@ -21,6 +23,16 @@ For each `cell_id`, pick one driving risk row:
 
 Edge-adjacent means centers differ by exactly `0.1°` on one axis and `0` on the other (4-connected on the peat grid). Cluster target is the mean of member cell centers (named `lat` / `lon`). Primary `cell_id` on the record is the member with the strongest driving risk.
 
+## Water cutoff
+
+The nearest catalogue source is attached only if it is within 15 km of the dispatch `target` (`DEFAULT_MAX_WATER_KM`, CLI `--max-water-km`, `0` disables). Beyond that, `water_source` is `null` rather than pointing a field team at a distant canal. 15 km is a team choice; change it in `c_agent/water.py` if the demo region needs another value.
+
+## Messages
+
+Templates in `messages.py` are the source of truth. Every message starts with `Simulasi` / `Simulation`. The `mpa` message is an SMS (≤160 characters, tested). A decline is written as a magnitude ("fell 0.06"), never "fell -0.06".
+
+Optional LLM phrasing (`--llm`, `llm.py`) may only rephrase. It is rejected, with the template used instead, if it changes the audience set, drops the simulation label, introduces any number not present in the facts or template, exceeds SMS length, or the call fails. It runs only when a new dispatch is minted.
+
 ## Dedupe, cooldown, escalation
 
 State file: `c_agent/state/incidents.json` (gitignored). Default cooldown: **6 hours**.
@@ -33,4 +45,4 @@ State file: `c_agent/state/incidents.json` (gitignored). Default cooldown: **6 h
 
 ## Coordinates and nulls
 
-JSON uses `lat` / `lon`. GeoJSON from Role A stays `[lon, lat]` and is not rewritten here. Missing measurements remain `null`. Water routing is unavailable → `water_source: null`.
+JSON uses `lat` / `lon`. GeoJSON from Role A stays `[lon, lat]` and is not rewritten here. Missing measurements remain `null`. Lookup uses the dispatch `target` (not `cell_id` alone), matching A's shifted-target example.
