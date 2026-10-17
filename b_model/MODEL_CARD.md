@@ -35,7 +35,7 @@ Default partitioning uses unique timestamps: first 55% for training, the next 20
 
 Median imputation and scaling are fit on training rows only. An entirely missing training feature is rejected because a median cannot be estimated. Gradient boosting's internal early stopping is disabled to avoid an automatic random holdout. Permutation importance uses calibration rows by default, or training rows when explicitly selected; the final validation slice is reserved for metrics.
 
-For backward compatibility, the direct Python call `train_pipeline(...)` without a training config retains the old short-synthetic-history split and guarded calibration. It is a compatibility/testing path, not the configured evaluation protocol. The older target-generation helper also remains available to those callers; configured runs require A's labels instead. Prefer the Hydra entry point for experiments.
+For backward compatibility, the direct Python call `train_pipeline(...)` without a training config retains guarded calibration. All entry points require full 72-hour temporal gaps; short histories fail. The older target-generation helper remains available to direct callers; configured runs require A's labels instead. Prefer the Hydra entry point for experiments.
 
 ## Models and imbalance
 
@@ -69,6 +69,15 @@ PIC 1 reads the saved weights and fitted scaler, computes exact standardized-val
 `top_k=3` and null explanation clipping settings match PIC 1's current three-factor, unclipped consumer. Training validation rejects incompatible overrides. The separate `baseline.z_score_clip=3` setting applies only to the baseline's standardized inputs; it does not clip primary-model explanations. Training-side priority multipliers and importance settings affect the saved weights that inference consumes.
 
 ## Evaluation and evidence status
+
+Average Precision (PR-AUC) is the primary metric and permutation-importance
+scorer. All supported base estimators require balanced class weights. Each
+horizon also records a diagnostic `optimal_threshold` maximizing validation F1
+over its precision-recall curve. Ties use the highest threshold; single-class
+validation records null. Threshold-tuned metrics reuse validation labels and
+are optimistic, so an untouched future period is needed to establish performance.
+The threshold is saved in the bundle and metrics without changing the artifact
+manifest or inference risk boundaries. PR-AUC is saved at full precision.
 
 New runs compute PR-AUC, ROC-AUC, precision, recall, F1 and baseline comparison on the untouched final validation slice. Classification metrics use a 0.50 decision cutoff; dispatch risk levels retain Contract 3.2 boundaries 0.35, 0.60 and 0.80. PR-AUC/ROC-AUC are null when the validation slice has only one class. Lead time is an approximate retrospective calculation from the available hotspot-count series; when no qualifying onset/alert pair is observed it is null. No minimum lead time, monotonic horizon ordering or superiority over the baseline is fabricated.
 

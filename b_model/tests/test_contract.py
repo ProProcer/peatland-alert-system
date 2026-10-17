@@ -992,7 +992,7 @@ class TestEndToEndPipeline:
             history_path=history_file,
             features_path=features_file,
             num_cells=6,
-            days_history=10,
+            days_history=30,
             force=True,
         )
 
