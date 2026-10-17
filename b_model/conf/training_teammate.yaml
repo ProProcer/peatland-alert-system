@@ -1,0 +1,16 @@
+# Retrospective comparison with experiment_results/20261017/split_final.json.
+# Ratios pin dates for this exact 539,352-row complete-label Role A history.
+# Do not reuse these ratios for a refreshed dataset without checking split dates.
+defaults:
+  - training
+  - _self_
+  - override model: xgboost
+
+paths:
+  history: data/demo/role_a_real/hackathon/history.parquet
+  model_dir: b_model/runs/teammate_xgboost_20261017
+split:
+  train_ratio: 0.9412934410181106
+  calibration_ratio: 0.02643171806167401
+  embargo_hours: 72
+  strict_embargo: true

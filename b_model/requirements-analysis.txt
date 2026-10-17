@@ -1,0 +1,3 @@
+# Optional offline experiment figures; not required for model serving.
+-r requirements-training.txt
+matplotlib>=3.9,<4

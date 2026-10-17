@@ -1,0 +1,19 @@
+{
+  "command": [
+    ".venv/bin/python",
+    "-m",
+    "b_model.predict",
+    "paths.model_dir=b_model/runs/teammate_xgboost_20261017",
+    "paths.features=data/demo/role_a_real/hackathon/features.json",
+    "paths.history=data/demo/role_a_real/hackathon/history.parquet",
+    "paths.output=b_model/experiment_results/20261017_teammate/risk.json"
+  ],
+  "wall_seconds": 4.167195930000162,
+  "records": 99,
+  "cells": 33,
+  "contract_validation": "passed",
+  "under_60_seconds": true,
+  "environment": "local CPU, OMP/BLAS threads=2; not LinuxONE",
+  "stdout": "",
+  "stderr": ""
+}

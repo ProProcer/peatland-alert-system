@@ -42,10 +42,12 @@ are omitted, making this an incomplete heuristic explanation, not SHAP.
 
 Metrics retain chronological gaps of at least 72 hours, Average Precision,
 diagnostic F1 thresholds, and now `quiet_case` precision/recall/AP and sample-weight
-metadata per horizon. No recall improvement or IBM hardware acceleration has
-been established by these code changes. Evaluate a new candidate on an untouched
-period before replacing the published models. Existing candidate reports describe
-earlier runs and do not evaluate this ensemble.
+metadata per horizon. The first real XGBoost run is now evaluated in
+[TEAMMATE_RESULTS.md](TEAMMATE_RESULTS.md): quiet-cell ranking/recall improved,
+while overall AP and Brier worsened against the prior Logistic Regression
+candidate on matched dates. This retrospective comparison is not a fresh unseen
+test. Snap ML and IBM hardware acceleration remain untested. Evaluate on an
+untouched period before replacing the published models.
 
 Added library: [XGBoost](https://xgboost.readthedocs.io/en/stable/) (Apache-2.0),
 used for CPU histogram boosting fallback and loading its exported models.
@@ -328,6 +330,44 @@ still calls A without `--replay` and therefore stops; use A's explicit replay ex
 and the named B replay configuration until E adds replay orchestration.
 
 ## Chronological experiments (PIC 2)
+
+The isolated forecast-horizon study tests 1/2/3/5/7/14 days with identical
+27-feature Logistic Regression settings, common observed rows and full 14-day
+purges for every horizon. See [HORIZON_RESULTS.md](HORIZON_RESULTS.md). Longer
+horizons are research-only labels rebuilt from A's raw-event handoff; canonical
+24/48/72-hour labels must match A exactly before fitting. No shared contract or
+feed changes. `conf/horizon_study.yaml` fixes the protocol before evaluation.
+
+```bash
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 \
+  python -m b_model.horizon_study
+# Optional figures; install requirements-analysis.txt for this command.
+python -m b_model.plot_horizon_study
+```
+
+The runner refuses existing run/evidence directories. Use a copied config with
+fresh output paths for a repeat. Plotting uses optional
+[Matplotlib](https://matplotlib.org/) (Matplotlib license), recorded in
+`requirements-analysis.txt`; it is not a model-serving dependency.
+
+The paired rolling-origin and fixed-alert-budget comparison is documented in
+[BACKTEST_RESULTS.md](BACKTEST_RESULTS.md). It retrains the prior Logistic
+Regression configuration and the teammate's XGBoost configuration separately
+before each of four evaluation periods. All settings are frozen in
+`conf/backtest.yaml`; earlier periods/settings were already inspected, so these
+are retrospective results. The primary budget is five cells per daily 00:00 UTC
+snapshot per horizon, with hourly sensitivity results and a separate quiet-cell
+pool. It does not change risk thresholds or Role C's dispatch policy.
+
+```bash
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 \
+  python -m b_model.backtest
+```
+
+The runner requires fresh run/evidence directories and refuses to replace an
+existing evaluation. Models and per-row predictions stay in ignored `runs/`;
+protocol, metrics, partition audits and per-day budget counts are saved in
+`experiment_results/20261017_backtest/`. No shared feeds are written.
 
 The completed real-data comparison is documented in
 [EXPERIMENT_RESULTS.md](EXPERIMENT_RESULTS.md), with reviewable protocol and

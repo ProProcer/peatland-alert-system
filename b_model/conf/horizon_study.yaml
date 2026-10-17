@@ -1,0 +1,12 @@
+# Research only: never changes shared risk.json horizons or Role A history.
+history: data/demo/role_a_real/hackathon/history.parquet
+events: data/demo/role_a_real/firms_normalized.parquet
+coverage_config: a_data/processing_config.json
+reference_windows: b_model/conf/backtest.yaml
+output_dir: b_model/runs/horizon_study_20261017
+evidence_dir: b_model/experiment_results/20261017_horizons
+horizons_h: [24, 48, 72, 120, 168, 336]
+calibration_days: 28
+seed: 42
+logistic_c: 0.001
+classification_cutoff: 0.50
