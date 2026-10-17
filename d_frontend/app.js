@@ -3,6 +3,64 @@
 const files = { features: "features.json", cells: "cells.geojson", risk: "risk.json", dispatch: "dispatch.json" };
 let feeds = {};
 let loadVersion = 0;
+const mapBounds = { west: 108, east: 119.5, south: -4.5, north: 4.5 };
+const mapColors = { LOW: "#32945b", MODERATE: "#e9c643", HIGH: "#e78b38", CRITICAL: "#d64b57" };
+let mapView;
+let selectedCell;
+const project = ([lon, lat]) => [256 * 64 * (lon + 180) / 360, 256 * 64 * (1 - Math.asinh(Math.tan(lat * Math.PI / 180)) / Math.PI) / 2];
+const mapNW = project([mapBounds.west, mapBounds.north]);
+const mapSE = project([mapBounds.east, mapBounds.south]);
+const regionView = [mapNW[0], mapNW[1], mapSE[0] - mapNW[0], mapSE[1] - mapNW[1]];
+function setMapView(view) {
+  mapView = view;
+  document.querySelector("#map").setAttribute("viewBox", view.join(" "));
+}
+function svgElement(tag, attributes) {
+  const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, value);
+  return node;
+}
+function regionalCells() {
+  return feeds.cells.data.features.filter(feature => feature.geometry.type === "Polygon" && feature.geometry.coordinates[0].every(([lon, lat]) => lon >= mapBounds.west && lon <= mapBounds.east && lat >= mapBounds.south && lat <= mapBounds.north));
+}
+function renderMap(horizon) {
+  const map = document.querySelector("#map");
+  map.replaceChildren();
+  if (!mapView) setMapView(regionView.slice());
+  for (let x = Math.floor(mapNW[0] / 256); x <= Math.floor(mapSE[0] / 256); x++) {
+    for (let y = Math.floor(mapNW[1] / 256); y <= Math.floor(mapSE[1] / 256); y++) {
+      map.append(svgElement("image", { x: x * 256, y: y * 256, width: 256, height: 256, href: `https://tile.openstreetmap.org/6/${x}/${y}.png`, "aria-hidden": "true" }));
+    }
+  }
+  const risks = new Map(feeds.risk.data.filter(row => row.horizon_h === horizon).map(row => [row.cell_id, row]));
+  document.querySelector("#map-detail").textContent = "Select a colored cell for its prediction and contributing signals.";
+  for (const feature of regionalCells()) {
+    const id = feature.properties.cell_id;
+    const risk = risks.get(id);
+    const description = risk ? `${id}: ${risk.risk_level}, score ${risk.risk_score.toFixed(2)}, ${horizon}h. ${risk.top_factors.map(f => `${f.feature}: ${f.contribution}`).join(", ")}. Timestamp: ${risk.ts}.` : `${id}: no prediction for ${horizon}h.`;
+    const path = feature.geometry.coordinates.map(ring => ring.map((point, index) => `${index ? "L" : "M"}${project(point).join(",")}`).join(" ") + " Z").join(" ");
+    const cell = svgElement("path", { d: path, fill: mapColors[risk?.risk_level] || "#879488", "fill-rule": "evenodd", class: "map-cell", tabindex: 0, role: "button", "aria-label": description, "aria-pressed": selectedCell === id });
+    const title = svgElement("title", {});
+    title.textContent = description;
+    cell.append(title);
+    const select = () => {
+      selectedCell = id;
+      for (const other of map.querySelectorAll(".map-cell")) other.setAttribute("aria-pressed", other === cell);
+      document.querySelector("#map-detail").textContent = description;
+    };
+    cell.addEventListener("click", select);
+    cell.addEventListener("keydown", event => { if (["Enter", " "].includes(event.key)) { event.preventDefault(); select(); } });
+    map.append(cell);
+    if (selectedCell === id) document.querySelector("#map-detail").textContent = description;
+  }
+  if (!regionalCells().length) document.querySelector("#map-detail").textContent = "No cell geometry is available within the Kalimantan regional bounds.";
+}
+function zoomMap(factor) {
+  const [x, y, width, height] = mapView || regionView;
+  const nextWidth = Math.min(regionView[2], Math.max(20, width * factor));
+  const nextHeight = nextWidth * regionView[3] / regionView[2];
+  setMapView([Math.max(regionView[0], Math.min(x + (width - nextWidth) / 2, mapSE[0] - nextWidth)), Math.max(regionView[1], Math.min(y + (height - nextHeight) / 2, mapSE[1] - nextHeight)), nextWidth, nextHeight]);
+}
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -25,6 +83,7 @@ async function loadFeed(filename) {
 
 function render() {
   const horizon = Number(document.querySelector("#horizon").value);
+  renderMap(horizon);
   document.querySelector("#summary-horizon").textContent = horizon;
   document.querySelector("#priority-count").textContent = feeds.risk.data.filter(row => row.horizon_h === horizon && ["HIGH", "CRITICAL"].includes(row.risk_level)).length;
   const riskBody = document.querySelector("#risk");
@@ -78,4 +137,16 @@ async function reload() {
 
 document.querySelector("#horizon").addEventListener("change", () => { if (feeds.risk) render(); });
 document.querySelector("#reload").addEventListener("click", reload);
+document.querySelector("#map-in").addEventListener("click", () => zoomMap(.5));
+document.querySelector("#map-out").addEventListener("click", () => zoomMap(2));
+document.querySelector("#map-reset").addEventListener("click", () => setMapView(regionView.slice()));
+document.querySelector("#map-cells").addEventListener("click", () => {
+  if (!feeds.cells) return;
+  const points = regionalCells().flatMap(feature => feature.geometry.coordinates[0].map(project));
+  if (!points.length) return;
+  const xs = points.map(p => p[0]), ys = points.map(p => p[1]);
+  const width = Math.max(30, Math.max(...xs) - Math.min(...xs) + 20, (Math.max(...ys) - Math.min(...ys) + 20) * regionView[2] / regionView[3]);
+  const height = width * regionView[3] / regionView[2];
+  setMapView([(Math.min(...xs) + Math.max(...xs) - width) / 2, (Math.min(...ys) + Math.max(...ys) - height) / 2, width, height]);
+});
 reload();
