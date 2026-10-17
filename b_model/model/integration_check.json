@@ -1,0 +1,43 @@
+{
+  "checked_at": "2026-10-17T08:37:40.903740Z",
+  "schema_version": "1.0",
+  "model_dir": "b_model/model",
+  "feature_count": 29,
+  "feature_pipeline": "leading_indicators_v1",
+  "model_version": "v1",
+  "mode": "historical_replay",
+  "snapshot": [
+    "2026-10-16T00:00:00Z"
+  ],
+  "cells": 33,
+  "risk_records": 99,
+  "risk_levels": {
+    "LOW": 99
+  },
+  "minimum_score": 0.002352816994432689,
+  "maximum_score": 0.007839916905490124,
+  "dispatch_records": 0,
+  "dispatch_actions": {},
+  "new_simulated_notifications": 0,
+  "water_catalogue": "data/demo/role_a_real/water_sources.geojson",
+  "manifest_repair": "Schema 1.0 and per-horizon metadata derived from bundles; all supplied top-level fields retained.",
+  "portability": "Linux-to-Windows RNG snapshot issue; portable UBJSON inference export; all stored model fields preserved exactly, calibration retained.",
+  "conversion_audit": "b_model/runs/uploaded_xgboost_integration_backup_02/conversion_report.json",
+  "backup": "b_model/runs/uploaded_xgboost_integration_backup_02",
+  "model_sha256": {
+    "model_24h.joblib": "bbfb35b1bade4e419142d7ea523baa06838ca80155fef8fd7507549b9e026dd1",
+    "model_48h.joblib": "6b81780273024441377b62f31f514d7780779e2227d30dfa225bff5ef6cdb90d",
+    "model_72h.joblib": "2190c6e7a83c8d343f98ca4083a97784f9414f2bc10253c48a1878344a612998"
+  },
+  "manifest_sha256": "2eeaf9308629e69830d8f5f60f726620a8a6f734616ed1cd208036ffe82d6a45",
+  "feed_sha256": {
+    "features.json": "8251934f24916011c4353f57f76f01af9e5f61d64a2578f319c8a9ef748c24fc",
+    "features.parquet": "f4447cc0f1320a69a9db567f444adfb3c4d2636c137270aea26c3c4d696380fb",
+    "history.parquet": "444152463a2aa952a6154c965d7c3876e48e4ffea1c86370ca811dafa76bfb40",
+    "cells.geojson": "59b570db7e711d16479c9dd76e45ab9ba114db17859f911e9933d1e19d6eb3cd",
+    "risk.json": "aa28cc9ca6ab5d3dd433a27fe2d3653802ffd15a5492ea70a0763ba5851782c9",
+    "dispatch.json": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+  },
+  "validation": "All four processed feeds passed cross-file validation; all 18 shared fixtures/processed feeds passed; 29 agent tests passed.",
+  "quality": "No high/critical predictions on this replay; integration success is not a performance evaluation."
+}

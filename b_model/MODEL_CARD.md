@@ -1,10 +1,16 @@
 # Model card — Peat Fire Early-Warning Model
 
-The latest auto training path is an unevaluated Snap ML/XGBoost ensemble with
+The latest auto training path is a Snap ML/XGBoost ensemble with
 two causal internal leading indicators and fivefold quiet-positive weighting.
 It preserves temporal embargoes, separately fitted calibration and frozen risk
-boundaries. Per-horizon quiet-case metrics are now recorded. Existing saved
-candidate metrics refer to earlier models and do not establish ensemble quality.
+boundaries. A real XGBoost run now has a matched-date retrospective evaluation:
+quiet-cell AP/recall improved, while overall AP and Brier worsened against the
+prior Logistic Regression candidate. See [TEAMMATE_RESULTS.md](TEAMMATE_RESULTS.md).
+Snap ML remains unevaluated; this run did not replace the shared model/feed.
+The subsequent [rolling-origin and alert-budget check](BACKTEST_RESULTS.md)
+found mixed earlier-period quiet-cell improvements and favored Logistic
+Regression at a daily five-cell budget in the latest period. Higher recall at
+cutoff 0.50 alone does not establish better performance at a fixed alert budget.
 See `README.md` and `leading_indicators.py` for the exact feature/weight definitions
 and history requirements. Original explicit legacy profiles remain available.
 
@@ -49,9 +55,9 @@ For backward compatibility, the direct Python call `train_pipeline(...)` without
 
 A baseline Logistic Regression uses the dryness index plus the explicitly named features `peat_fraction`, `peat_area_km2`, `temp_c` and `precip_mm` by default. Its feature list, regularization and iteration limit are configurable.
 
-The primary model uses all 27 original canonical predictors. `model=auto` selects optional Snap ML when installed, otherwise sklearn histogram gradient boosting. Explicit choices are `hist_gradient_boosting`, `logistic_regression`, and `snapml`; explicit Snap ML selection fails clearly when that optional dependency is absent. The logistic primary model includes its own fitted scaler so PIC 1 can continue supplying raw imputed predictors.
+The primary model uses all 27 original canonical predictors; Snap ML/XGBoost also use the two internal indicators described above. `model=auto` selects optional Snap ML when installed, otherwise XGBoost. Explicit choices are `hist_gradient_boosting`, `logistic_regression`, `xgboost`, and `snapml`; explicit Snap ML selection fails clearly when that optional dependency is absent. The logistic primary model includes its own fitted scaler so PIC 1 can continue supplying raw imputed predictors.
 
-Both baseline and primary default to `class_weight=balanced`. Model iterations, learning rate, depth, regularization and seed are recorded in the resolved config. Configured calibration defaults to sigmoid fitting on the separate chronological calibration slice. Isotonic is an explicit alternative. Both require both target classes in that slice and never rescale probabilities to force CRITICAL alerts. `legacy_guarded` explicitly selects the old percentile/log-odds heuristic; its output should not be presented as empirically validated probability calibration.
+Legacy baseline/primary fits use `class_weight=balanced`. For Snap ML/XGBoost runs, baseline and primary instead use the custom training sample weights described in the README, without double balancing. Model iterations, learning rate, depth, regularization and seed are recorded in the resolved config. Configured calibration defaults to sigmoid fitting on the separate chronological calibration slice. Isotonic is an explicit alternative. Both require both target classes in that slice and never rescale probabilities to force CRITICAL alerts. `legacy_guarded` explicitly selects the old percentile/log-odds heuristic; its output should not be presented as empirically validated probability calibration.
 
 ## Engineered dryness index
 

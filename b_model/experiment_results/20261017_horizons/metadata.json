@@ -1,0 +1,34 @@
+{
+  "status": "Retrospective research; no model selection, promotion or shared contract changes.",
+  "source_sha256": "444152463a2aa952a6154c965d7c3876e48e4ffea1c86370ca811dafa76bfb40",
+  "events_sha256": "465bcee73b373f7fca6cebdd61bc489e0e8c9af534974066f5f77653e413b5cb",
+  "coverage": {
+    "start": "2024-12-02T00:00:00Z",
+    "end_exclusive": "2026-10-17T00:00:00Z",
+    "scope": "All Indonesian Kalimantan",
+    "status": "human_declared_complete_local_J1V_J2V_exports",
+    "confirmation_date": "2026-10-17",
+    "confirmation": "Yes, use that as the declared export coverage",
+    "limitation": "Declared export completeness, not independently audited satellite observation availability. Geographic coverage outside Kalimantan is unconfirmed."
+  },
+  "original_labels_exact_match": [
+    24,
+    48,
+    72
+  ],
+  "source_rows": 541728,
+  "common_complete_rows": 530640,
+  "excluded_incomplete_rows": 11088,
+  "latest_common_timestamp": "2026-10-02T23:00:00Z",
+  "model": "27-feature balanced Logistic Regression, C=0.001, sigmoid calibration",
+  "baseline_note": "Always-hotspot/no-hotspot accuracies describe constants on evaluation labels, not tuned deployed classifiers.",
+  "comparison_note": "All horizons retrained with identical source rows, features, C and 336h purges. Not directly comparable with the prior 72h-purge evaluation.",
+  "runtime_seconds": 56.988227977999486,
+  "completed_models": 24,
+  "library_versions": {
+    "numpy": "2.5.4",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.6.1",
+    "matplotlib": "3.11.2"
+  }
+}

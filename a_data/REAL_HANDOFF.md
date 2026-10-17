@@ -1,5 +1,7 @@
 # Real-data handoff for today's hackathon
 
+> **Earlier 33-cell release:** the current approved 40-cell, five-province handoff is documented in [REGIONAL_HANDOFF.md](REGIONAL_HANDOFF.md). This page preserves the original Central Kalimantan bundle's counts and reproduction commands. Use one bundle's matching features, geometry, and model outputs together.
+
 ## Scope and priority
 
 The human has a today-only deadline. Use the **33 cached Central Kalimantan cells** for the working ML-to-agent-to-dashboard demo. Full Indonesian Kalimantan expansion is deferred; the 782-cell spatial grid and completed downloads remain available.

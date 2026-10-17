@@ -1,0 +1,10 @@
+# Local comparison run; does not overwrite the published risk feed.
+defaults:
+  - config
+  - _self_
+
+paths:
+  features: data/demo/role_a_real/hackathon/features.json
+  history: data/demo/role_a_real/hackathon/history.parquet
+  model_dir: b_model/runs/teammate_xgboost_20261017
+  output: b_model/experiment_results/20261017_teammate/risk.json

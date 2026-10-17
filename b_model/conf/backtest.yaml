@@ -1,0 +1,40 @@
+# Frozen before scoring: same historical windows as the existing experiment.
+history: data/demo/role_a_real/hackathon/history.parquet
+output_dir: b_model/runs/budget_backtest_20261017
+evidence_dir: b_model/experiment_results/20261017_backtest
+seed: 42
+budget: 5
+embargo_hours: 72
+logistic_c: {'24': 0.001, '48': 0.001, '72': 0.1}
+xgboost:
+  n_estimators: 150
+  max_depth: 4
+  learning_rate: 0.05
+  colsample_bytree: 0.7
+  reg_lambda: 2.0
+  cold_start_multiplier: 5.0
+windows:
+  - name: archive_2025
+    train_end: '2025-06-28T00:00:00Z'
+    calibration_start: '2025-07-01T00:00:00Z'
+    calibration_end: '2025-08-01T00:00:00Z'
+    validation_start: '2025-08-04T00:00:00Z'
+    validation_end: '2025-11-01T00:00:00Z'
+  - name: archive_2026
+    train_end: '2025-12-29T00:00:00Z'
+    calibration_start: '2026-01-01T00:00:00Z'
+    calibration_end: '2026-04-01T00:00:00Z'
+    validation_start: '2026-04-04T00:00:00Z'
+    validation_end: '2026-07-01T00:00:00Z'
+  - name: nrt_transition
+    train_end: '2026-06-28T00:00:00Z'
+    calibration_start: '2026-07-01T00:00:00Z'
+    calibration_end: '2026-08-01T00:00:00Z'
+    validation_start: '2026-08-04T00:00:00Z'
+    validation_end: '2026-09-01T00:00:00Z'
+  - name: final_2026
+    train_end: '2026-09-01T00:00:00Z'
+    calibration_start: '2026-09-04T00:00:00Z'
+    calibration_end: '2026-09-19T00:00:00Z'
+    validation_start: '2026-09-22T00:00:00Z'
+    validation_end: '2026-10-14T00:00:00Z'

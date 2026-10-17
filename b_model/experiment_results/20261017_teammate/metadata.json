@@ -1,0 +1,17 @@
+{
+  "created_utc": "2026-10-17T08:23:48.757646Z",
+  "implementation_commit": "489c4f4",
+  "model_backend": "xgboost",
+  "xgboost_version": "3.4.1",
+  "installed_distribution": "xgboost-cpu",
+  "artifact_directory": "b_model/runs/teammate_xgboost_20261017",
+  "history_sha256": "444152463a2aa952a6154c965d7c3876e48e4ffea1c86370ca811dafa76bfb40",
+  "split_matches_prior_experiment": true,
+  "evaluation_status": "Retrospective comparison; final period was previously inspected, not a fresh unseen test. No hyperparameters tuned after these scores.",
+  "published_model_replaced": false,
+  "artifacts_sha256": {
+    "model_72h.joblib": "d6fa60382db032cdc6ed04080fc8da367bc7e763df1149c77c0dccbc239f389a",
+    "model_48h.joblib": "c19a58e9b58be2a159026b26e44ae40ea95e098d8c26179f0761bf23357c76e2",
+    "model_24h.joblib": "4a2ccea6e8586299dc1773f552279587045f476581f2883dcac8d3a7bd31e07d"
+  }
+}

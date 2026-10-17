@@ -2,7 +2,7 @@
 
 Updated: 2026-10-17. Status: approved and implemented through the first real handoff; broad weather expansion deferred for the today-only deadline.
 
-**Deadline update:** use the 33 cached Central Kalimantan cells for today's integrated demo. Full-region peat processing, FIRMS normalization, water extraction, and the five-province real sample are complete. See [REAL_HANDOFF.md](REAL_HANDOFF.md) for current files and commands. The original expansion plan below remains the reference for later coverage.
+**Latest approved scope:** use 40 geographically spread cells, eight per province, with every center strictly inside mapped peat. See [REGIONAL_HANDOFF.md](REGIONAL_HANDOFF.md) for files, selection rules, and commands. The earlier 33-cell Central Kalimantan bundle is preserved. Full-region peat processing, FIRMS normalization, and water extraction are complete; weather for all 782 cells remains deferred. The original expansion plan below remains the reference for later coverage.
 
 ## Goal and agreed scope
 

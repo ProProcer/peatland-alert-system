@@ -1,0 +1,1706 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-3.25_112.15",
+        "lat": -3.25,
+        "lon": 112.15,
+        "peat_fraction": 0.5768974218524461,
+        "peat_area_km2": 70.89954409965162,
+        "cell_area_km2": 122.89800823167087,
+        "province": "Central Kalimantan",
+        "polygon_ids": [
+          "{D84EFC61-790F-4046-BC46-8E9BB48CC4D3}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              112.2,
+              -3.3
+            ],
+            [
+              112.2,
+              -3.2
+            ],
+            [
+              112.1,
+              -3.2
+            ],
+            [
+              112.1,
+              -3.3
+            ],
+            [
+              112.2,
+              -3.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-3.25_114.25",
+        "lat": -3.25,
+        "lon": 114.25,
+        "peat_fraction": 0.16941663626185294,
+        "peat_area_km2": 20.820967158896682,
+        "cell_area_km2": 122.89800823760588,
+        "province": "Central Kalimantan",
+        "polygon_ids": [
+          "{551286D6-F742-4BF2-A1BB-9FE2323290AB}",
+          "{611B54C9-89D8-4CDC-A35D-1F582FF3AED1}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              114.3,
+              -3.3
+            ],
+            [
+              114.3,
+              -3.2
+            ],
+            [
+              114.2,
+              -3.2
+            ],
+            [
+              114.2,
+              -3.3
+            ],
+            [
+              114.3,
+              -3.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-3.05_114.95",
+        "lat": -3.05,
+        "lon": 114.95,
+        "peat_fraction": 0.6787707238810283,
+        "peat_area_km2": 83.43516878480101,
+        "cell_area_km2": 122.92098914894437,
+        "province": "South Kalimantan",
+        "polygon_ids": [
+          "{511C0596-9FDE-4166-8EC2-DD2F9A332BBA}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              115.0,
+              -3.1
+            ],
+            [
+              115.0,
+              -3.0
+            ],
+            [
+              114.9,
+              -3.0
+            ],
+            [
+              114.9,
+              -3.1
+            ],
+            [
+              115.0,
+              -3.1
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-2.95_110.85",
+        "lat": -2.95,
+        "lon": 110.85,
+        "peat_fraction": 0.7345609510853249,
+        "peat_area_km2": 90.30099748773847,
+        "cell_area_km2": 122.93193281553748,
+        "province": "Central Kalimantan",
+        "polygon_ids": [
+          "{2CD2BB34-98B8-4B23-AEFA-DE3C92D78546}",
+          "{6C6651FA-1FFF-4546-9E19-60B0FC2C1626}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              110.9,
+              -3.0
+            ],
+            [
+              110.9,
+              -2.9
+            ],
+            [
+              110.8,
+              -2.9
+            ],
+            [
+              110.8,
+              -3.0
+            ],
+            [
+              110.9,
+              -3.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-2.85_110.85",
+        "lat": -2.85,
+        "lon": 110.85,
+        "peat_fraction": 0.6679823512022497,
+        "peat_area_km2": 82.12342819403263,
+        "cell_area_km2": 122.94251194844449,
+        "province": "West Kalimantan",
+        "polygon_ids": [
+          "{2CD2BB34-98B8-4B23-AEFA-DE3C92D78546}",
+          "{6C6651FA-1FFF-4546-9E19-60B0FC2C1626}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              110.9,
+              -2.9
+            ],
+            [
+              110.9,
+              -2.8
+            ],
+            [
+              110.8,
+              -2.8
+            ],
+            [
+              110.8,
+              -2.9
+            ],
+            [
+              110.9,
+              -2.9
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-2.75_114.85",
+        "lat": -2.75,
+        "lon": 114.85,
+        "peat_fraction": 0.8016844603658388,
+        "peat_area_km2": 98.56929021343977,
+        "cell_area_km2": 122.95272652342406,
+        "province": "South Kalimantan",
+        "polygon_ids": [
+          "{BE7759FC-3FCE-4E62-AF1A-76B0644B1BB8}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              114.9,
+              -2.8
+            ],
+            [
+              114.9,
+              -2.7
+            ],
+            [
+              114.8,
+              -2.7
+            ],
+            [
+              114.8,
+              -2.8
+            ],
+            [
+              114.9,
+              -2.8
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-2.65_114.85",
+        "lat": -2.65,
+        "lon": 114.85,
+        "peat_fraction": 0.6892153558422731,
+        "peat_area_km2": 84.7476959070425,
+        "cell_area_km2": 122.9625764844929,
+        "province": "South Kalimantan",
+        "polygon_ids": [
+          "{BE7759FC-3FCE-4E62-AF1A-76B0644B1BB8}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              114.9,
+              -2.7
+            ],
+            [
+              114.9,
+              -2.6
+            ],
+            [
+              114.8,
+              -2.6
+            ],
+            [
+              114.8,
+              -2.7
+            ],
+            [
+              114.9,
+              -2.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-2.65_114.95",
+        "lat": -2.65,
+        "lon": 114.95,
+        "peat_fraction": 0.9633909965465115,
+        "peat_area_km2": 118.46103909701561,
+        "cell_area_km2": 122.9625764841746,
+        "province": "South Kalimantan",
+        "polygon_ids": [
+          "{BE7759FC-3FCE-4E62-AF1A-76B0644B1BB8}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              115.0,
+              -2.7
+            ],
+            [
+              115.0,
+              -2.6
+            ],
+            [
+              114.9,
+              -2.6
+            ],
+            [
+              114.9,
+              -2.7
+            ],
+            [
+              115.0,
+              -2.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-2.55_113.35",
+        "lat": -2.55,
+        "lon": 113.35,
+        "peat_fraction": 0.268053296187949,
+        "peat_area_km2": 32.963066511402296,
+        "cell_area_km2": 122.97206182568193,
+        "province": "Central Kalimantan",
+        "polygon_ids": [
+          "{27E9C4FF-8B96-46E0-AF4A-29E100CA099F}",
+          "{99D273D9-1488-423C-A4EF-FD7176DF6939}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              113.4,
+              -2.6
+            ],
+            [
+              113.4,
+              -2.5
+            ],
+            [
+              113.3,
+              -2.5
+            ],
+            [
+              113.3,
+              -2.6
+            ],
+            [
+              113.4,
+              -2.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-2.55_114.95",
+        "lat": -2.55,
+        "lon": 114.95,
+        "peat_fraction": 0.6311659834055869,
+        "peat_area_km2": 77.61578233307539,
+        "cell_area_km2": 122.97206182482037,
+        "province": "South Kalimantan",
+        "polygon_ids": [
+          "{BE7759FC-3FCE-4E62-AF1A-76B0644B1BB8}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              115.0,
+              -2.6
+            ],
+            [
+              115.0,
+              -2.5
+            ],
+            [
+              114.9,
+              -2.5
+            ],
+            [
+              114.9,
+              -2.6
+            ],
+            [
+              115.0,
+              -2.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-2.45_111.65",
+        "lat": -2.45,
+        "lon": 111.65,
+        "peat_fraction": 0.48285577665516477,
+        "peat_area_km2": 59.38217439730815,
+        "cell_area_km2": 122.98118251511858,
+        "province": "Central Kalimantan",
+        "polygon_ids": [
+          "{2CD2BB34-98B8-4B23-AEFA-DE3C92D78546}",
+          "{33D64612-DEEF-4B62-86FE-66C8EA19A789}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              111.7,
+              -2.5
+            ],
+            [
+              111.7,
+              -2.4
+            ],
+            [
+              111.6,
+              -2.4
+            ],
+            [
+              111.6,
+              -2.5
+            ],
+            [
+              111.7,
+              -2.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-2.45_115.35",
+        "lat": -2.45,
+        "lon": 115.35,
+        "peat_fraction": 0.5210161592694984,
+        "peat_area_km2": 64.07518337983352,
+        "cell_area_km2": 122.98118252161598,
+        "province": "South Kalimantan",
+        "polygon_ids": [
+          "{163DF490-C45B-4369-8F69-D390165E8303}",
+          "{3BBE9F3F-AE4D-4C0F-9378-B417E8174C98}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              115.4,
+              -2.5
+            ],
+            [
+              115.4,
+              -2.4
+            ],
+            [
+              115.3,
+              -2.4
+            ],
+            [
+              115.3,
+              -2.5
+            ],
+            [
+              115.4,
+              -2.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-2.35_115.15",
+        "lat": -2.35,
+        "lon": 115.15,
+        "peat_fraction": 0.9683479873291817,
+        "peat_area_km2": 119.09705946416193,
+        "cell_area_km2": 122.98993855777582,
+        "province": "South Kalimantan",
+        "polygon_ids": [
+          "{BD065819-B959-4F46-A690-0335130C4D11}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              115.2,
+              -2.4
+            ],
+            [
+              115.2,
+              -2.3
+            ],
+            [
+              115.1,
+              -2.3
+            ],
+            [
+              115.1,
+              -2.4
+            ],
+            [
+              115.2,
+              -2.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-2.25_115.05",
+        "lat": -2.25,
+        "lon": 115.05,
+        "peat_fraction": 0.8200095431650469,
+        "peat_area_km2": 100.85980431948379,
+        "cell_area_km2": 122.99832990990362,
+        "province": "Central Kalimantan",
+        "polygon_ids": [
+          "{BD065819-B959-4F46-A690-0335130C4D11}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              115.1,
+              -2.3
+            ],
+            [
+              115.1,
+              -2.2
+            ],
+            [
+              115.0,
+              -2.2
+            ],
+            [
+              115.0,
+              -2.3
+            ],
+            [
+              115.1,
+              -2.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-2.25_115.25",
+        "lat": -2.25,
+        "lon": 115.25,
+        "peat_fraction": 0.4388286893571138,
+        "peat_area_km2": 53.97519590712136,
+        "cell_area_km2": 122.99832990909344,
+        "province": "South Kalimantan",
+        "polygon_ids": [
+          "{BD065819-B959-4F46-A690-0335130C4D11}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              115.3,
+              -2.3
+            ],
+            [
+              115.3,
+              -2.2
+            ],
+            [
+              115.2,
+              -2.2
+            ],
+            [
+              115.2,
+              -2.3
+            ],
+            [
+              115.3,
+              -2.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-2.05_114.15",
+        "lat": -2.05,
+        "lon": 114.15,
+        "peat_fraction": 0.9107236970553189,
+        "peat_area_km2": 112.03178170766681,
+        "cell_area_km2": 123.01401848870725,
+        "province": "Central Kalimantan",
+        "polygon_ids": [
+          "{B8766416-8658-45A7-AA6E-7C8076A700D9}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              114.2,
+              -2.1
+            ],
+            [
+              114.2,
+              -2.0
+            ],
+            [
+              114.1,
+              -2.0
+            ],
+            [
+              114.1,
+              -2.1
+            ],
+            [
+              114.2,
+              -2.1
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-1.55_110.15",
+        "lat": -1.55,
+        "lon": 110.15,
+        "peat_fraction": 0.9111800319606581,
+        "peat_area_km2": 112.11783881609813,
+        "cell_area_km2": 123.04685669509824,
+        "province": "West Kalimantan",
+        "polygon_ids": [
+          "{49270D0F-1AAA-46B0-A664-5A77B4DDCDBE}",
+          "{DB61ECCD-5C02-4AF6-B948-09A9A7652411}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              110.2,
+              -1.6
+            ],
+            [
+              110.2,
+              -1.5
+            ],
+            [
+              110.1,
+              -1.5
+            ],
+            [
+              110.1,
+              -1.6
+            ],
+            [
+              110.2,
+              -1.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-1.55_114.75",
+        "lat": -1.55,
+        "lon": 114.75,
+        "peat_fraction": 0.7099434826924067,
+        "peat_area_km2": 87.35631399428024,
+        "cell_area_km2": 123.04685672018294,
+        "province": "Central Kalimantan",
+        "polygon_ids": [
+          "{22D9D9CF-CEBF-4CFA-940B-15DF0C611987}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              114.8,
+              -1.6
+            ],
+            [
+              114.8,
+              -1.5
+            ],
+            [
+              114.7,
+              -1.5
+            ],
+            [
+              114.7,
+              -1.6
+            ],
+            [
+              114.8,
+              -1.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-0.85_109.35",
+        "lat": -0.85,
+        "lon": 109.35,
+        "peat_fraction": 0.49877394363622046,
+        "peat_area_km2": 61.387853911689405,
+        "cell_area_km2": 123.0775077466005,
+        "province": "West Kalimantan",
+        "polygon_ids": [
+          "{55C392CB-B77D-45F4-8E76-DD102BD61293}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              109.4,
+              -0.9
+            ],
+            [
+              109.4,
+              -0.8
+            ],
+            [
+              109.3,
+              -0.8
+            ],
+            [
+              109.3,
+              -0.9
+            ],
+            [
+              109.4,
+              -0.9
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-0.25_116.15",
+        "lat": -0.25,
+        "lon": 116.15,
+        "peat_fraction": 0.8470709927300905,
+        "peat_area_km2": 104.26558714918076,
+        "cell_area_km2": 123.08954980636882,
+        "province": "East Kalimantan",
+        "polygon_ids": [
+          "{4AFE79D8-E23C-4644-A60B-F7632C192EB6}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              116.2,
+              -0.3
+            ],
+            [
+              116.2,
+              -0.2
+            ],
+            [
+              116.1,
+              -0.2
+            ],
+            [
+              116.1,
+              -0.3
+            ],
+            [
+              116.2,
+              -0.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-0.15_116.55",
+        "lat": -0.15,
+        "lon": 116.55,
+        "peat_fraction": 0.6633778116238009,
+        "peat_area_km2": 81.65536033497575,
+        "cell_area_km2": 123.09027963281082,
+        "province": "East Kalimantan",
+        "polygon_ids": [
+          "{37FFBF27-E104-440C-8B72-CCC08F26F442}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              116.6,
+              -0.2
+            ],
+            [
+              116.6,
+              -0.1
+            ],
+            [
+              116.5,
+              -0.1
+            ],
+            [
+              116.5,
+              -0.2
+            ],
+            [
+              116.6,
+              -0.2
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-0.15_116.85",
+        "lat": -0.15,
+        "lon": 116.85,
+        "peat_fraction": 0.242801368507873,
+        "peat_area_km2": 29.886488344172648,
+        "cell_area_km2": 123.09027962996657,
+        "province": "East Kalimantan",
+        "polygon_ids": [
+          "{5E29C21E-0773-4040-A4D3-00714771039A}",
+          "{60169322-D2CC-4EE3-ADCE-50449FD3DC34}",
+          "{A646C393-91AA-460D-8A77-DEE83141F315}",
+          "{F0E649CA-C933-4AB3-AAB5-B37215636DDB}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              116.9,
+              -0.2
+            ],
+            [
+              116.9,
+              -0.1
+            ],
+            [
+              116.8,
+              -0.1
+            ],
+            [
+              116.8,
+              -0.2
+            ],
+            [
+              116.9,
+              -0.2
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-0.05_110.25",
+        "lat": -0.05,
+        "lon": 110.25,
+        "peat_fraction": 0.07177638575029271,
+        "peat_area_km2": 8.835001584388634,
+        "cell_area_km2": 123.09064453489292,
+        "province": "West Kalimantan",
+        "polygon_ids": [
+          "{2D73BD68-164D-4B67-8086-21ADA972D340}",
+          "{FA12247B-8F66-467D-9214-8B25353E2E79}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              110.3,
+              -0.1
+            ],
+            [
+              110.3,
+              0.0
+            ],
+            [
+              110.2,
+              0.0
+            ],
+            [
+              110.2,
+              -0.1
+            ],
+            [
+              110.3,
+              -0.1
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "-0.05_116.35",
+        "lat": -0.05,
+        "lon": 116.35,
+        "peat_fraction": 0.311458188448477,
+        "peat_area_km2": 38.33758916647642,
+        "cell_area_km2": 123.09064454992944,
+        "province": "East Kalimantan",
+        "polygon_ids": [
+          "{B2DA1DB1-167D-4CA8-BC5B-F37B8B5A280B}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              116.4,
+              -0.1
+            ],
+            [
+              116.4,
+              0.0
+            ],
+            [
+              116.3,
+              0.0
+            ],
+            [
+              116.3,
+              -0.1
+            ],
+            [
+              116.4,
+              -0.1
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "0.05_116.65",
+        "lat": 0.05,
+        "lon": 116.65,
+        "peat_fraction": 0.8440766772538737,
+        "peat_area_km2": 103.89794225048111,
+        "cell_area_km2": 123.0906445472508,
+        "province": "East Kalimantan",
+        "polygon_ids": [
+          "{37FFBF27-E104-440C-8B72-CCC08F26F442}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              116.7,
+              0.0
+            ],
+            [
+              116.7,
+              0.1
+            ],
+            [
+              116.6,
+              0.1
+            ],
+            [
+              116.6,
+              0.0
+            ],
+            [
+              116.7,
+              0.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "0.05_116.85",
+        "lat": 0.05,
+        "lon": 116.85,
+        "peat_fraction": 0.7786594367748053,
+        "peat_area_km2": 95.84569195390523,
+        "cell_area_km2": 123.09064454531818,
+        "province": "East Kalimantan",
+        "polygon_ids": [
+          "{4671846C-68E0-4CF3-96B7-2F3C14D8D85C}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              116.9,
+              0.0
+            ],
+            [
+              116.9,
+              0.1
+            ],
+            [
+              116.8,
+              0.1
+            ],
+            [
+              116.8,
+              0.0
+            ],
+            [
+              116.9,
+              0.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "0.15_111.65",
+        "lat": 0.15,
+        "lon": 111.65,
+        "peat_fraction": 0.24810104170471053,
+        "peat_area_km2": 30.53882660106379,
+        "cell_area_km2": 123.0902796345815,
+        "province": "West Kalimantan",
+        "polygon_ids": [
+          "{4C708B3E-2D4D-49F9-A820-43B54EEC1349}",
+          "{696208E8-F43E-441D-BB7E-031F3C2FA713}",
+          "{A9BA4B9B-D0FC-42F8-A26A-B0A4412D613A}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              111.7,
+              0.1
+            ],
+            [
+              111.7,
+              0.2
+            ],
+            [
+              111.6,
+              0.2
+            ],
+            [
+              111.6,
+              0.1
+            ],
+            [
+              111.7,
+              0.1
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "0.15_116.55",
+        "lat": 0.15,
+        "lon": 116.55,
+        "peat_fraction": 0.5552114653890331,
+        "peat_area_km2": 68.34113453008896,
+        "cell_area_km2": 123.09027963282922,
+        "province": "East Kalimantan",
+        "polygon_ids": [
+          "{37FFBF27-E104-440C-8B72-CCC08F26F442}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              116.6,
+              0.1
+            ],
+            [
+              116.6,
+              0.2
+            ],
+            [
+              116.5,
+              0.2
+            ],
+            [
+              116.5,
+              0.1
+            ],
+            [
+              116.6,
+              0.1
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "0.25_109.15",
+        "lat": 0.25,
+        "lon": 109.15,
+        "peat_fraction": 0.5191371026647023,
+        "peat_area_km2": 63.90035223754046,
+        "cell_area_km2": 123.08954977315909,
+        "province": "West Kalimantan",
+        "polygon_ids": [
+          "{F6E2766B-DF21-42C5-B6C7-00678F832D96}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              109.2,
+              0.2
+            ],
+            [
+              109.2,
+              0.3
+            ],
+            [
+              109.1,
+              0.3
+            ],
+            [
+              109.1,
+              0.2
+            ],
+            [
+              109.2,
+              0.2
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "0.75_112.95",
+        "lat": 0.75,
+        "lon": 112.95,
+        "peat_fraction": 0.9287891933166907,
+        "peat_area_km2": 114.31577053863901,
+        "cell_area_km2": 123.08042703470666,
+        "province": "West Kalimantan",
+        "polygon_ids": [
+          "{6B07E373-13A4-4FB8-9758-47861337D208}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              113.0,
+              0.7
+            ],
+            [
+              113.0,
+              0.8
+            ],
+            [
+              112.9,
+              0.8
+            ],
+            [
+              112.9,
+              0.7
+            ],
+            [
+              113.0,
+              0.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "1.35_118.55",
+        "lat": 1.35,
+        "lon": 118.55,
+        "peat_fraction": 0.11351118085326634,
+        "peat_area_km2": 13.968395142857304,
+        "cell_area_km2": 123.0574383761717,
+        "province": "East Kalimantan",
+        "polygon_ids": [
+          "{16F7ED38-BEC2-4812-B29D-1F48C9EC1D7D}",
+          "{3A3B496C-98A2-46B9-AC3F-DC632101107E}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              118.6,
+              1.3
+            ],
+            [
+              118.6,
+              1.4
+            ],
+            [
+              118.5,
+              1.4
+            ],
+            [
+              118.5,
+              1.3
+            ],
+            [
+              118.6,
+              1.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "1.45_109.15",
+        "lat": 1.45,
+        "lon": 109.15,
+        "peat_fraction": 0.9255746014534909,
+        "peat_area_km2": 113.89411124120899,
+        "cell_area_km2": 123.05232993899524,
+        "province": "West Kalimantan",
+        "polygon_ids": [
+          "{D5AECC61-192D-4284-AF47-C129C8BE53A7}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              109.2,
+              1.4
+            ],
+            [
+              109.2,
+              1.5
+            ],
+            [
+              109.1,
+              1.5
+            ],
+            [
+              109.1,
+              1.4
+            ],
+            [
+              109.2,
+              1.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "3.55_117.05",
+        "lat": 3.55,
+        "lon": 117.05,
+        "peat_fraction": 0.4046241462130648,
+        "peat_area_km2": 49.71244767338946,
+        "cell_area_km2": 122.86080338668704,
+        "province": "North Kalimantan",
+        "polygon_ids": [
+          "{CBCD2AD4-8472-4E75-940B-F8BB0ACF8493}",
+          "{D34B35B1-CCDF-4A5C-A6CA-41DBC1944CA0}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              117.1,
+              3.5
+            ],
+            [
+              117.1,
+              3.6
+            ],
+            [
+              117.0,
+              3.6
+            ],
+            [
+              117.0,
+              3.5
+            ],
+            [
+              117.1,
+              3.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "3.55_117.25",
+        "lat": 3.55,
+        "lon": 117.25,
+        "peat_fraction": 0.2244974831912426,
+        "peat_area_km2": 27.581941142662394,
+        "cell_area_km2": 122.86080338444674,
+        "province": "North Kalimantan",
+        "polygon_ids": [
+          "{64787993-CF8A-4E54-AF0B-954C373665E5}",
+          "{917A9727-6264-4CB3-B2A6-40991D6B70F0}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              117.3,
+              3.5
+            ],
+            [
+              117.3,
+              3.6
+            ],
+            [
+              117.2,
+              3.6
+            ],
+            [
+              117.2,
+              3.5
+            ],
+            [
+              117.3,
+              3.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "3.65_117.15",
+        "lat": 3.65,
+        "lon": 117.15,
+        "peat_fraction": 0.4749153202384096,
+        "peat_area_km2": 58.34224194603307,
+        "cell_area_km2": 122.84767296356118,
+        "province": "North Kalimantan",
+        "polygon_ids": [
+          "{7E2B1B97-A54C-4CC9-B243-6B8C2D833E02}",
+          "{D34B35B1-CCDF-4A5C-A6CA-41DBC1944CA0}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              117.2,
+              3.6
+            ],
+            [
+              117.2,
+              3.7
+            ],
+            [
+              117.1,
+              3.7
+            ],
+            [
+              117.1,
+              3.6
+            ],
+            [
+              117.2,
+              3.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "3.65_117.35",
+        "lat": 3.65,
+        "lon": 117.35,
+        "peat_fraction": 0.2961287184537392,
+        "peat_area_km2": 36.378723959029486,
+        "cell_area_km2": 122.84767296121777,
+        "province": "North Kalimantan",
+        "polygon_ids": [
+          "{7E2B1B97-A54C-4CC9-B243-6B8C2D833E02}",
+          "{F9F2434A-F64F-4CA5-B864-E14323EC2C25}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              117.4,
+              3.6
+            ],
+            [
+              117.4,
+              3.7
+            ],
+            [
+              117.3,
+              3.7
+            ],
+            [
+              117.3,
+              3.6
+            ],
+            [
+              117.4,
+              3.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "3.75_116.85",
+        "lat": 3.75,
+        "lon": 116.85,
+        "peat_fraction": 0.39394773240314646,
+        "peat_area_km2": 48.39024595921671,
+        "cell_area_km2": 122.83417818914249,
+        "province": "North Kalimantan",
+        "polygon_ids": [
+          "{D34B35B1-CCDF-4A5C-A6CA-41DBC1944CA0}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              116.9,
+              3.7
+            ],
+            [
+              116.9,
+              3.8
+            ],
+            [
+              116.8,
+              3.8
+            ],
+            [
+              116.8,
+              3.7
+            ],
+            [
+              116.9,
+              3.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "3.75_117.05",
+        "lat": 3.75,
+        "lon": 117.05,
+        "peat_fraction": 0.9996231718181406,
+        "peat_area_km2": 122.78789080700729,
+        "cell_area_km2": 122.83417818704369,
+        "province": "North Kalimantan",
+        "polygon_ids": [
+          "{D34B35B1-CCDF-4A5C-A6CA-41DBC1944CA0}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              117.1,
+              3.7
+            ],
+            [
+              117.1,
+              3.8
+            ],
+            [
+              117.0,
+              3.8
+            ],
+            [
+              117.0,
+              3.7
+            ],
+            [
+              117.1,
+              3.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "3.85_117.35",
+        "lat": 3.85,
+        "lon": 117.35,
+        "peat_fraction": 0.6830203479858545,
+        "peat_area_km2": 83.88877707886071,
+        "cell_area_km2": 122.82031908161842,
+        "province": "North Kalimantan",
+        "polygon_ids": [
+          "{2CD7E134-F092-48F2-937B-580CA49DBB0D}",
+          "{360F1686-B813-447F-8040-75BA3991C3F6}",
+          "{D34B35B1-CCDF-4A5C-A6CA-41DBC1944CA0}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              117.4,
+              3.8
+            ],
+            [
+              117.4,
+              3.9
+            ],
+            [
+              117.3,
+              3.9
+            ],
+            [
+              117.3,
+              3.8
+            ],
+            [
+              117.4,
+              3.8
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cell_id": "3.95_117.15",
+        "lat": 3.95,
+        "lon": 117.15,
+        "peat_fraction": 0.5119451488270929,
+        "peat_area_km2": 62.86998493467478,
+        "cell_area_km2": 122.80609568957716,
+        "province": "North Kalimantan",
+        "polygon_ids": [
+          "{2CD7E134-F092-48F2-937B-580CA49DBB0D}",
+          "{FC8C4C71-079E-4161-BB79-5E9708FC732B}"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              117.2,
+              3.9
+            ],
+            [
+              117.2,
+              4.0
+            ],
+            [
+              117.1,
+              4.0
+            ],
+            [
+              117.1,
+              3.9
+            ],
+            [
+              117.2,
+              3.9
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

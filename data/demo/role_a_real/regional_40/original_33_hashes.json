@@ -1,0 +1,11 @@
+{
+  "cells.geojson": "59b570db7e711d16479c9dd76e45ab9ba114db17859f911e9933d1e19d6eb3cd",
+  "features.json": "8251934f24916011c4353f57f76f01af9e5f61d64a2578f319c8a9ef748c24fc",
+  "features.parquet": "f4447cc0f1320a69a9db567f444adfb3c4d2636c137270aea26c3c4d696380fb",
+  "history.parquet": "444152463a2aa952a6154c965d7c3876e48e4ffea1c86370ca811dafa76bfb40",
+  "history_2025.parquet": "4e64ca1a7ad7a2384993ea3c6a54a3058dba12c66dcdae2f25bd93afff113b43",
+  "quality_report.json": "3ebed9da852d5b438bbadccfab81ecfd678e0538c0eb3f226310e3b93b168a61",
+  "scope.json": "45bd7759ee11bd9dbd390919f5b7158d7a4ab6eef8b20d59fd7f9d336946ece5",
+  "validation_report.json": "632101f2b0e3c56b6b1748a608bd7a41e6be1bbc93f97a02bc75c860dfa186c1",
+  "water_lookup_examples.json": "ef46961477ca50a22e345390f1850a62a743928bf542852ad36bf711f52bc923"
+}

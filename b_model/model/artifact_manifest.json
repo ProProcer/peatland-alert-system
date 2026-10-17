@@ -1,4 +1,43 @@
 {
+  "model_version": "1.1-xgboost-calibrated",
+  "format": "joblib",
+  "feature_order": [
+    "temp_c",
+    "humidity_percent",
+    "wind_kph",
+    "precip_mm",
+    "sm_0_7",
+    "sm_7_28",
+    "sm_28_100",
+    "sm_100_289",
+    "peat_fraction",
+    "history_1d",
+    "history_2d",
+    "history_3d",
+    "history_4d",
+    "history_5d",
+    "history_6d",
+    "history_7d",
+    "history_8d",
+    "history_9d",
+    "history_10d",
+    "history_11d",
+    "history_12d",
+    "history_13d",
+    "history_14d",
+    "history_15d",
+    "history_16d",
+    "history_17d",
+    "history_18d",
+    "cumulative_dry_days",
+    "soil_moisture_momentum"
+  ],
+  "feature_pipeline": "leading_indicators_v1",
+  "horizons": [
+    "24",
+    "48",
+    "72"
+  ],
   "schema_version": "1.0",
   "models": {
     "24": {
@@ -32,9 +71,12 @@
         "hotspots_in_cell_24h",
         "hotspots_10km_7d",
         "frp_sum_10km_7d",
-        "nearest_hotspot_km"
+        "nearest_hotspot_km",
+        "cumulative_dry_days",
+        "soil_moisture_momentum"
       ],
-      "positive_class": 1
+      "positive_class": 1,
+      "feature_pipeline": "leading_indicators_v1"
     },
     "48": {
       "filename": "model_48h.joblib",
@@ -67,9 +109,12 @@
         "hotspots_in_cell_24h",
         "hotspots_10km_7d",
         "frp_sum_10km_7d",
-        "nearest_hotspot_km"
+        "nearest_hotspot_km",
+        "cumulative_dry_days",
+        "soil_moisture_momentum"
       ],
-      "positive_class": 1
+      "positive_class": 1,
+      "feature_pipeline": "leading_indicators_v1"
     },
     "72": {
       "filename": "model_72h.joblib",
@@ -102,9 +147,13 @@
         "hotspots_in_cell_24h",
         "hotspots_10km_7d",
         "frp_sum_10km_7d",
-        "nearest_hotspot_km"
+        "nearest_hotspot_km",
+        "cumulative_dry_days",
+        "soil_moisture_momentum"
       ],
-      "positive_class": 1
+      "positive_class": 1,
+      "feature_pipeline": "leading_indicators_v1"
     }
-  }
+  },
+  "metadata_note": "Per-horizon models entries are authoritative. Original top-level model_version/feature_order are retained as supplied and differ from the actual bundles."
 }

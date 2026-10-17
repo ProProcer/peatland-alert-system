@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-10-17T08:36:14Z",
+  "is_mock": false,
+  "scope": "40 peat-centered cells across all five Indonesian Kalimantan provinces",
+  "definition": "Detection coordinate intersects the supplied peat polygon, including its boundary.",
+  "all_delivered_history": {
+    "nominal_high_detection_records": 16734,
+    "point_on_mapped_peat": 12668,
+    "point_outside_mapped_peat": 4066,
+    "on_mapped_peat_percent": 75.7
+  },
+  "calendar_2025": {
+    "nominal_high_detection_records": 787,
+    "point_on_mapped_peat": 660,
+    "point_outside_mapped_peat": 127,
+    "on_mapped_peat_percent": 83.86
+  },
+  "by_province": {
+    "Central Kalimantan": {
+      "nominal_high_detection_records": 8435,
+      "point_on_mapped_peat": 5858,
+      "point_outside_mapped_peat": 2577,
+      "on_mapped_peat_percent": 69.45
+    },
+    "East Kalimantan": {
+      "nominal_high_detection_records": 560,
+      "point_on_mapped_peat": 175,
+      "point_outside_mapped_peat": 385,
+      "on_mapped_peat_percent": 31.25
+    },
+    "North Kalimantan": {
+      "nominal_high_detection_records": 45,
+      "point_on_mapped_peat": 2,
+      "point_outside_mapped_peat": 43,
+      "on_mapped_peat_percent": 4.44
+    },
+    "South Kalimantan": {
+      "nominal_high_detection_records": 3435,
+      "point_on_mapped_peat": 2887,
+      "point_outside_mapped_peat": 548,
+      "on_mapped_peat_percent": 84.05
+    },
+    "West Kalimantan": {
+      "nominal_high_detection_records": 4259,
+      "point_on_mapped_peat": 3746,
+      "point_outside_mapped_peat": 513,
+      "on_mapped_peat_percent": 87.95
+    }
+  },
+  "note": "Detection records are not hourly training rows. This supporting audit does not change target labels, which remain cell-based under schema 1.0."
+}

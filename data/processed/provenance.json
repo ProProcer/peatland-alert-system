@@ -1,5 +1,5 @@
 {
-  "published_at": "2026-10-17T07:07:21.595682Z",
+  "published_at": "2026-10-17T08:37:40.903740Z",
   "mode": "historical_replay",
   "is_mock": false,
   "snapshot": "2026-10-16T00:00:00Z",
@@ -8,21 +8,27 @@
   "risk_records": 99,
   "source_bundle": "data/demo/role_a_real/hackathon",
   "source_handoff": "a_data/REAL_HANDOFF.md",
-  "training_input": "data/demo/role_a_real/hackathon/history_2025.parquet",
-  "training_sha256": "4e64ca1a7ad7a2384993ea3c6a54a3058dba12c66dcdae2f25bd93afff113b43",
-  "model_dir": "b_model/model_real_2025",
-  "training_rows": 289080,
-  "inference_config": "b_model/conf/replay_role_a.yaml",
-  "model_quality": "First real candidate; validation recall is zero at cutoff 0.50 for all horizons. All replay predictions are LOW. Not an accepted operational model.",
-  "dispatch": "Existing C deterministic policy; empty result from LOW risks. Explicit empty water catalogue; no mock water sources used. Real mapped-water integration remains with C.",
+  "training_input": "data/processed/history.parquet",
+  "training_sha256": "444152463a2aa952a6154c965d7c3876e48e4ffea1c86370ca811dafa76bfb40",
+  "model_dir": "b_model/model",
+  "training_rows": 539352,
+  "inference_config": "b_model/conf/config.yaml",
+  "model_quality": "Uploaded XGBoost ensemble with sigmoid calibration. All 99 replay predictions are LOW; supplied training metrics report zero recall at 0.50. Not an accepted operational model.",
+  "dispatch": "C deterministic policy executed with the explicit real GeoJSON water catalogue. Empty dispatch; 0 new simulated notifications from LOW risks.",
   "coverage_limitation": "FIRMS export completeness is human-declared, not an independent satellite-observation availability audit.",
-  "development_backup": "b_model/runs/before_real_publication_20261017_070632",
+  "development_backup": "b_model/runs/uploaded_xgboost_integration_backup_02/processed_before",
   "files": {
-    "features.json": "0298b1cebd48c8046cd860d5d61d7553e52061d34cd48606b26e9a71ab65445c",
+    "features.json": "8251934f24916011c4353f57f76f01af9e5f61d64a2578f319c8a9ef748c24fc",
     "features.parquet": "f4447cc0f1320a69a9db567f444adfb3c4d2636c137270aea26c3c4d696380fb",
     "history.parquet": "444152463a2aa952a6154c965d7c3876e48e4ffea1c86370ca811dafa76bfb40",
-    "cells.geojson": "4a68469ed5b935dd2d63975ab596727c3f235920f5774e8d9e0cb16b4b7d5e6c",
-    "risk.json": "47453843bd22b8ec8110ea316096bb92d1e35180bf03816a0162e1e502677a9d",
-    "dispatch.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    "cells.geojson": "59b570db7e711d16479c9dd76e45ab9ba114db17859f911e9933d1e19d6eb3cd",
+    "risk.json": "aa28cc9ca6ab5d3dd433a27fe2d3653802ffd15a5492ea70a0763ba5851782c9",
+    "dispatch.json": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+  },
+  "integration_report": "b_model/model/integration_check.json",
+  "model_artifact_sha256": {
+    "model_24h.joblib": "bbfb35b1bade4e419142d7ea523baa06838ca80155fef8fd7507549b9e026dd1",
+    "model_48h.joblib": "6b81780273024441377b62f31f514d7780779e2227d30dfa225bff5ef6cdb90d",
+    "model_72h.joblib": "2190c6e7a83c8d343f98ca4083a97784f9414f2bc10253c48a1878344a612998"
   }
 }

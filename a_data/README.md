@@ -4,7 +4,9 @@ Read `TEAM_PLAYBOOK.md` and `contracts/CONTRACTS.md`. Own this folder and `data/
 
 ## Mock handoff ready
 
-**Current real delivery:** see [REAL_HANDOFF.md](REAL_HANDOFF.md). For the today-only deadline, the scoped bundle uses 33 cached Central Kalimantan cells, canonical features, supplied future labels, and a dated real replay. The all-Kalimantan grid has 782 cells; broader historical weather expansion is deferred.
+**Current real delivery:** see [REGIONAL_HANDOFF.md](REGIONAL_HANDOFF.md). The approved scope uses 40 cells, eight per Kalimantan province, with every center strictly inside mapped peat. Canonical features, cell-based future labels, and the dated real replay retain schema 1.0. The previous 33-cell Central bundle is preserved; [REAL_HANDOFF.md](REAL_HANDOFF.md) documents that earlier release. Full 782-cell weather coverage remains deferred.
+
+For the complete processing record, exact feature definitions, row/label counts, missingness, API constraints, and reproduction steps, read [DATA_PROCESSING_REPORT.md](DATA_PROCESSING_REPORT.md).
 
 Share [mock_output.json](mock_output.json) and [fixtures/cells.geojson](fixtures/cells.geojson) together. The three synthetic Kalimantan cells cover dry conditions, wet conditions with measured zero fire counts, and partial data with nulls. All 27 canonical numeric input fields are present. See [MOCK_HANDOFF.md](MOCK_HANDOFF.md) for scenario details, units, and loader commands, and [HANDOFF_PLAN.md](HANDOFF_PLAN.md) for the proposed agreement with B.
 
@@ -20,7 +22,7 @@ python -m a_data.refresh --mock --output-dir data/demo/role_a_mock
 
 ## Setup and real ingestion
 
-The longer-term scope is **all Indonesian Kalimantan**. [PROCESSING_PLAN.md](PROCESSING_PLAN.md) records the approved processing sequence. The human's today-only deadline makes the cached Central Kalimantan subset the current integration priority; [REAL_HANDOFF.md](REAL_HANDOFF.md) has commands and consumer paths. Coordinate the matching demo configuration with E before publication.
+The longer-term scope is **all Indonesian Kalimantan**. [PROCESSING_PLAN.md](PROCESSING_PLAN.md) records the approved processing sequence. The today-only integration scope is the geographically spread 40-cell peat-centered subset; [REGIONAL_HANDOFF.md](REGIONAL_HANDOFF.md) has commands and consumer paths. Coordinate the matching demo configuration with E before publication.
 
 ```bash
 bash scripts/setup.sh a
@@ -29,7 +31,7 @@ python -m a_data.refresh --mock --output-dir data/demo
 python -m contracts.validate --kind features data/demo/features.json
 ```
 
-`refresh.py --mock` exports the synthetic fixtures. `refresh.py --replay` exports a prepared real historical bundle. Current-hour live refresh awaits fresh FIRMS coverage and E's integration. Real processing is implemented in `inventory.py`, `geography.py`, `firms.py`, `water.py`, `weather.py`, `assemble.py`, and `hackathon.py`; `validate_real.py` audits the resulting sample against source records and B's loader.
+`refresh.py --mock` exports the synthetic fixtures. `refresh.py --replay --source-dir data/demo/role_a_real/regional_40` exports the new prepared real historical bundle; specify the source because its default still points to the earlier 33-cell bundle. Current-hour live refresh awaits fresh FIRMS coverage and E's integration. Real processing is implemented in `inventory.py`, `geography.py`, `firms.py`, `water.py`, `weather.py`, `assemble.py`, `hackathon.py`, and `regional.py`; `validate_real.py` audits the resulting sample against source records and B's loader.
 
 The processing sequence is:
 

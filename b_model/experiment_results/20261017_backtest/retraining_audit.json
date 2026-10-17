@@ -1,0 +1,23 @@
+{
+  "note": "Backtest sorts training rows by timestamp and cell_id; previous training uses timestamp sorting after cell sorting. Parameters and fitted medians match, but tree dumps differ. Row ordering differs; its causal effect has not been isolated. Do not conflate this run with prior metrics.",
+  "horizons": {
+    "24": {
+      "parameters_identical_nan_normalized": true,
+      "parameter_differences": {},
+      "imputer_max_abs_difference": 0.0,
+      "tree_dump_identical": false
+    },
+    "48": {
+      "parameters_identical_nan_normalized": true,
+      "parameter_differences": {},
+      "imputer_max_abs_difference": 0.0,
+      "tree_dump_identical": false
+    },
+    "72": {
+      "parameters_identical_nan_normalized": true,
+      "parameter_differences": {},
+      "imputer_max_abs_difference": 0.0,
+      "tree_dump_identical": false
+    }
+  }
+}
