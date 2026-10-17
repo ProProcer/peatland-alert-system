@@ -1,5 +1,8 @@
 """Optional LLM phrasing for Role C messages (off unless --llm and a key is set).
 
+Providers: Gemini (GEMINI_API_KEY or GOOGLE_API_KEY; default) or Anthropic
+(ANTHROPIC_API_KEY). Force one with LLM_PROVIDER=gemini|anthropic.
+
 The deterministic policy decides everything: who is notified, where, priority,
 water source and every number. The model may only *rephrase* the template
 messages. Its output is accepted only if it passes validate_rewrite(); otherwise
@@ -15,8 +18,10 @@ import re
 import urllib.request
 from typing import Any, Callable
 
-API_URL = "https://api.anthropic.com/v1/messages"
-DEFAULT_MODEL = "claude-sonnet-5-5"  # override with AGENT_MODEL
+ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+# Model ids change often: confirm yours in Google AI Studio and set AGENT_MODEL.
+DEFAULT_MODELS = {"gemini": "gemini-flash-latest", "anthropic": "claude-sonnet-5-5"}
 SMS_MAX_CHARS = 160
 MAX_MESSAGE_CHARS = 600
 LANG_PREFIX = {"id": "Simulasi", "en": "Simulation"}  # alerts stay labelled as simulated
@@ -33,7 +38,8 @@ SYSTEM_PROMPT = (
     "No markdown, no commentary."
 )
 
-Post = Callable[[dict[str, Any]], str]
+# A transport takes {"system": str, "user": str} and returns the model's text.
+Post = Callable[[dict[str, str]], str]
 
 
 def numbers_in(text: str) -> set[float]:
@@ -75,11 +81,42 @@ def _parse_json(text: str) -> Any:
     return json.loads(cleaned)
 
 
-def _http_post(api_key: str, timeout: float) -> Post:
-    def post(payload: dict[str, Any]) -> str:
+def _gemini_post(api_key: str, model: str, timeout: float) -> Post:
+    def post(payload: dict[str, str]) -> str:
+        body = {
+            "systemInstruction": {"parts": [{"text": payload["system"]}]},
+            "contents": [{"role": "user", "parts": [{"text": payload["user"]}]}],
+            # Generous token limit: "thinking" models spend output tokens before the JSON.
+            "generationConfig": {
+                "responseMimeType": "application/json",
+                "temperature": 0.2,
+                "maxOutputTokens": 4096,
+            },
+        }
         request = urllib.request.Request(
-            API_URL,
-            data=json.dumps(payload).encode("utf-8"),
+            GEMINI_URL.format(model=model),
+            data=json.dumps(body).encode("utf-8"),
+            headers={"content-type": "application/json", "x-goog-api-key": api_key},
+        )
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            data = json.load(response)
+        parts = data["candidates"][0]["content"]["parts"]
+        return "".join(part.get("text", "") for part in parts if not part.get("thought"))
+
+    return post
+
+
+def _anthropic_post(api_key: str, model: str, timeout: float) -> Post:
+    def post(payload: dict[str, str]) -> str:
+        body = {
+            "model": model,
+            "max_tokens": 1000,
+            "system": payload["system"],
+            "messages": [{"role": "user", "content": payload["user"]}],
+        }
+        request = urllib.request.Request(
+            ANTHROPIC_URL,
+            data=json.dumps(body).encode("utf-8"),
             headers={
                 "content-type": "application/json",
                 "x-api-key": api_key,
@@ -87,10 +124,28 @@ def _http_post(api_key: str, timeout: float) -> Post:
             },
         )
         with urllib.request.urlopen(request, timeout=timeout) as response:
-            body = json.load(response)
-        return "".join(block.get("text", "") for block in body["content"] if block.get("type") == "text")
+            data = json.load(response)
+        return "".join(block.get("text", "") for block in data["content"] if block.get("type") == "text")
 
     return post
+
+
+def _pick_provider(api_key: str | None) -> tuple[str, str] | None:
+    """Return (provider, key) from args/environment, or None."""
+    forced = os.environ.get("LLM_PROVIDER", "").strip().lower()
+    gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
+    if api_key:
+        return (forced or "gemini", api_key)
+    if forced == "anthropic":
+        return ("anthropic", anthropic_key) if anthropic_key else None
+    if forced == "gemini":
+        return ("gemini", gemini_key) if gemini_key else None
+    if gemini_key:
+        return ("gemini", gemini_key)
+    if anthropic_key:
+        return ("anthropic", anthropic_key)
+    return None
 
 
 def make_rewriter(
@@ -102,24 +157,19 @@ def make_rewriter(
     log: Callable[[str], None] = print,
 ) -> Callable[[str, dict[str, Any], dict[str, dict[str, str]]], dict[str, dict[str, str]]] | None:
     """Build a rewriter, or None when no key / transport is available."""
-    key = api_key or os.environ.get("ANTHROPIC_API_KEY")
     if post is None:
-        if not key:
+        picked = _pick_provider(api_key)
+        if picked is None:
             return None
-        post = _http_post(key, timeout)
-    model_name = model or os.environ.get("AGENT_MODEL", DEFAULT_MODEL)
+        provider, key = picked
+        model_name = model or os.environ.get("AGENT_MODEL") or DEFAULT_MODELS[provider]
+        factory = _gemini_post if provider == "gemini" else _anthropic_post
+        post = factory(key, model_name, timeout)
 
     def rewrite(action: str, ctx: dict[str, Any], template: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
         payload = {
-            "model": model_name,
-            "max_tokens": 1000,
             "system": SYSTEM_PROMPT,
-            "messages": [{
-                "role": "user",
-                "content": json.dumps(
-                    {"ACTION": action, "FACTS": ctx, "TEMPLATE": template}, ensure_ascii=False
-                ),
-            }],
+            "user": json.dumps({"ACTION": action, "FACTS": ctx, "TEMPLATE": template}, ensure_ascii=False),
         }
         try:
             candidate = _parse_json(post(payload))

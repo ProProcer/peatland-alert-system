@@ -1,0 +1,10 @@
+# Explicit real-data preset for Role A's 33-cell hackathon handoff.
+# Keep the shared development defaults available for their existing consumers.
+defaults:
+  - training
+  - _self_
+  - override model: hist_gradient_boosting
+
+paths:
+  history: data/demo/role_a_real/hackathon/history_2025.parquet
+  model_dir: b_model/runs/role_a_2025_${now:%Y%m%d_%H%M%S}

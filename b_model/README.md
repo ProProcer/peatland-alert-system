@@ -213,3 +213,40 @@ shared data by executing in a temporary copy. See [MODEL_CARD.md](MODEL_CARD.md)
 the precise target, validation protocol, heuristic explanation limits and evidence
 status. These configurations follow Hydra's [structured-schema](https://hydra.cc/docs/1.3/tutorials/structured_config/schema/)
 and [CLI override](https://hydra.cc/docs/1.3/advanced/override_grammar/basic/) mechanisms.
+
+## Role A real-data replay
+
+Role A's source handoff is in `data/demo/role_a_real/hackathon/`. With the human's
+approval, its real replay has been published to `data/processed/`, together with
+risk from the first real training run. `b_model/model/` retains the legacy demo
+artifacts; `b_model/model_real_2025/` contains the explicitly selected real candidate.
+See [A's handoff](../a_data/REAL_HANDOFF.md). The named training preset selects the
+33-cell 2025 history and sklearn gradient boosting explicitly, preserving the
+chronological splits, 72-hour embargoes, balanced class weights and sigmoid
+calibration. Its default model directory is a separate timestamped run.
+
+```bash
+# Confirm the preset before training; actual Parquet files require Git LFS checkout.
+python -m b_model.train --config-name training_role_a --cfg job
+python -m b_model.train --config-name training_role_a paths.model_dir=b_model/runs/role_a_2025
+
+# Use matching real features, history schema and newly trained artifacts together.
+python -m b_model.predict paths.features=data/demo/role_a_real/hackathon/features.json paths.history=data/demo/role_a_real/hackathon/history_2025.parquet paths.model_dir=b_model/runs/role_a_2025 paths.output=b_model/.test-output/role_a_replay/risk.json
+python -m contracts.validate --kind risk b_model/.test-output/role_a_replay/risk.json
+
+# Reproduce the published real risk using the saved real candidate and processed inputs.
+python -m b_model.predict --config-name replay_role_a
+```
+
+This is a historical replay at `2026-10-16T00:00:00Z`, producing 99 risk records
+(33 cells times three horizons). To use the extended history, explicitly override
+`paths.history=data/demo/role_a_real/hackathon/history.parquet` at training and
+inference. Its incomplete future labels are excluded by configured training.
+Never treat the replay as current-hour observations. E owns selecting and publishing
+matching A/B/C/D feeds for integration.
+
+Read [REAL_DATA_CHECK.md](REAL_DATA_CHECK.md) for the measured compatibility result
+and the candidate's poor validation performance. A successful schema/latency check
+does not establish useful prediction quality. The current live platform script
+still calls A without `--replay` and therefore stops; use A's explicit replay export
+and the named B replay configuration until E adds replay orchestration.

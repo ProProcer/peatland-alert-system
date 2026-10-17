@@ -1,0 +1,10 @@
+# Real historical replay; the generic inference configuration also serves legacy demos.
+defaults:
+  - config
+  - _self_
+
+paths:
+  features: data/processed/features.json
+  history: data/processed/history.parquet
+  model_dir: b_model/model_real_2025
+  output: data/processed/risk.json
