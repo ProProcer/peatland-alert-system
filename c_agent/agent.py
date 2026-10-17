@@ -10,8 +10,11 @@ from pathlib import Path
 from contracts.validate import ROOT, validate_file, validate_payload
 
 from c_agent import llm
+from c_agent.email import generate_batch_email_summary, generate_email_notification
 from c_agent.policy import decide, dispatch_timestamp
+from c_agent.social_media import generate_social_media_posts
 from c_agent.state_store import StateStore, format_ts
+from c_agent.summary import export_to_csv, generate_summary, generate_risk_distribution
 from c_agent.water import DEFAULT_MAX_WATER_KM, resolve_water_catalogue_path
 
 PACKAGE = Path(__file__).resolve().parent
@@ -71,6 +74,10 @@ def dispatch_live(
     now: datetime | None = None,
     use_llm: bool = False,
     max_water_km: float | None = DEFAULT_MAX_WATER_KM,
+    export_social_media: Path | None = None,
+    export_email: Path | None = None,
+    export_summary: Path | None = None,
+    export_csv: Path | None = None,
 ) -> list:
     _require_inputs(data_dir, ("features.json", "risk.json", "cells.geojson"))
     features = validate_file("features", data_dir / "features.json")
@@ -108,6 +115,27 @@ def dispatch_live(
     _atomic_write(output, payload)
     _append_log(log_path or PACKAGE / "logs" / "notifications.log", created)
     print(f"C: wrote {len(payload)} simulated dispatch record(s) to {output} ({len(created)} new)")
+    
+    # Generate additional exports
+    if export_social_media:
+        social_posts = generate_social_media_posts(payload)
+        _atomic_write(export_social_media, social_posts)
+        print(f"C: wrote social media posts to {export_social_media}")
+    
+    if export_email:
+        email_summary = generate_batch_email_summary(payload)
+        _atomic_write(export_email, email_summary)
+        print(f"C: wrote email summary to {export_email}")
+    
+    if export_summary:
+        summary = generate_summary(payload)
+        _atomic_write(export_summary, summary)
+        print(f"C: wrote summary statistics to {export_summary}")
+    
+    if export_csv:
+        export_to_csv(payload, export_csv)
+        print(f"C: wrote CSV export to {export_csv}")
+    
     return payload
 
 
@@ -136,6 +164,30 @@ def main() -> None:
         action="store_true",
         help="Let an LLM rephrase messages (needs GEMINI_API_KEY or ANTHROPIC_API_KEY); output is validated, templates are the fallback",
     )
+    parser.add_argument(
+        "--export-social-media",
+        type=Path,
+        default=None,
+        help="Export social media posts (Twitter/Facebook) to this JSON file",
+    )
+    parser.add_argument(
+        "--export-email",
+        type=Path,
+        default=None,
+        help="Export email summary to this JSON file",
+    )
+    parser.add_argument(
+        "--export-summary",
+        type=Path,
+        default=None,
+        help="Export summary statistics to this JSON file",
+    )
+    parser.add_argument(
+        "--export-csv",
+        type=Path,
+        default=None,
+        help="Export dispatches to CSV file for analysis",
+    )
     args = parser.parse_args()
     output = args.output or args.data_dir / "dispatch.json"
     if args.mock:
@@ -150,6 +202,10 @@ def main() -> None:
         cooldown_hours=args.cooldown_hours,
         use_llm=args.llm,
         max_water_km=args.max_water_km or None,
+        export_social_media=args.export_social_media,
+        export_email=args.export_email,
+        export_summary=args.export_summary,
+        export_csv=args.export_csv,
     )
 
 

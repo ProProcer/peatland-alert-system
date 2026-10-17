@@ -17,6 +17,57 @@ On Windows without activating the venv, call `.venv\Scripts\python.exe` instead 
 
 `--mock` validates the three inputs and replays `mock_output.json` (fixed CRITICAL fixture with all five bilingual messages and `water_source: null`). Live mode runs the deterministic policy in `policy.py`, persists dedupe/cooldown state under `state/` (gitignored), and appends simulated notification lines to `logs/`.
 
+## Extended Features (Beyond Team Playbook)
+
+### Social Media Post Generation
+Generate Twitter/X and Facebook posts for dispatches:
+```bash
+python -m c_agent.agent --data-dir data/demo --output data/demo/dispatch.json --export-social-media data/demo/social_media.json
+```
+- Twitter posts: ≤280 characters with hashtags
+- Facebook posts: More detailed with full incident information
+- All posts marked as "SIMULASI/SIMULATION"
+
+### Email Notifications
+Generate email templates for dispatches:
+```bash
+python -m c_agent.agent --data-dir data/demo --output data/demo/dispatch.json --export-email data/demo/email_summary.json
+```
+- Individual dispatch emails with full details
+- Batch summary emails for multiple dispatches
+- Bilingual subject lines and bodies
+
+### Summary Statistics
+Generate summary statistics for analysis:
+```bash
+python -m c_agent.agent --data-dir data/demo --output data/demo/dispatch.json --export-summary data/demo/summary.json
+```
+- Total dispatches by action type
+- Dispatches by priority level
+- Audience distribution
+- Water source availability statistics
+
+### CSV Export
+Export dispatches to CSV for spreadsheet analysis:
+```bash
+python -m c_agent.agent --data-dir data/demo --output data/demo/dispatch.json --export-csv data/demo/dispatch.csv
+```
+
+### HTTP Server
+Run a local HTTP server for frontend integration:
+```bash
+python -m c_agent.server --host 127.0.0.1 --port 8000
+# or
+python -m c_agent.run_server --host 127.0.0.1 --port 8000
+```
+API endpoints:
+- `/api/dispatch` - Dispatch data
+- `/api/summary` - Summary statistics
+- `/api/risk-distribution` - Risk level distribution
+- `/api/social-media` - Social media posts
+- `/api/email-summary` - Email summary
+- `/api/timeline` - Incident timeline
+
 Policy summary (see `decision_rules.md`):
 
 1. Resolve each cell to one driving horizon (highest level, then score, then shortest horizon).

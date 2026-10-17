@@ -1,0 +1,14 @@
+{
+  "subject": {
+    "id": "[SIMULASI] Ringkasan Peringatan - 1 Dispatch (1 Kritis, 0 Tinggi)",
+    "en": "[SIMULATION] Alert Summary - 1 Dispatches (1 Critical, 0 High)"
+  },
+  "body": {
+    "id": "RINGKASAN PERINGATAN GAMBUT - SIMULASI\n\nTotal Dispatch: 1\nKritis: 1\nTinggi: 0\nModerate/Low: 0\n\nDETAIL DISPATCH:\n\n- d_20261017_0001: DISPATCH di sel -2.35_114.05\n",
+    "en": "PEAT FIRE ALERT SUMMARY - SIMULATION\n\nTotal Dispatches: 1\nCritical: 1\nHigh: 0\nModerate/Low: 0\n\nDISPATCH DETAILS:\n\n- d_20261017_0001: DISPATCH at cell -2.35_114.05\n"
+  },
+  "count": 1,
+  "critical_count": 1,
+  "high_count": 0,
+  "generated_at": "2026-10-17T09:05:00Z"
+}

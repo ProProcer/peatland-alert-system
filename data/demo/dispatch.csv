@@ -1,0 +1,2 @@
+dispatch_id,cell_id,ts,action,priority,lat,lon,audiences,water_source_kind,water_source_distance_km
+d_20261017_0001,-2.35_114.05,2026-10-17T09:05:00Z,DISPATCH,1,-2.35,114.05,"manggala_agni,mpa,bpbd,brgm,leadership",canal,4.007

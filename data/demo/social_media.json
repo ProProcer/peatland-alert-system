@@ -1,0 +1,16 @@
+{
+  "twitter": [
+    {
+      "id": "🔥 SIMULASI: Peringatan kebakaran gambut di -2.35, 114.05 (sel -2.35_114.05). Risk 0.91 for 72h on -2.35_114.05. Koordinasi patroli segera. #PeatFireAlert #Kalimantan",
+      "en": "🔥 SIMULATION: Peat fire warning at -2.35, 114.05 (cell -2.35_114.05). Risk 0.91 for 72h on -2.35_114.05. Coordinate patrol immediately. #PeatFireAlert #Kalimantan"
+    }
+  ],
+  "facebook": [
+    {
+      "id": "🔔 SIMULASI - PERINGATAN KEBAKARAN GAMBUT\n\n📍 Lokasi: -2.35, 114.05 (Sel: -2.35_114.05)\n⚠️ Status: DISPATCH (Prioritas: 1)\n📊 Risk 0.91 for 72h on -2.35_114.05; 22 days since rain; deep soil moisture 0.14 (Δ7d -0.06). Top factors: days_since_rain=0.34, sm_27_81_delta_7d=0.24, vpd_mean_24h=0.19. Sumber air terdekat: canal di -2.33, 114.02 (4.007 km). Simulated alert only.\n\nTim Manggala Agni, BPBD, dan BRGM diminta siaga. Masyarakat di sekitar diminta waspada dan tidak membakar lahan.\n\n#PeatFireAlert #Kalimantan #KebakaranHutan #Bencana",
+      "en": "🔔 SIMULATION - PEAT FIRE ALERT\n\n📍 Location: -2.35, 114.05 (Cell: -2.35_114.05)\n⚠️ Status: DISPATCH (Priority: 1)\n📊 Risk 0.91 for 72h on -2.35_114.05; 22 days since rain; deep soil moisture 0.14 (Δ7d -0.06). Top factors: days_since_rain=0.34, sm_27_81_delta_7d=0.24, vpd_mean_24h=0.19. Sumber air terdekat: canal di -2.33, 114.02 (4.007 km). Simulated alert only.\n\nManggala Agni, BPBD, and BRGM teams are requested to stay alert. Nearby communities are advised to remain alert and avoid land burning.\n\n#PeatFireAlert #Kalimantan #ForestFire #Disaster"
+    }
+  ],
+  "generated_at": "2026-10-17T09:05:00Z",
+  "total_dispatches": 1
+}

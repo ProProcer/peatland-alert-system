@@ -1,0 +1,20 @@
+{
+  "total_dispatches": 1,
+  "by_action": {
+    "DISPATCH": 1
+  },
+  "by_priority": {
+    "1": 1
+  },
+  "by_audience": {
+    "manggala_agni": 1,
+    "mpa": 1,
+    "bpbd": 1,
+    "brgm": 1,
+    "leadership": 1
+  },
+  "cells_affected": 1,
+  "with_water_source": 1,
+  "without_water_source": 0,
+  "generated_at": "2026-10-17T09:34:59Z"
+}
