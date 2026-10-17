@@ -1,0 +1,22 @@
+defaults:
+  - inference_schema
+  - override hydra/job_logging: disabled
+  - _self_
+
+paths:
+  features: ${oc.env:PEAT_FEATURES,data/processed/features.json}
+  history: ${oc.env:PEAT_HISTORY,data/processed/history.parquet}
+  model_dir: ${oc.env:PEAT_MODELS,b_model/model}
+  output: ${oc.env:PEAT_RISK,data/processed/risk.json}
+horizons: [24, 48, 72]
+imputation:
+  continuous: artifact_median
+  hotspot_counts: artifact_median
+max_seconds: 60.0
+
+hydra:
+  job:
+    chdir: false
+  output_subdir: null
+  run:
+    dir: .

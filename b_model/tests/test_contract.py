@@ -95,6 +95,37 @@ def _validate_single_risk_record(rec: dict):
 class TestRiskContract:
     """Tests validating Contract 3.2 on mock_output.json and live risk.json."""
 
+    @pytest.mark.parametrize("field,value", [
+        ("ts", "2026-02-30T09:00:00Z"),
+        ("ts", "2026-10-17T09:00:00+00:00"),
+        ("cell_id", "114.05_-2.35"),
+        ("risk_score", float("nan")),
+        ("risk_score", True),
+        ("risk_score", -999),
+        ("horizon_h", 24.0),
+        ("risk_level", "LOW"),
+    ])
+    def test_reject_invalid_risk(self, field, value):
+        records = json.loads(DEFAULT_MOCK_OUTPUT_PATH.read_text())
+        records[0][field] = value
+        with pytest.raises(ValueError):
+            validate_risk_contract(records)
+
+    def test_reject_nonfinite_and_sentinel_factors(self):
+        for value in (-999, float("inf"), float("nan"), True):
+            records = json.loads(DEFAULT_MOCK_OUTPUT_PATH.read_text())
+            records[0]["top_factors"][0]["contribution"] = value
+            with pytest.raises(ValueError):
+                validate_risk_contract(records)
+
+    def test_reject_duplicate_risks_and_extra_fields(self):
+        records = json.loads(DEFAULT_MOCK_OUTPUT_PATH.read_text())
+        with pytest.raises(ValueError):
+            validate_risk_contract(records + [records[0]])
+        records[0]["scores"] = {}
+        with pytest.raises(ValueError):
+            validate_risk_contract(records)
+
     def test_risk_level_boundaries(self):
         """Tests exact threshold definitions: LOW < 0.35 <= MODERATE < 0.60 <= HIGH < 0.80 <= CRITICAL."""
         assert get_risk_level(0.0) == "LOW"
@@ -604,6 +635,111 @@ class TestMLCorrectnessAndCalibration:
         assert lt_72 > lt_48 > lt_24, (
             f"Expected lead_time_72h ({lt_72}) > lead_time_48h ({lt_48}) > lead_time_24h ({lt_24})"
         )
+
+
+class TestHydraInference:
+    """Inference acceptance checks independent of claimed training quality."""
+
+    @pytest.fixture
+    def inputs(self, tmp_path):
+        source = tmp_path / "features.json"
+        history = tmp_path / "history.parquet"
+        generate_mock_data_if_missing(features_path=source, history_path=history,
+                                      num_cells=3, days_history=2)
+        return source, history
+
+    def test_latest_null_is_not_backfilled_from_an_older_hour(self, inputs):
+        source, _ = inputs
+        records = json.loads(source.read_text())
+        newer = json.loads(json.dumps(records[0]))
+        newer["ts"] = "2026-10-17T10:00:00Z"
+        newer["weather"]["sm_27_81"] = None
+        source.write_text(json.dumps(records + [newer]))
+        df = flatten_features_json(source)
+        latest = df.loc[df.cell_id == newer["cell_id"]].iloc[0]
+        assert latest.ts == newer["ts"]
+        assert pd.isna(latest.sm_27_81)
+
+    def test_history_predictor_columns_and_dtypes(self, inputs):
+        source, history = inputs
+        reference = pd.read_parquet(history).drop(columns=["target_24h", "target_48h", "target_72h"])
+        actual = flatten_features_json(source, history_path=history)
+        assert actual.columns.tolist() == reference.columns.tolist()
+        assert actual.dtypes.equals(reference.dtypes)
+
+    @pytest.mark.parametrize("bad_value", [-999, float("nan"), float("inf"), "bad", True])
+    def test_reject_bad_measurements(self, inputs, bad_value):
+        source, _ = inputs
+        records = json.loads(source.read_text())
+        records[0]["weather"]["temp_c"] = bad_value
+        source.write_text(json.dumps(records))
+        with pytest.raises(ValueError):
+            flatten_features_json(source)
+
+    def test_missing_input_does_not_create_mock_files(self, tmp_path):
+        source = tmp_path / "absent.json"
+        with pytest.raises(FileNotFoundError):
+            flatten_features_json(source)
+        assert not source.exists()
+
+    def test_structured_config_validation(self):
+        from omegaconf import OmegaConf
+        from omegaconf.errors import OmegaConfBaseException
+        from b_model.config import validate_config
+        for invalid in ({"horizons": [24]}, {"paths": {"output": "other.json"}},
+                        {"max_seconds": 61}, {"imputation": {"continuous": "zero"}}):
+            with pytest.raises(ValueError):
+                validate_config(OmegaConf.create(invalid))
+        for invalid in ({"typo": 1}, {"max_seconds": "invalid"}):
+            with pytest.raises(OmegaConfBaseException):
+                validate_config(OmegaConf.create(invalid))
+
+    def test_nullable_counts_are_imputed_without_modifying_json(self, inputs, tmp_path):
+        source, history = inputs
+        from b_model.predict import run_configured
+        from omegaconf import OmegaConf
+        records = json.loads(source.read_text())
+        records[0]["fire"]["hotspots_in_cell_24h"] = None
+        records[0]["weather"]["sm_27_81"] = None
+        source.write_text(json.dumps(records))
+        before = source.read_bytes()
+        for strategy in ("artifact_median", "zero"):
+            output = tmp_path / strategy / "risk.json"
+            summary = run_configured(OmegaConf.create({
+                "paths": {"features": str(source), "history": str(history),
+                          "model_dir": str(DEFAULT_MODEL_DIR), "output": str(output)},
+                "imputation": {"hotspot_counts": strategy},
+            }))
+            validate_risk_contract(json.loads(output.read_text()))
+            assert set(summary[records[0]["cell_id"]]["scores"]) == set(HORIZONS)
+        assert source.read_bytes() == before
+
+    def test_hydra_cli_300_cells_under_60_seconds(self, inputs, tmp_path):
+        import os
+        import subprocess
+        source, history = inputs
+        template = json.loads(source.read_text())[0]
+        records = []
+        for index in range(300):
+            record = json.loads(json.dumps(template))
+            record["lat"] = round(-2.35 - (index // 30) * 0.1, 2)
+            record["lon"] = round(114.05 + (index % 30) * 0.1, 2)
+            record["cell_id"] = f'{record["lat"]:.2f}_{record["lon"]:.2f}'
+            records.append(record)
+        source.write_text(json.dumps(records))
+        output = tmp_path / "risk.json"
+        env = dict(os.environ, OMP_NUM_THREADS="2", OPENBLAS_NUM_THREADS="2")
+        start = time.perf_counter()
+        result = subprocess.run([
+            sys.executable, "-m", "b_model.predict", f"paths.features={source.as_posix()}",
+            f"paths.history={history.as_posix()}", f"paths.output={output.as_posix()}",
+        ], cwd=PROJECT_ROOT, env=env, capture_output=True, text=True, timeout=60)
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert time.perf_counter() - start < 60
+        payload = json.loads(output.read_text())
+        assert len(payload) == 900
+        validate_risk_contract(payload)
+        assert {r["cell_id"] for r in payload} == {r["cell_id"] for r in records}
 
 
 class TestEndToEndPipeline:

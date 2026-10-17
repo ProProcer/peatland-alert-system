@@ -4,6 +4,8 @@ Strictly adheres to Contract 3.1 (/data/processed/features.json).
 """
 
 import json
+import re
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 import numpy as np
@@ -55,7 +57,8 @@ def flatten_feature_record(record: Dict[str, Any]) -> Dict[str, Any]:
 
 def flatten_features_json(
     json_path: Path = DEFAULT_FEATURES_PATH,
-    latest_only: bool = True
+    latest_only: bool = True,
+    history_path: Optional[Path] = None,
 ) -> pd.DataFrame:
     """
     Reads nested Contract 3.1 JSON and returns a validated DataFrame with exact FEATURE_COLUMNS order.
@@ -68,44 +71,122 @@ def flatten_features_json(
     Returns:
         pd.DataFrame containing metadata + all FEATURE_COLUMNS in exact canonical order
     """
-    if not json_path.exists() or json_path.stat().st_size == 0:
-        logger.warning("Features file %s missing or empty; generating mock features.", json_path)
-        generate_mock_data_if_missing(features_path=json_path)
+    json_path = Path(json_path)
+    if not json_path.exists():
+        raise FileNotFoundError(json_path)
 
     with open(json_path, "r", encoding="utf-8") as f:
-        raw_data = json.load(f)
+        raw_data = json.load(f, object_pairs_hook=_unique_keys,
+                             parse_constant=_invalid_constant)
 
-    if isinstance(raw_data, dict):
-        raw_list = [raw_data]
-    elif isinstance(raw_data, list):
+    if isinstance(raw_data, list) and raw_data:
         raw_list = raw_data
     else:
         raise ValueError(f"Unexpected JSON root type in {json_path}: {type(raw_data)}")
 
+    for record in raw_list:
+        validate_feature_record(record)
     flattened = [flatten_feature_record(rec) for rec in raw_list]
     df = pd.DataFrame(flattened)
+    if df.duplicated(["cell_id", "ts"]).any():
+        raise ValueError("Duplicate feature (cell_id, ts)")
 
     if df.empty:
         return df
 
     # Deduplicate multi-hour inputs: keep latest timestamp per cell_id
     if latest_only and "cell_id" in df.columns and "ts" in df.columns:
-        df = df.sort_values("ts").groupby("cell_id", as_index=False).last()
+        df = df.assign(_time=pd.to_datetime(df["ts"], utc=True)).sort_values("_time")
+        df = df.drop_duplicates("cell_id", keep="last").drop(columns="_time")
 
     # Ensure all canonical feature columns exist in exact order
     for col in FEATURE_COLUMNS:
         if col not in df.columns:
             df[col] = np.nan
         else:
-            df[col] = pd.to_numeric(df[col], errors="coerce")
+            df[col] = pd.to_numeric(df[col], errors="raise").astype("float64")
 
     # Order columns: metadata first, then exact FEATURE_COLUMNS order
     metadata_cols = [c for c in ["schema_version", "cell_id", "ts", "lat", "lon"] if c in df.columns]
     ordered_cols = metadata_cols + [c for c in FEATURE_COLUMNS if c not in metadata_cols]
-    df = df[ordered_cols]
+    df = df[ordered_cols].reset_index(drop=True)
+    if history_path is not None:
+        df = align_history_schema(df, Path(history_path))
 
     logger.info("Loaded %d unique cell feature rows from %s", len(df), json_path)
     return df
+
+
+def _unique_keys(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"Duplicate JSON key: {key}")
+        result[key] = value
+    return result
+
+
+def _invalid_constant(value):
+    raise ValueError(f"Non-finite JSON number: {value}")
+
+
+def validate_feature_record(record):
+    """Reject corrupt metadata/measurements before any model transformation."""
+    if record.get("schema_version") != SCHEMA_VERSION:
+        raise ValueError("Expected schema_version 1.0")
+    ts = record["ts"]
+    if not isinstance(ts, str) or not re.fullmatch(
+        r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z", ts
+    ):
+        raise ValueError("Timestamp must be ISO-8601 UTC ending in Z")
+    datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    lat, lon = record["lat"], record["lon"]
+    if (type(lat) not in (int, float) or type(lon) not in (int, float)
+            or not -90 < lat < 90 or not -180 < lon < 180):
+        raise ValueError("Invalid lat/lon coordinates")
+    if record["cell_id"] != f"{lat:.2f}_{lon:.2f}":
+        raise ValueError("cell_id does not match lat/lon")
+    for value in (lat, lon):
+        if not np.isclose((value - 0.05) / 0.1, round((value - 0.05) / 0.1), rtol=0, atol=1e-7):
+            raise ValueError("Cell centers must be on .x5")
+    for group, columns in FEATURE_GROUPS.items():
+        values = record.get(group, {})
+        for column in columns:
+            value = values.get(column)
+            if value is not None and (type(value) not in (int, float)
+                                      or not np.isfinite(value) or value == -999):
+                raise ValueError(f"Invalid measurement: {column}; missing values must be null")
+    if all(record.get("weather", {}).get(c) is None for c in FEATURE_GROUPS["weather"]):
+        raise ValueError("All-null weather is prohibited")
+
+
+def align_history_schema(df: pd.DataFrame, history_path: Path) -> pd.DataFrame:
+    """Match the historical predictor projection, excluding unavailable target labels.
+
+    Read only Parquet metadata. Nullable integer extension types preserve missing
+    counts until the fitted model imputer is applied; no labels are fabricated.
+    """
+    import pyarrow.parquet as pq
+    import pyarrow as pa
+    schema = pq.read_schema(history_path)
+    columns = [name for name in schema.names if not name.startswith("target_")]
+    required = {"cell_id", "ts", "lat", "lon", *FEATURE_COLUMNS}
+    if not required.issubset(columns) or not set(columns).issubset(df.columns):
+        raise ValueError("history.parquet predictor schema differs from canonical features")
+    result = df[columns].copy()
+    for field in schema:
+        if field.name not in columns:
+            continue
+        if pa.types.is_integer(field.type) and result[field.name].isna().any():
+            if (result[field.name].dropna() % 1 != 0).any():
+                raise ValueError(f"Fractional integer feature: {field.name}")
+            result[field.name] = result[field.name].astype(f"Int{field.type.bit_width}")
+        else:
+            dtype = field.type.to_pandas_dtype()
+            if pa.types.is_integer(field.type) and (result[field.name] % 1 != 0).any():
+                raise ValueError(f"Fractional integer feature: {field.name}")
+            result[field.name] = result[field.name].astype(dtype)
+    return result
 
 
 def load_live_features(

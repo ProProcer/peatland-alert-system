@@ -6,6 +6,8 @@ pyarrow>=14.0.0
 scikit-learn>=1.4.0
 joblib>=1.3.0
 pytest>=8.0.0
+hydra-core==1.3.2
+omegaconf==2.3.0
 
 # Optional hardware acceleration on LinuxONE s390x (installed in IBM Z environment):
 # snapml>=1.13.0

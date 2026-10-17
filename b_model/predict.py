@@ -4,16 +4,16 @@ Consumes /data/processed/features.json (Contract 3.1).
 Outputs /data/processed/risk.json (Contract 3.2).
 Includes deduplication of multi-hour inputs, signed directional feature attribution,
 robust negative cell_id parsing, multi-cell surge injection, and optional features.json persistence.
-Designed for ultra-fast, zero-crash execution on IBM Z / LinuxONE (s390x) & standard architectures.
+Hardware compatibility and latency require verification on the deployment target.
 """
 
 import argparse
+import tempfile
 import json
 import os
 import sys
 import time
 from pathlib import Path
-import sys
 
 # Ensure project root is in sys.path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -44,13 +44,6 @@ os.environ.setdefault("LOKY_MAX_CPU_COUNT", "4")
 
 logger = setup_logger("b_model.predict")
 
-# Check for SHAP availability
-try:
-    import shap
-
-    SHAP_AVAILABLE = True
-except ImportError:
-    SHAP_AVAILABLE = False
 
 
 def compute_local_attributions(
@@ -134,49 +127,59 @@ def compute_local_attributions(
 
 
 def validate_risk_contract(records: List[Dict[str, Any]]) -> None:
-    """
-    Validates the generated risk records against Contract 3.2 before persistence.
-    Raises ValueError on any violation.
-    """
-    if not isinstance(records, list) or len(records) == 0:
-        raise ValueError("Contract 3.2 Error: Output risk records must be a non-empty list.")
-
-    valid_horizons = {24, 48, 72}
-
-    for idx, r in enumerate(records):
-        for key in ["schema_version", "cell_id", "ts", "horizon_h", "risk_score", "risk_level", "top_factors", "model_version"]:
-            if key not in r:
-                raise ValueError(f"Contract 3.2 Error: Record #{idx} missing required key '{key}'")
-
-        if r["schema_version"] != SCHEMA_VERSION:
-            raise ValueError(f"Contract 3.2 Error: Invalid schema_version '{r['schema_version']}', expected '{SCHEMA_VERSION}'")
-        if r["model_version"] != MODEL_VERSION:
-            raise ValueError(f"Contract 3.2 Error: Invalid model_version '{r['model_version']}', expected '{MODEL_VERSION}'")
-
-        if r["horizon_h"] not in valid_horizons:
-            raise ValueError(f"Contract 3.2 Error: Invalid horizon_h {r['horizon_h']}, must be in {valid_horizons}")
-
-        score = r["risk_score"]
-        if not (0.0 <= score <= 1.0):
-            raise ValueError(f"Contract 3.2 Error: risk_score {score} outside [0.0, 1.0]")
-        expected_level = get_risk_level(score)
-        if r["risk_level"] != expected_level:
-            raise ValueError(
-                f"Contract 3.2 Error: Level mismatch for score {score}: got '{r['risk_level']}', expected '{expected_level}'"
-            )
-
-        ts = str(r["ts"])
-        if not ts.endswith("Z"):
-            raise ValueError(f"Contract 3.2 Error: Timestamp '{ts}' must be UTC ending in 'Z'")
-
-        tf = r["top_factors"]
-        if not isinstance(tf, list) or len(tf) < 1:
-            raise ValueError(f"Contract 3.2 Error: Record #{idx} top_factors must be a non-empty list")
-        for f_idx, factor in enumerate(tf):
-            if "feature" not in factor or "contribution" not in factor:
-                raise ValueError(f"Contract 3.2 Error: top_factors #{f_idx} missing 'feature' or 'contribution'")
-            if not isinstance(factor["contribution"], (int, float)):
-                raise ValueError(f"Contract 3.2 Error: factor contribution must be numeric")
+    """Validate frozen Contract 3.2, including semantic and finite-value checks."""
+    from datetime import datetime
+    import math
+    import re
+    required = {"schema_version", "cell_id", "ts", "horizon_h", "risk_score",
+                "risk_level", "top_factors", "model_version"}
+    if not isinstance(records, list) or not records:
+        raise ValueError("risk.json must be a nonempty array")
+    seen = set()
+    for record in records:
+        if not isinstance(record, dict) or set(record) != required:
+            raise ValueError("Incorrect Contract 3.2 fields")
+        if record["schema_version"] != SCHEMA_VERSION:
+            raise ValueError("Invalid schema_version")
+        if not isinstance(record["model_version"], str) or not record["model_version"]:
+            raise ValueError("model_version must be nonempty")
+        cell = record["cell_id"]
+        if not isinstance(cell, str) or not re.fullmatch(r"-?\d+\.\d{2}_-?\d+\.\d{2}", cell):
+            raise ValueError("Invalid cell_id")
+        lat, lon = map(float, cell.split("_"))
+        if not -90 < lat < 90 or not -180 < lon < 180:
+            raise ValueError("Cell coordinates out of range")
+        if cell != f"{lat:.2f}_{lon:.2f}":
+            raise ValueError("Noncanonical cell_id")
+        for value in (lat, lon):
+            if not math.isclose((value - 0.05) / 0.1, round((value - 0.05) / 0.1), abs_tol=1e-7):
+                raise ValueError("Cell centers must be on .x5")
+        ts = record["ts"]
+        if not isinstance(ts, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z", ts):
+            raise ValueError("Invalid UTC timestamp")
+        datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        horizon = record["horizon_h"]
+        if type(horizon) is not int or horizon not in HORIZONS:
+            raise ValueError("Invalid horizon")
+        key = (cell, horizon)
+        if key in seen:
+            raise ValueError("Duplicate cell/horizon prediction")
+        seen.add(key)
+        score = record["risk_score"]
+        if type(score) not in (int, float) or not math.isfinite(score) or not 0 <= score <= 1:
+            raise ValueError("Invalid risk_score")
+        if record["risk_level"] != get_risk_level(score):
+            raise ValueError("Risk threshold mismatch")
+        factors = record["top_factors"]
+        if not isinstance(factors, list) or not factors:
+            raise ValueError("top_factors must be nonempty")
+        for factor in factors:
+            if not isinstance(factor, dict) or set(factor) != {"feature", "contribution"}:
+                raise ValueError("Invalid factor fields")
+            value = factor["contribution"]
+            if (factor["feature"] not in FEATURE_COLUMNS or type(value) not in (int, float)
+                    or not math.isfinite(value) or value == -999):
+                raise ValueError("Invalid factor value")
 
 
 def parse_surge_cell_list(df: pd.DataFrame, surge_spec: str) -> List[str]:
@@ -335,23 +338,26 @@ def run_predictions(
     surge_cell: Optional[str] = None,
     write_surged_features: bool = False,
     surge_output_features: Optional[Path] = None,
+    history_path: Optional[Path] = None,
+    hotspot_imputation: str = "artifact_median",
+    max_seconds: float = 60.0,
 ) -> List[Dict[str, Any]]:
     """
     Executes live inference on features.json and writes contract-validated risk.json.
     Deduplicates multi-hour inputs: guarantees exactly 1 prediction per (cell_id, horizon_h).
     Optionally persists surged features back to disk for Role C / Role D consistency.
-    Guaranteed to run in < 60 seconds.
+    Checks the latency budget before publishing; target hardware must be benchmarked.
     """
-    start_time = time.time()
+    start_time = time.perf_counter()
     logger.info("Starting live inference from %s", features_path)
 
     # 1. Load, flatten, and deduplicate live features (keep latest hour per cell)
-    df = flatten_features_json(features_path, latest_only=True)
+    df = flatten_features_json(features_path, latest_only=True, history_path=history_path)
     if df.empty:
         raise ValueError(f"No feature records available in {features_path}")
 
-    # Deduplicate defensively: sort by ts ascending and keep latest per cell
-    df = df.sort_values("ts").groupby("cell_id", as_index=False).last()
+    # Keep positional indices aligned with vectorized model outputs.
+    df = df.reset_index(drop=True)
 
     # Optional synthetic surge injection for Role D demo
     if surge_cell:
@@ -363,7 +369,12 @@ def run_predictions(
             feat_out = surge_output_features or features_path
             persist_surged_features(features_path, feat_out, target_cells)
 
-    X_raw = df[FEATURE_COLUMNS].copy()
+    if hotspot_imputation not in ("artifact_median", "zero"):
+        raise ValueError("Unsupported hotspot imputation")
+    X_raw = df[FEATURE_COLUMNS].astype("float64").copy()
+    if hotspot_imputation == "zero":
+        counts = ["hotspots_in_cell_24h", "hotspots_10km_7d"]
+        X_raw[counts] = X_raw[counts].fillna(0.0)
     results: List[Dict[str, Any]] = []
 
     # 2. Iterate through each horizon (24, 48, 72)
@@ -375,17 +386,27 @@ def run_predictions(
             )
 
         artifact = joblib.load(model_file)
+        if artifact.get("feature_columns") != FEATURE_COLUMNS:
+            raise ValueError("Artifact feature order differs from canonical predictors")
+        if artifact.get("horizon_h") != horizon or artifact.get("schema_version") != SCHEMA_VERSION:
+            raise ValueError("Artifact horizon/schema mismatch")
         imputer = artifact["imputer"]
+        if getattr(imputer, "strategy", None) != "median":
+            raise ValueError("Expected fitted median imputer")
         scaler = artifact["scaler"]
         primary_model = artifact.get("primary_model", artifact.get("model"))
         signed_weights = artifact.get("signed_feature_weights", artifact.get("feature_weights"))
 
         # Preprocessing transforms with z-score clipping
         X_imp = imputer.transform(X_raw)
+        if X_imp.shape != X_raw.shape or not np.isfinite(X_imp).all():
+            raise ValueError("Imputer must produce 27 finite predictor columns")
         X_scaled = np.clip(scaler.transform(X_imp), -3.0, 3.0)
 
         # Live prediction with calibrated probabilities clipped to [0.02, 0.96]
         raw_probs = primary_model.predict_proba(X_imp)[:, 1]
+        if raw_probs.shape != (len(df),) or not np.isfinite(raw_probs).all() or ((raw_probs < 0) | (raw_probs > 1)).any():
+            raise ValueError("Model produced invalid probabilities")
         probs = np.clip(raw_probs, 0.02, 0.96)
 
         # Signed local attributions for top_factors
@@ -417,10 +438,22 @@ def run_predictions(
 
     # 4. Atomic file write
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(results, f, indent=2)
+    if time.perf_counter() - start_time >= max_seconds:
+        raise TimeoutError("Inference exceeded the configured latency budget")
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=output_path.parent,
+                                         prefix=".risk-", suffix=".tmp", delete=False) as f:
+            temporary = Path(f.name)
+            json.dump(results, f, indent=2, allow_nan=False)
+        if time.perf_counter() - start_time >= max_seconds:
+            raise TimeoutError("Inference exceeded the configured latency budget")
+        temporary.replace(output_path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
 
-    elapsed = time.time() - start_time
+    elapsed = time.perf_counter() - start_time
     logger.info(
         "Successfully produced %d predictions in %.2fs -> %s (Valid Contract 3.2)",
         len(results),
@@ -489,5 +522,59 @@ def main(args_list: Optional[List[str]] = None):
         sys.exit(1)
 
 
+def summarize_predictions(records):
+    """Internal cell summary; never changes the frozen risk.json array."""
+    summary = {}
+    for record in records:
+        cell = summary.setdefault(record["cell_id"], {"scores": {}, "levels": {}, "top_factors": {}})
+        horizon = record["horizon_h"]
+        cell["scores"][horizon] = record["risk_score"]
+        cell["levels"][horizon] = record["risk_level"]
+        cell["top_factors"][horizon] = record["top_factors"]
+    return summary
+
+
+def run_configured(config):
+    from b_model.config import PROJECT_ROOT, validate_config
+    config = validate_config(config)
+    def resolve(value):
+        path = Path(value).expanduser()
+        return path if path.is_absolute() else PROJECT_ROOT / path
+    output = resolve(config.paths.output)
+    source = resolve(config.paths.features)
+    history = resolve(config.paths.history) if config.paths.history else None
+    if output.resolve() in {source.resolve(), history.resolve() if history else None}:
+        raise ValueError("Output must not overwrite inputs")
+    results = run_predictions(features_path=source, model_dir=resolve(config.paths.model_dir),
+                              output_path=output, history_path=history,
+                              hotspot_imputation=config.imputation.hotspot_counts,
+                              max_seconds=config.max_seconds)
+    return summarize_predictions(results)
+
+
+# Hydra is required by the configured entry point; legacy imports remain usable.
+try:
+    import hydra
+except ImportError:
+    hydra = None
+
+if hydra is not None:
+    from b_model.config import register_config
+    register_config()
+
+    @hydra.main(version_base="1.3", config_path="conf", config_name="config")
+    def hydra_main(config):
+        return run_configured(config)
+else:
+    def hydra_main():
+        raise ImportError("Install b_model/requirements.txt to use Hydra inference")
+
+
 if __name__ == "__main__":
-    main()
+    # Keep Role E's existing --input/--output CLI and surge flags compatible.
+    legacy_flags = ("--input", "--features-path", "--output", "--output-path",
+                    "--model-dir", "--surge-cell", "--write-surged-features", "--surge-output-features")
+    if any(arg.split("=")[0] in legacy_flags for arg in sys.argv[1:]):
+        main()
+    else:
+        hydra_main()

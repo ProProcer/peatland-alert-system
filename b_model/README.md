@@ -29,3 +29,58 @@ Coordinate with A on `target_24h`, `target_48h`, `target_72h`, n/h-confidence ho
 Preserve 27 canonical input features and the fixed risk thresholds. Emit the latest timestamp per cell and all three horizons, along with top contributing factors. Existing `predict.py` has surge flags; write surged features to an isolated file to keep C's inputs consistent during a demo.
 
 Coordinate optional IBM Snap ML and `s390x` dependency checks with E. Do not assume local wheels or latency claims establish LinuxONE compatibility. State clearly that soil data is modeled and FIRMS observes surface emergence; demonstrate how sensor readings map to the existing weather fields. Done when inference on A's real features completes within a minute and the risk contract validates.
+
+## Hydra inference (PIC 1)
+
+Install `b_model/requirements.txt` using the root constraints. The configuration is
+`b_model/conf/config.yaml`, backed by dataclasses in `config.py`. For an isolated run:
+
+```bash
+python -m b_model.predict paths.features=a_data/mock_output.json paths.output=b_model/.test-output/risk.json
+python -m contracts.validate --kind risk b_model/.test-output/risk.json
+```
+
+Paths resolve relative to the repository root, including when called from another
+directory. Override them with Hydra arguments or environment variables
+`PEAT_FEATURES`, `PEAT_HISTORY`, `PEAT_MODELS`, and `PEAT_RISK`. Windows Hydra overrides
+should use forward slashes and quote the whole argument when it contains spaces.
+The configured output basename must be `risk.json`. The existing argparse
+`--input` / `--output` command and surge flags remain supported; use one CLI style
+per invocation. Hydra logging creates no files and does not change directories.
+
+`paths.history` reads only Parquet schema metadata to align predictor column order
+and dtypes. Targets (`target_24h`, `target_48h`, `target_72h`) are excluded because
+future outcomes are unavailable at inference time. Metadata absent from history,
+such as `schema_version`, remains validated at input rather than fabricated as a
+historical column. Missing integer measurements use pandas nullable integer dtypes
+until imputation; this is the necessary representation difference from non-nullable
+historical integer columns. Set `paths.history=null` explicitly to use the canonical
+predictor schema without a historical reference.
+
+Continuous nulls use each saved model's fitted median imputer. Hotspot counts also
+use artifact medians by default, preserving the existing training preprocessing;
+`imputation.hotspot_counts=zero` explicitly enables zero filling for the two count
+columns. Zero filling is a changed missing-data assumption and should be evaluated
+before operational use. Neither setting modifies the source JSON or emits sentinels.
+Missing input, duplicate records/keys, malformed timestamps, coordinate mismatches,
+nonfinite values, and `-999` measurements fail explicitly instead of creating mocks.
+
+Output is the frozen Contract 3.2 array with all three horizons and each cell's
+latest timestamp, validated before atomic replacement. `summarize_predictions`
+provides an internal `scores` / `levels` / `top_factors` mapping without changing
+the handoff. Existing artifact probability clipping and heuristic directional
+attributions are preserved; those factors are not SHAP values or a causal explanation.
+
+`max_seconds` defaults to 60 and rejects an over-budget result before publishing.
+It is a latency check, not a hard cancellation mechanism for native model code.
+The acceptance suite measures a fresh CLI process on 300 synthetic cells; this
+does not establish performance on A's real data or IBM LinuxONE hardware.
+
+Dependency attribution for Role E's root README inventory:
+
+| Added library | Purpose | Source |
+| --- | --- | --- |
+| Hydra Core 1.3.2 | YAML configuration, composition and CLI overrides | https://hydra.cc/docs/1.3/intro/ |
+| OmegaConf 2.3.0 | Structured configuration validation and environment interpolation | https://omegaconf.readthedocs.io/en/2.3_branch/structured_config.html |
+
+No new datasets are introduced. Root README changes remain with Role E.
