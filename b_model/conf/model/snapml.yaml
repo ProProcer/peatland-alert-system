@@ -1,0 +1,2 @@
+# Explicit selection fails clearly if the optional snapml library is absent.
+backend: snapml

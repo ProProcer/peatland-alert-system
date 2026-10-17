@@ -1,0 +1,22 @@
+# These are directional heuristics, not SHAP values or probability contributions.
+method: signed_standardized
+importance_split: calibration
+permutation_repeats: 5
+# Locked to PIC 1's current implementation until that consumer is updated.
+top_k: 3
+z_score_clip: 3.0
+contribution_clip: 0.60
+priority_multipliers:
+  days_since_rain: 3.0
+  sm_27_81: 3.0
+  vpd_mean_24h: 2.5
+  sm_27_81_delta_7d: 2.5
+  vpd_kpa: 2.0
+  rain_24h_mm: 2.5
+  sm_0_1: 2.0
+  hotspots_10km_7d: 2.0
+  peat_fraction: 2.0
+  et_mm: 0.05
+  et0_mm: 0.05
+  wind_dir_deg: 0.05
+  soil_air_temp_gap_c: 0.05

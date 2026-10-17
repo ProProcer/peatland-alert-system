@@ -17,11 +17,12 @@ Root `constraints.txt` pins scikit-learn 1.6.1, as recorded in the existing arti
 
 `make model-test` runs the existing tests in a temporary copy: some regenerate default historical data, so running pytest directly in the shared workspace can overwrite A's training handoff.
 
-Training is separate:
+Training is separate. PIC 2's Hydra entry point supports configuration preview and overrides:
 
 ```bash
 python -m b_model.train --help
-python -m b_model.train --input data/processed/history.parquet --model-dir /tmp/peatland-model
+python -m b_model.train --cfg job
+python -m b_model.train model=hist_gradient_boosting model.learning_rate=0.05
 ```
 
 Coordinate with A on `target_24h`, `target_48h`, `target_72h`, n/h-confidence hotspot labels, hourly coverage and incomplete future windows. Use chronological validation with a purge gap; prevent future label leakage. Compare the logistic / dryness baseline with gradient boosting and measure precision, recall and lead time honestly. Verify the source and evaluation provenance of the existing historical data, model artifacts and reported metrics before using them as submission evidence.
@@ -84,3 +85,76 @@ Dependency attribution for Role E's root README inventory:
 | OmegaConf 2.3.0 | Structured configuration validation and environment interpolation | https://omegaconf.readthedocs.io/en/2.3_branch/structured_config.html |
 
 No new datasets are introduced. Root README changes remain with Role E.
+
+## Hydra training (PIC 2)
+
+Activate `.venv` and install the declared dependencies:
+
+```bash
+source .venv/bin/activate
+python -m pip install -r b_model/requirements-training.txt
+python -m pip check
+```
+
+Training configuration lives in `conf/training.yaml`, backed by typed schemas in
+`training_config.py`. It is independent of PIC 1's `conf/config.yaml`. Its config
+groups select the main model, engineered dryness feature and explanation settings:
+
+```text
+conf/training.yaml        Paths, split fractions, embargo, seed, baseline, calibration
+conf/model/              auto, hist_gradient_boosting, logistic_regression, snapml
+conf/dryness/default.yaml Weights, normalizing references, explicit missing-value defaults
+conf/explanation/default.yaml Importance settings and feature-priority multipliers
+```
+
+`requirements-training.txt` includes the shared role requirements, the root
+scikit-learn artifact constraint, and `pandas<3`. That pandas bound keeps the
+current PIC 1 Arrow/schema alignment compatible with historical string dtypes;
+coordinate lifting it with PIC 1. No change to PIC 1's requirement file is needed.
+
+```bash
+# Preview without fitting or creating artifacts.
+python -m b_model.train --cfg job
+
+# Run a repeatable experiment without replacing existing model artifacts.
+python -m b_model.train model=hist_gradient_boosting model.max_depth=3 seed=7
+
+# Choose a different primary model; its scaler is fitted inside the saved model.
+python -m b_model.train model=logistic_regression model.logistic_c=0.5
+
+# Override dryness weights together so they still sum to one.
+python -m b_model.train dryness.rain_weight=0.3 dryness.soil_weight=0.5 dryness.air_weight=0.2
+```
+
+Default Hydra output is a timestamped directory under ignored `b_model/runs/`.
+Override `paths.history` and `paths.model_dir` when needed; relative paths resolve
+from the repository root. Every successful run saves three compatible model
+bundles, `metrics.json` and the resolved `training_config.yaml`. Data fingerprint,
+split ranges, backend and library versions are saved for reproducibility. Unknown
+keys, invalid types, incompatible settings and nonfinite values fail explicitly.
+
+Configured runs require all producer-supplied future target columns and never
+silently generate synthetic history. They enforce at least 72 hours between the
+training/calibration and calibration/validation slices. Supply enough history for
+nonempty splits with both classes in training and calibration. Short history fails
+instead of reducing the gap. The older argparse `--input` / `--output` style is
+retained; do not mix it with Hydra overrides. `--force-mock` is an explicit testing
+option, not a substitute for A's labeled historical dataset.
+
+Sigmoid calibration is the configured default; it does not force high-risk scores
+to reach a demo threshold. The legacy direct Python API keeps its old guarded
+calibration and short synthetic split behavior for backward compatibility. New
+metrics retain measured lead times, including null when unobserved, without forcing
+a minimum or an increasing sequence across horizons.
+
+Read [PIC2_HANDOFF.md](PIC2_HANDOFF.md) before changing settings that inference also
+uses. Dryness currently affects the baseline only. Explanation priorities affect
+the saved weights that PIC 1 already consumes; changing the factor count or clipping
+bounds requires a consumer update, so incompatible overrides are rejected today.
+
+Run PIC 2 checks with `python -m pytest b_model/tests/test_training_config.py -q`.
+Run the complete existing/new suite through `make model-test`, which preserves the
+shared data by executing in a temporary copy. See [MODEL_CARD.md](MODEL_CARD.md) for
+the precise target, validation protocol, heuristic explanation limits and evidence
+status. These configurations follow Hydra's [structured-schema](https://hydra.cc/docs/1.3/tutorials/structured_config/schema/)
+and [CLI override](https://hydra.cc/docs/1.3/advanced/override_grammar/basic/) mechanisms.

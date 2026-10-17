@@ -1,0 +1,9 @@
+rain_weight: 0.40
+soil_weight: 0.40
+air_weight: 0.20
+rainless_days_cap: 30.0
+soil_moisture_reference: 0.50
+vpd_reference_kpa: 3.5
+missing_days_since_rain: 0.0
+missing_soil_moisture: 0.30
+missing_vpd_kpa: 1.5
