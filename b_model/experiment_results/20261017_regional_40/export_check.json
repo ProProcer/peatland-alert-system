@@ -1,0 +1,17 @@
+{
+  "24": {
+    "validation_rows": 21120,
+    "max_probability_difference_after_export": 0.0,
+    "artifact_hash_matches_provenance": true
+  },
+  "48": {
+    "validation_rows": 21120,
+    "max_probability_difference_after_export": 0.0,
+    "artifact_hash_matches_provenance": true
+  },
+  "72": {
+    "validation_rows": 21120,
+    "max_probability_difference_after_export": 0.0,
+    "artifact_hash_matches_provenance": true
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "cells": 40,
+  "rows": 656640,
+  "complete_rows": 653760,
+  "old_33_cell_overlap": 2,
+  "source_label_checks": 1969920,
+  "raw_event_labels_exact_match": true,
+  "feature_and_geometry_schema": "passed",
+  "scope_matches_frozen_selection": true,
+  "files_sha256": {
+    "history.parquet": "83c226e5c9fd72c00bbfd487c0fa488147ac7ac90fe939ae64a25f2e0074f945",
+    "features.json": "84195afd80e1be21d3df2fef85bd2be1d80f42cbf9f5e7d642bfe2b9cfd3d696",
+    "features.parquet": "1e97585142f99204df1ce79c3fcb53f3d5bbf98af65bc03b6b53741e3e53aec6",
+    "cells.geojson": "62d1bd5737fb7cb8ca1014d263c1b52a87a8d4b62ee9ae1b82805a2e3436b816"
+  }
+}

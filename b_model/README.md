@@ -1,5 +1,49 @@
 # Role B — ML lead
 
+## Current handoff: updated 40-cell regional scope
+
+Use [REGIONAL_RESULTS.md](REGIONAL_RESULTS.md) and `conf/replay_regional.yaml`
+for the new points across five provinces. The 33-cell reports below are
+historical experiments; their numbers do not describe this new geography.
+
+```bash
+python -m b_model.predict --config-name replay_regional
+python -m contracts.validate --kind risk b_model/experiment_results/20261017_regional_40/risk.json
+python -m b_model.quality b_model/model_regional_40/metrics.json
+```
+
+The named profile binds A's matching `regional_40/features.json` and full history
+to `b_model/model_regional_40/`, with risk in B's regional evidence directory.
+`CURRENT_HANDOFF.json` lists the exact matching A/B paths and fingerprints for
+C/D/E. Switch features, geometry, history and risk together. Shared
+`data/processed/` still represents the separate legacy 33-cell replay and is
+owned jointly by other roles; this B handoff does not mix the two scopes.
+
+Reproduce the new comparison and packaging using fresh output paths:
+
+```bash
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 \
+  python -m b_model.backtest --config b_model/conf/backtest_regional.yaml
+python -m b_model.regional_handoff
+```
+
+The backtest freezes the per-horizon backend choice from three development
+periods before the final period is scored. It includes calibrated dryness
+baselines, all/quiet subgroups and matched top-five budgets. Published regional
+bundles retain the chosen preprocessing and empirical sigmoid calibration.
+
+Software correctness and model acceptance are separate: `make model-test`
+does not require all dry scenarios to become CRITICAL or invent a lead-time
+hierarchy. The explicit `b_model.quality` command exits 1 for a model that fails
+to beat its own saved AP baseline or has zero recall at its recorded cutoff.
+This is only a minimal candidate gate, not operational certification.
+
+Install `b_model/requirements-repair.txt` to run the optional trusted-artifact
+repair test as well. It includes [py-ubjson](https://github.com/Iotic-Labs/py-ubjson)
+(Apache-2.0), a conversion/test dependency rather than a normal inference
+dependency. The incoming `b_model/model/` upload is preserved and its quality
+rejection remains recorded; the regional profile selects separate artifacts.
+
 ## Uploaded XGBoost integration repair
 
 The active `b_model/model/` upload has been integrated with the processed 33-cell

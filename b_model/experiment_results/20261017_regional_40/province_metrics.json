@@ -1,0 +1,1613 @@
+{
+  "24": {
+    "Central Kalimantan": {
+      "rows": 4224,
+      "positives": 3227,
+      "positive_rate": 0.763967803030303,
+      "accuracy_at_0_50": 0.6576704545454546,
+      "balanced_accuracy_at_0_50": 0.6945108644806437,
+      "always_hotspot_accuracy": 0.763967803030303,
+      "always_no_hotspot_accuracy": 0.23603219696969702,
+      "pr_auc": 0.9209554432426691,
+      "ap_lift_over_prevalence": 1.2054898643498713,
+      "roc_auc": 0.792213952051382,
+      "brier": 0.1925493005187214,
+      "score_quantiles": {
+        "min": 0.0321354437967565,
+        "median": 0.5340972361654188,
+        "p90": 0.9999648489201508,
+        "max": 0.9999999999995735
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.8631545133311918,
+          "recall": 0.8326619150914162,
+          "tp": 2687,
+          "fp": 426,
+          "fn": 540,
+          "alert_rows": 3113
+        },
+        "0.50": {
+          "precision": 0.8956019546868058,
+          "recall": 0.6247288503253796,
+          "tp": 2016,
+          "fp": 235,
+          "fn": 1211,
+          "alert_rows": 2251
+        },
+        "0.60": {
+          "precision": 0.904786680541103,
+          "recall": 0.5388906104741246,
+          "tp": 1739,
+          "fp": 183,
+          "fn": 1488,
+          "alert_rows": 1922
+        },
+        "0.80": {
+          "precision": 0.9286182056319581,
+          "recall": 0.4394174155562442,
+          "tp": 1418,
+          "fp": 109,
+          "fn": 1809,
+          "alert_rows": 1527
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 82,
+          "mean_score": 0.07940080576131961,
+          "observed_rate": 0.0
+        },
+        {
+          "lower": 0.1,
+          "rows": 307,
+          "mean_score": 0.15927120848588028,
+          "observed_rate": 0.23778501628664495
+        },
+        {
+          "lower": 0.2,
+          "rows": 387,
+          "mean_score": 0.2557866563887455,
+          "observed_rate": 0.6072351421188631
+        },
+        {
+          "lower": 0.3,
+          "rows": 644,
+          "mean_score": 0.34944515389529784,
+          "observed_rate": 0.734472049689441
+        },
+        {
+          "lower": 0.4,
+          "rows": 553,
+          "mean_score": 0.4476829225382564,
+          "observed_rate": 0.7775768535262206
+        },
+        {
+          "lower": 0.5,
+          "rows": 329,
+          "mean_score": 0.5436918986045756,
+          "observed_rate": 0.8419452887537994
+        },
+        {
+          "lower": 0.6,
+          "rows": 226,
+          "mean_score": 0.6479282017786786,
+          "observed_rate": 0.8938053097345132
+        },
+        {
+          "lower": 0.7,
+          "rows": 169,
+          "mean_score": 0.7558610540335443,
+          "observed_rate": 0.7041420118343196
+        },
+        {
+          "lower": 0.8,
+          "rows": 212,
+          "mean_score": 0.8593697081566894,
+          "observed_rate": 0.7971698113207547
+        },
+        {
+          "lower": 0.9,
+          "rows": 1315,
+          "mean_score": 0.9839425216378467,
+          "observed_rate": 0.9498098859315589
+        }
+      ]
+    },
+    "East Kalimantan": {
+      "rows": 4224,
+      "positives": 1198,
+      "positive_rate": 0.28361742424242425,
+      "accuracy_at_0_50": 0.7346117424242424,
+      "balanced_accuracy_at_0_50": 0.5956730594171604,
+      "always_hotspot_accuracy": 0.28361742424242425,
+      "always_no_hotspot_accuracy": 0.7163825757575757,
+      "pr_auc": 0.5926637152117367,
+      "ap_lift_over_prevalence": 2.0896590426163404,
+      "roc_auc": 0.7967531256654902,
+      "brier": 0.17675178846854714,
+      "score_quantiles": {
+        "min": 0.030880487966224227,
+        "median": 0.18369837328467337,
+        "p90": 0.733341840277289,
+        "max": 0.999930634040566
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.6552486187845303,
+          "recall": 0.494991652754591,
+          "tp": 593,
+          "fp": 312,
+          "fn": 605,
+          "alert_rows": 905
+        },
+        "0.50": {
+          "precision": 0.5662650602409639,
+          "recall": 0.27462437395659434,
+          "tp": 329,
+          "fp": 252,
+          "fn": 869,
+          "alert_rows": 581
+        },
+        "0.60": {
+          "precision": 0.5470941883767535,
+          "recall": 0.2278797996661102,
+          "tp": 273,
+          "fp": 226,
+          "fn": 925,
+          "alert_rows": 499
+        },
+        "0.80": {
+          "precision": 0.5544303797468354,
+          "recall": 0.18280467445742904,
+          "tp": 219,
+          "fp": 176,
+          "fn": 979,
+          "alert_rows": 395
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 431,
+          "mean_score": 0.08350025613061753,
+          "observed_rate": 0.08816705336426914
+        },
+        {
+          "lower": 0.1,
+          "rows": 1895,
+          "mean_score": 0.14739006294188636,
+          "observed_rate": 0.10448548812664908
+        },
+        {
+          "lower": 0.2,
+          "rows": 864,
+          "mean_score": 0.24218455081471574,
+          "observed_rate": 0.3263888888888889
+        },
+        {
+          "lower": 0.3,
+          "rows": 250,
+          "mean_score": 0.34622558230429445,
+          "observed_rate": 0.684
+        },
+        {
+          "lower": 0.4,
+          "rows": 203,
+          "mean_score": 0.443840592673048,
+          "observed_rate": 0.8866995073891626
+        },
+        {
+          "lower": 0.5,
+          "rows": 82,
+          "mean_score": 0.5518852311309816,
+          "observed_rate": 0.6829268292682927
+        },
+        {
+          "lower": 0.6,
+          "rows": 56,
+          "mean_score": 0.6462872235443253,
+          "observed_rate": 0.625
+        },
+        {
+          "lower": 0.7,
+          "rows": 48,
+          "mean_score": 0.7455681902185667,
+          "observed_rate": 0.3958333333333333
+        },
+        {
+          "lower": 0.8,
+          "rows": 154,
+          "mean_score": 0.8613903433271426,
+          "observed_rate": 0.37662337662337664
+        },
+        {
+          "lower": 0.9,
+          "rows": 241,
+          "mean_score": 0.9642130527001547,
+          "observed_rate": 0.6680497925311203
+        }
+      ]
+    },
+    "North Kalimantan": {
+      "rows": 4224,
+      "positives": 42,
+      "positive_rate": 0.009943181818181818,
+      "accuracy_at_0_50": 0.9900568181818182,
+      "balanced_accuracy_at_0_50": 0.5,
+      "always_hotspot_accuracy": 0.009943181818181818,
+      "always_no_hotspot_accuracy": 0.9900568181818182,
+      "pr_auc": 0.03148493856064465,
+      "ap_lift_over_prevalence": 3.1664852495276907,
+      "roc_auc": 0.7610849217735874,
+      "brier": 0.012837829100588376,
+      "score_quantiles": {
+        "min": 0.009267526071191134,
+        "median": 0.06115586586731306,
+        "p90": 0.09683999647630427,
+        "max": 0.20510451630270055
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 42,
+          "alert_rows": 0
+        },
+        "0.50": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 42,
+          "alert_rows": 0
+        },
+        "0.60": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 42,
+          "alert_rows": 0
+        },
+        "0.80": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 42,
+          "alert_rows": 0
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 3887,
+          "mean_score": 0.05796117054886644,
+          "observed_rate": 0.006946231026498585
+        },
+        {
+          "lower": 0.1,
+          "rows": 335,
+          "mean_score": 0.11805912136099135,
+          "observed_rate": 0.04477611940298507
+        },
+        {
+          "lower": 0.2,
+          "rows": 2,
+          "mean_score": 0.20441056477739628,
+          "observed_rate": 0.0
+        }
+      ]
+    },
+    "South Kalimantan": {
+      "rows": 4224,
+      "positives": 2352,
+      "positive_rate": 0.5568181818181818,
+      "accuracy_at_0_50": 0.6645359848484849,
+      "balanced_accuracy_at_0_50": 0.6881922640851212,
+      "always_hotspot_accuracy": 0.5568181818181818,
+      "always_no_hotspot_accuracy": 0.44318181818181823,
+      "pr_auc": 0.8254244157995324,
+      "ap_lift_over_prevalence": 1.4823948691909972,
+      "roc_auc": 0.7629463377231235,
+      "brier": 0.20606961862567177,
+      "score_quantiles": {
+        "min": 0.04316405353171389,
+        "median": 0.36836050312046786,
+        "p90": 0.940458513071423,
+        "max": 0.9999929295885717
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.7294324681038276,
+          "recall": 0.7049319727891157,
+          "tp": 1658,
+          "fp": 615,
+          "fn": 694,
+          "alert_rows": 2273
+        },
+        "0.50": {
+          "precision": 0.8533635676492819,
+          "recall": 0.4800170068027211,
+          "tp": 1129,
+          "fp": 194,
+          "fn": 1223,
+          "alert_rows": 1323
+        },
+        "0.60": {
+          "precision": 0.8666053357865685,
+          "recall": 0.4005102040816326,
+          "tp": 942,
+          "fp": 145,
+          "fn": 1410,
+          "alert_rows": 1087
+        },
+        "0.80": {
+          "precision": 0.9368279569892473,
+          "recall": 0.296343537414966,
+          "tp": 697,
+          "fp": 47,
+          "fn": 1655,
+          "alert_rows": 744
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 11,
+          "mean_score": 0.08354027236844391,
+          "observed_rate": 0.2727272727272727
+        },
+        {
+          "lower": 0.1,
+          "rows": 313,
+          "mean_score": 0.1691842373168816,
+          "observed_rate": 0.34824281150159747
+        },
+        {
+          "lower": 0.2,
+          "rows": 1173,
+          "mean_score": 0.24956675836384745,
+          "observed_rate": 0.30605285592497866
+        },
+        {
+          "lower": 0.3,
+          "rows": 848,
+          "mean_score": 0.3477018413530133,
+          "observed_rate": 0.48702830188679247
+        },
+        {
+          "lower": 0.4,
+          "rows": 556,
+          "mean_score": 0.44430487673992874,
+          "observed_rate": 0.6097122302158273
+        },
+        {
+          "lower": 0.5,
+          "rows": 236,
+          "mean_score": 0.5473894150481092,
+          "observed_rate": 0.7923728813559322
+        },
+        {
+          "lower": 0.6,
+          "rows": 202,
+          "mean_score": 0.6454571915021723,
+          "observed_rate": 0.6336633663366337
+        },
+        {
+          "lower": 0.7,
+          "rows": 141,
+          "mean_score": 0.7532089899505475,
+          "observed_rate": 0.8297872340425532
+        },
+        {
+          "lower": 0.8,
+          "rows": 195,
+          "mean_score": 0.8627958713805756,
+          "observed_rate": 0.8717948717948718
+        },
+        {
+          "lower": 0.9,
+          "rows": 549,
+          "mean_score": 0.9692118084958901,
+          "observed_rate": 0.9599271402550091
+        }
+      ]
+    },
+    "West Kalimantan": {
+      "rows": 4224,
+      "positives": 910,
+      "positive_rate": 0.21543560606060605,
+      "accuracy_at_0_50": 0.9102746212121212,
+      "balanced_accuracy_at_0_50": 0.8248400061013217,
+      "always_hotspot_accuracy": 0.21543560606060605,
+      "always_no_hotspot_accuracy": 0.7845643939393939,
+      "pr_auc": 0.9040268016431229,
+      "ap_lift_over_prevalence": 4.196273857297309,
+      "roc_auc": 0.970657284779192,
+      "brier": 0.06654263738661746,
+      "score_quantiles": {
+        "min": 0.011130153608844149,
+        "median": 0.07965226650492967,
+        "p90": 0.9872963060449422,
+        "max": 0.9999999983050771
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.8533333333333334,
+          "recall": 0.7032967032967034,
+          "tp": 640,
+          "fp": 110,
+          "fn": 270,
+          "alert_rows": 750
+        },
+        "0.50": {
+          "precision": 0.8809182209469153,
+          "recall": 0.6747252747252748,
+          "tp": 614,
+          "fp": 83,
+          "fn": 296,
+          "alert_rows": 697
+        },
+        "0.60": {
+          "precision": 0.9104938271604939,
+          "recall": 0.6483516483516484,
+          "tp": 590,
+          "fp": 58,
+          "fn": 320,
+          "alert_rows": 648
+        },
+        "0.80": {
+          "precision": 0.9543918918918919,
+          "recall": 0.6208791208791209,
+          "tp": 565,
+          "fp": 27,
+          "fn": 345,
+          "alert_rows": 592
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 2643,
+          "mean_score": 0.058056198692235585,
+          "observed_rate": 0.007567158531971245
+        },
+        {
+          "lower": 0.1,
+          "rows": 716,
+          "mean_score": 0.12941485726763466,
+          "observed_rate": 0.26536312849162014
+        },
+        {
+          "lower": 0.2,
+          "rows": 113,
+          "mean_score": 0.2485947693626528,
+          "observed_rate": 0.5132743362831859
+        },
+        {
+          "lower": 0.3,
+          "rows": 13,
+          "mean_score": 0.35999103318043174,
+          "observed_rate": 1.0
+        },
+        {
+          "lower": 0.4,
+          "rows": 42,
+          "mean_score": 0.44003004478927304,
+          "observed_rate": 0.35714285714285715
+        },
+        {
+          "lower": 0.5,
+          "rows": 49,
+          "mean_score": 0.5498722085766146,
+          "observed_rate": 0.4897959183673469
+        },
+        {
+          "lower": 0.6,
+          "rows": 30,
+          "mean_score": 0.6284644093274558,
+          "observed_rate": 0.3
+        },
+        {
+          "lower": 0.7,
+          "rows": 26,
+          "mean_score": 0.7679693241543684,
+          "observed_rate": 0.6153846153846154
+        },
+        {
+          "lower": 0.8,
+          "rows": 55,
+          "mean_score": 0.8524577100267063,
+          "observed_rate": 0.9454545454545454
+        },
+        {
+          "lower": 0.9,
+          "rows": 537,
+          "mean_score": 0.9890905458647951,
+          "observed_rate": 0.9553072625698324
+        }
+      ]
+    }
+  },
+  "48": {
+    "Central Kalimantan": {
+      "rows": 4224,
+      "positives": 3715,
+      "positive_rate": 0.8794981060606061,
+      "accuracy_at_0_50": 0.8089488636363636,
+      "balanced_accuracy_at_0_50": 0.7379473646635131,
+      "always_hotspot_accuracy": 0.8794981060606061,
+      "always_no_hotspot_accuracy": 0.12050189393939392,
+      "pr_auc": 0.9720751900435924,
+      "ap_lift_over_prevalence": 1.1052612658799823,
+      "roc_auc": 0.8468630598090363,
+      "brier": 0.12370038772570575,
+      "score_quantiles": {
+        "min": 0.02044250014702037,
+        "median": 0.8051484279196377,
+        "p90": 0.9999999835171801,
+        "max": 1.0
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.9426318651441,
+          "recall": 0.933243606998654,
+          "tp": 3467,
+          "fp": 211,
+          "fn": 248,
+          "alert_rows": 3678
+        },
+        "0.50": {
+          "precision": 0.9446483180428135,
+          "recall": 0.8314939434724091,
+          "tp": 3089,
+          "fp": 181,
+          "fn": 626,
+          "alert_rows": 3270
+        },
+        "0.60": {
+          "precision": 0.960124826629681,
+          "recall": 0.7453566621803499,
+          "tp": 2769,
+          "fp": 115,
+          "fn": 946,
+          "alert_rows": 2884
+        },
+        "0.80": {
+          "precision": 0.9718574108818011,
+          "recall": 0.5577388963660834,
+          "tp": 2072,
+          "fp": 60,
+          "fn": 1643,
+          "alert_rows": 2132
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 94,
+          "mean_score": 0.06828171475469696,
+          "observed_rate": 0.010638297872340425
+        },
+        {
+          "lower": 0.1,
+          "rows": 180,
+          "mean_score": 0.15302800828222535,
+          "observed_rate": 0.4111111111111111
+        },
+        {
+          "lower": 0.2,
+          "rows": 171,
+          "mean_score": 0.24081476559955023,
+          "observed_rate": 0.5380116959064327
+        },
+        {
+          "lower": 0.3,
+          "rows": 242,
+          "mean_score": 0.3561076196542072,
+          "observed_rate": 0.8884297520661157
+        },
+        {
+          "lower": 0.4,
+          "rows": 267,
+          "mean_score": 0.45532563547198474,
+          "observed_rate": 0.9138576779026217
+        },
+        {
+          "lower": 0.5,
+          "rows": 386,
+          "mean_score": 0.5490319049125922,
+          "observed_rate": 0.8290155440414507
+        },
+        {
+          "lower": 0.6,
+          "rows": 362,
+          "mean_score": 0.6475482744247173,
+          "observed_rate": 0.8977900552486188
+        },
+        {
+          "lower": 0.7,
+          "rows": 390,
+          "mean_score": 0.7482109335474917,
+          "observed_rate": 0.9538461538461539
+        },
+        {
+          "lower": 0.8,
+          "rows": 315,
+          "mean_score": 0.8501381646730061,
+          "observed_rate": 0.9746031746031746
+        },
+        {
+          "lower": 0.9,
+          "rows": 1817,
+          "mean_score": 0.9886159790677942,
+          "observed_rate": 0.9713813979086406
+        }
+      ]
+    },
+    "East Kalimantan": {
+      "rows": 4224,
+      "positives": 1584,
+      "positive_rate": 0.375,
+      "accuracy_at_0_50": 0.7653882575757576,
+      "balanced_accuracy_at_0_50": 0.70625,
+      "always_hotspot_accuracy": 0.375,
+      "always_no_hotspot_accuracy": 0.625,
+      "pr_auc": 0.7366100217942526,
+      "ap_lift_over_prevalence": 1.9642933914513403,
+      "roc_auc": 0.8114320286195287,
+      "brier": 0.17217425910083395,
+      "score_quantiles": {
+        "min": 0.020876488319299363,
+        "median": 0.2232652035877346,
+        "p90": 0.9539609846943974,
+        "max": 0.9999999527955843
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.7592732778198334,
+          "recall": 0.6332070707070707,
+          "tp": 1003,
+          "fp": 318,
+          "fn": 581,
+          "alert_rows": 1321
+        },
+        "0.50": {
+          "precision": 0.8312849162011173,
+          "recall": 0.4696969696969697,
+          "tp": 744,
+          "fp": 151,
+          "fn": 840,
+          "alert_rows": 895
+        },
+        "0.60": {
+          "precision": 0.8403141361256544,
+          "recall": 0.4053030303030303,
+          "tp": 642,
+          "fp": 122,
+          "fn": 942,
+          "alert_rows": 764
+        },
+        "0.80": {
+          "precision": 0.8046181172291297,
+          "recall": 0.2859848484848485,
+          "tp": 453,
+          "fp": 110,
+          "fn": 1131,
+          "alert_rows": 563
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 517,
+          "mean_score": 0.07429944321911931,
+          "observed_rate": 0.13346228239845262
+        },
+        {
+          "lower": 0.1,
+          "rows": 1400,
+          "mean_score": 0.14723435889504352,
+          "observed_rate": 0.16
+        },
+        {
+          "lower": 0.2,
+          "rows": 724,
+          "mean_score": 0.24476284451053792,
+          "observed_rate": 0.2472375690607735
+        },
+        {
+          "lower": 0.3,
+          "rows": 486,
+          "mean_score": 0.34684099754264136,
+          "observed_rate": 0.4547325102880658
+        },
+        {
+          "lower": 0.4,
+          "rows": 202,
+          "mean_score": 0.4422340461146996,
+          "observed_rate": 0.7277227722772277
+        },
+        {
+          "lower": 0.5,
+          "rows": 131,
+          "mean_score": 0.5480152686981854,
+          "observed_rate": 0.7786259541984732
+        },
+        {
+          "lower": 0.6,
+          "rows": 126,
+          "mean_score": 0.6572677117321899,
+          "observed_rate": 0.9047619047619048
+        },
+        {
+          "lower": 0.7,
+          "rows": 75,
+          "mean_score": 0.7382610589475911,
+          "observed_rate": 1.0
+        },
+        {
+          "lower": 0.8,
+          "rows": 99,
+          "mean_score": 0.8451083619335062,
+          "observed_rate": 0.98989898989899
+        },
+        {
+          "lower": 0.9,
+          "rows": 464,
+          "mean_score": 0.9883151392256437,
+          "observed_rate": 0.7650862068965517
+        }
+      ]
+    },
+    "North Kalimantan": {
+      "rows": 4224,
+      "positives": 90,
+      "positive_rate": 0.02130681818181818,
+      "accuracy_at_0_50": 0.9786931818181818,
+      "balanced_accuracy_at_0_50": 0.5,
+      "always_hotspot_accuracy": 0.02130681818181818,
+      "always_no_hotspot_accuracy": 0.9786931818181818,
+      "pr_auc": 0.04761129942455559,
+      "ap_lift_over_prevalence": 2.234556986325809,
+      "roc_auc": 0.6734209536096329,
+      "brier": 0.021733829827244457,
+      "score_quantiles": {
+        "min": 0.0033341243519028714,
+        "median": 0.04529528457563642,
+        "p90": 0.08788702243041538,
+        "max": 0.25523418113430935
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 90,
+          "alert_rows": 0
+        },
+        "0.50": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 90,
+          "alert_rows": 0
+        },
+        "0.60": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 90,
+          "alert_rows": 0
+        },
+        "0.80": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 90,
+          "alert_rows": 0
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 3987,
+          "mean_score": 0.04482919308129797,
+          "observed_rate": 0.018309505894156006
+        },
+        {
+          "lower": 0.1,
+          "rows": 221,
+          "mean_score": 0.12062967415419432,
+          "observed_rate": 0.07692307692307693
+        },
+        {
+          "lower": 0.2,
+          "rows": 16,
+          "mean_score": 0.22593288784300508,
+          "observed_rate": 0.0
+        }
+      ]
+    },
+    "South Kalimantan": {
+      "rows": 4224,
+      "positives": 2852,
+      "positive_rate": 0.6751893939393939,
+      "accuracy_at_0_50": 0.7154356060606061,
+      "balanced_accuracy_at_0_50": 0.7227018837990015,
+      "always_hotspot_accuracy": 0.6751893939393939,
+      "always_no_hotspot_accuracy": 0.3248106060606061,
+      "pr_auc": 0.8819761418547076,
+      "ap_lift_over_prevalence": 1.3062648047665797,
+      "roc_auc": 0.7813748420626516,
+      "brier": 0.1863946971285791,
+      "score_quantiles": {
+        "min": 0.03691089666450799,
+        "median": 0.5512760032296002,
+        "p90": 0.997303915283837,
+        "max": 0.9999999992845521
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.7802303262955854,
+          "recall": 0.8551893408134642,
+          "tp": 2439,
+          "fp": 687,
+          "fn": 413,
+          "alert_rows": 3126
+        },
+        "0.50": {
+          "precision": 0.8504672897196262,
+          "recall": 0.7019635343618513,
+          "tp": 2002,
+          "fp": 352,
+          "fn": 850,
+          "alert_rows": 2354
+        },
+        "0.60": {
+          "precision": 0.8789942378208486,
+          "recall": 0.5883590462833099,
+          "tp": 1678,
+          "fp": 231,
+          "fn": 1174,
+          "alert_rows": 1909
+        },
+        "0.80": {
+          "precision": 0.914722445695897,
+          "recall": 0.39866760168302945,
+          "tp": 1137,
+          "fp": 106,
+          "fn": 1715,
+          "alert_rows": 1243
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 15,
+          "mean_score": 0.07635031761674409,
+          "observed_rate": 0.2
+        },
+        {
+          "lower": 0.1,
+          "rows": 138,
+          "mean_score": 0.16397326019187813,
+          "observed_rate": 0.2536231884057971
+        },
+        {
+          "lower": 0.2,
+          "rows": 590,
+          "mean_score": 0.2551623223635118,
+          "observed_rate": 0.4186440677966102
+        },
+        {
+          "lower": 0.3,
+          "rows": 628,
+          "mean_score": 0.34606953839584625,
+          "observed_rate": 0.39012738853503187
+        },
+        {
+          "lower": 0.4,
+          "rows": 499,
+          "mean_score": 0.4501984611142883,
+          "observed_rate": 0.6412825651302605
+        },
+        {
+          "lower": 0.5,
+          "rows": 445,
+          "mean_score": 0.5469247289881434,
+          "observed_rate": 0.7280898876404495
+        },
+        {
+          "lower": 0.6,
+          "rows": 378,
+          "mean_score": 0.6480286948485111,
+          "observed_rate": 0.7962962962962963
+        },
+        {
+          "lower": 0.7,
+          "rows": 288,
+          "mean_score": 0.7496860876650018,
+          "observed_rate": 0.8333333333333334
+        },
+        {
+          "lower": 0.8,
+          "rows": 265,
+          "mean_score": 0.8487614533856455,
+          "observed_rate": 0.9245283018867925
+        },
+        {
+          "lower": 0.9,
+          "rows": 978,
+          "mean_score": 0.9814773316918226,
+          "observed_rate": 0.9120654396728016
+        }
+      ]
+    },
+    "West Kalimantan": {
+      "rows": 4224,
+      "positives": 1051,
+      "positive_rate": 0.24881628787878787,
+      "accuracy_at_0_50": 0.8835227272727273,
+      "balanced_accuracy_at_0_50": 0.7964803529302754,
+      "always_hotspot_accuracy": 0.24881628787878787,
+      "always_no_hotspot_accuracy": 0.7511837121212122,
+      "pr_auc": 0.8996954247029035,
+      "ap_lift_over_prevalence": 3.6159024490438294,
+      "roc_auc": 0.9627029680435815,
+      "brier": 0.08470615921612187,
+      "score_quantiles": {
+        "min": 0.005507308442065667,
+        "median": 0.0679746922009662,
+        "p90": 0.9998968964988652,
+        "max": 0.9999999999999998
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.8545006165228114,
+          "recall": 0.659372026641294,
+          "tp": 693,
+          "fp": 118,
+          "fn": 358,
+          "alert_rows": 811
+        },
+        "0.50": {
+          "precision": 0.8721704394141145,
+          "recall": 0.6232159847764034,
+          "tp": 655,
+          "fp": 96,
+          "fn": 396,
+          "alert_rows": 751
+        },
+        "0.60": {
+          "precision": 0.8707940780619112,
+          "recall": 0.615604186489058,
+          "tp": 647,
+          "fp": 96,
+          "fn": 404,
+          "alert_rows": 743
+        },
+        "0.80": {
+          "precision": 0.8799435028248588,
+          "recall": 0.5927687916270219,
+          "tp": 623,
+          "fp": 85,
+          "fn": 428,
+          "alert_rows": 708
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 2726,
+          "mean_score": 0.04688493504538363,
+          "observed_rate": 0.02384446074834923
+        },
+        {
+          "lower": 0.1,
+          "rows": 529,
+          "mean_score": 0.13257354921044215,
+          "observed_rate": 0.27599243856332706
+        },
+        {
+          "lower": 0.2,
+          "rows": 115,
+          "mean_score": 0.2437565630296826,
+          "observed_rate": 0.9130434782608695
+        },
+        {
+          "lower": 0.3,
+          "rows": 63,
+          "mean_score": 0.3370329868717989,
+          "observed_rate": 0.8888888888888888
+        },
+        {
+          "lower": 0.4,
+          "rows": 40,
+          "mean_score": 0.4250150276831063,
+          "observed_rate": 0.6
+        },
+        {
+          "lower": 0.5,
+          "rows": 8,
+          "mean_score": 0.5655034354529345,
+          "observed_rate": 1.0
+        },
+        {
+          "lower": 0.6,
+          "rows": 23,
+          "mean_score": 0.6552140454725736,
+          "observed_rate": 0.5217391304347826
+        },
+        {
+          "lower": 0.7,
+          "rows": 12,
+          "mean_score": 0.7604084484553183,
+          "observed_rate": 1.0
+        },
+        {
+          "lower": 0.8,
+          "rows": 50,
+          "mean_score": 0.8594259193735868,
+          "observed_rate": 0.56
+        },
+        {
+          "lower": 0.9,
+          "rows": 658,
+          "mean_score": 0.9932666892148115,
+          "observed_rate": 0.9042553191489362
+        }
+      ]
+    }
+  },
+  "72": {
+    "Central Kalimantan": {
+      "rows": 4224,
+      "positives": 3870,
+      "positive_rate": 0.9161931818181818,
+      "accuracy_at_0_50": 0.8771306818181818,
+      "balanced_accuracy_at_0_50": 0.7943568519248456,
+      "always_hotspot_accuracy": 0.9161931818181818,
+      "always_no_hotspot_accuracy": 0.08380681818181823,
+      "pr_auc": 0.9778409447906857,
+      "ap_lift_over_prevalence": 1.067286860670764,
+      "roc_auc": 0.8296624768244791,
+      "brier": 0.09320325496280835,
+      "score_quantiles": {
+        "min": 0.06527273605791059,
+        "median": 0.9363734219629345,
+        "p90": 0.999999999999872,
+        "max": 1.0
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.9665621734587252,
+          "recall": 0.9560723514211886,
+          "tp": 3700,
+          "fp": 128,
+          "fn": 170,
+          "alert_rows": 3828
+        },
+        "0.50": {
+          "precision": 0.9697224558452481,
+          "recall": 0.8937984496124031,
+          "tp": 3459,
+          "fp": 108,
+          "fn": 411,
+          "alert_rows": 3567
+        },
+        "0.60": {
+          "precision": 0.967713004484305,
+          "recall": 0.8364341085271317,
+          "tp": 3237,
+          "fp": 108,
+          "fn": 633,
+          "alert_rows": 3345
+        },
+        "0.80": {
+          "precision": 0.9650827933765299,
+          "recall": 0.692764857881137,
+          "tp": 2681,
+          "fp": 97,
+          "fn": 1189,
+          "alert_rows": 2778
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 30,
+          "mean_score": 0.08611894308802341,
+          "observed_rate": 0.13333333333333333
+        },
+        {
+          "lower": 0.1,
+          "rows": 144,
+          "mean_score": 0.14733543831611262,
+          "observed_rate": 0.4722222222222222
+        },
+        {
+          "lower": 0.2,
+          "rows": 134,
+          "mean_score": 0.2654346679650024,
+          "observed_rate": 0.3358208955223881
+        },
+        {
+          "lower": 0.3,
+          "rows": 181,
+          "mean_score": 0.35024152982593976,
+          "observed_rate": 0.6961325966850829
+        },
+        {
+          "lower": 0.4,
+          "rows": 168,
+          "mean_score": 0.45298151121600827,
+          "observed_rate": 1.0
+        },
+        {
+          "lower": 0.5,
+          "rows": 222,
+          "mean_score": 0.557959865517595,
+          "observed_rate": 1.0
+        },
+        {
+          "lower": 0.6,
+          "rows": 275,
+          "mean_score": 0.6485142985489659,
+          "observed_rate": 1.0
+        },
+        {
+          "lower": 0.7,
+          "rows": 292,
+          "mean_score": 0.7562008098707426,
+          "observed_rate": 0.9623287671232876
+        },
+        {
+          "lower": 0.8,
+          "rows": 413,
+          "mean_score": 0.8562391785827728,
+          "observed_rate": 0.9467312348668281
+        },
+        {
+          "lower": 0.9,
+          "rows": 2365,
+          "mean_score": 0.985352254427312,
+          "observed_rate": 0.9682875264270613
+        }
+      ]
+    },
+    "East Kalimantan": {
+      "rows": 4224,
+      "positives": 1837,
+      "positive_rate": 0.4348958333333333,
+      "accuracy_at_0_50": 0.7831439393939394,
+      "balanced_accuracy_at_0_50": 0.7568265229072646,
+      "always_hotspot_accuracy": 0.4348958333333333,
+      "always_no_hotspot_accuracy": 0.5651041666666667,
+      "pr_auc": 0.7945500366633739,
+      "ap_lift_over_prevalence": 1.826989305860692,
+      "roc_auc": 0.8079278089287396,
+      "brier": 0.167935965458647,
+      "score_quantiles": {
+        "min": 0.038842545334435354,
+        "median": 0.294994143614332,
+        "p90": 0.9907010092054993,
+        "max": 0.999999999998811
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.7645673925838729,
+          "recall": 0.7071311921611323,
+          "tp": 1299,
+          "fp": 400,
+          "fn": 538,
+          "alert_rows": 1699
+        },
+        "0.50": {
+          "precision": 0.9122649955237243,
+          "recall": 0.5547087642896026,
+          "tp": 1019,
+          "fp": 98,
+          "fn": 818,
+          "alert_rows": 1117
+        },
+        "0.60": {
+          "precision": 0.923963133640553,
+          "recall": 0.43658138268916713,
+          "tp": 802,
+          "fp": 66,
+          "fn": 1035,
+          "alert_rows": 868
+        },
+        "0.80": {
+          "precision": 0.912981455064194,
+          "recall": 0.3483941208492107,
+          "tp": 640,
+          "fp": 61,
+          "fn": 1197,
+          "alert_rows": 701
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 152,
+          "mean_score": 0.07763275507083689,
+          "observed_rate": 0.039473684210526314
+        },
+        {
+          "lower": 0.1,
+          "rows": 1092,
+          "mean_score": 0.1527053032294112,
+          "observed_rate": 0.21245421245421245
+        },
+        {
+          "lower": 0.2,
+          "rows": 918,
+          "mean_score": 0.24604232142345975,
+          "observed_rate": 0.23965141612200436
+        },
+        {
+          "lower": 0.3,
+          "rows": 592,
+          "mean_score": 0.3437246411592065,
+          "observed_rate": 0.3091216216216216
+        },
+        {
+          "lower": 0.4,
+          "rows": 353,
+          "mean_score": 0.4492533956650339,
+          "observed_rate": 0.5014164305949008
+        },
+        {
+          "lower": 0.5,
+          "rows": 249,
+          "mean_score": 0.5555131929656109,
+          "observed_rate": 0.8714859437751004
+        },
+        {
+          "lower": 0.6,
+          "rows": 76,
+          "mean_score": 0.63847493674195,
+          "observed_rate": 0.9342105263157895
+        },
+        {
+          "lower": 0.7,
+          "rows": 91,
+          "mean_score": 0.7494700340087722,
+          "observed_rate": 1.0
+        },
+        {
+          "lower": 0.8,
+          "rows": 101,
+          "mean_score": 0.8453064564673374,
+          "observed_rate": 1.0
+        },
+        {
+          "lower": 0.9,
+          "rows": 600,
+          "mean_score": 0.9886075661336474,
+          "observed_rate": 0.8983333333333333
+        }
+      ]
+    },
+    "North Kalimantan": {
+      "rows": 4224,
+      "positives": 138,
+      "positive_rate": 0.032670454545454544,
+      "accuracy_at_0_50": 0.9673295454545454,
+      "balanced_accuracy_at_0_50": 0.5,
+      "always_hotspot_accuracy": 0.032670454545454544,
+      "always_no_hotspot_accuracy": 0.9673295454545454,
+      "pr_auc": 0.058016709100947444,
+      "ap_lift_over_prevalence": 1.7758157916116089,
+      "roc_auc": 0.614996772294225,
+      "brier": 0.03376473680252166,
+      "score_quantiles": {
+        "min": 0.008174898693283517,
+        "median": 0.07023928131722759,
+        "p90": 0.12214431805570287,
+        "max": 0.31888978686807334
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 138,
+          "alert_rows": 0
+        },
+        "0.50": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 138,
+          "alert_rows": 0
+        },
+        "0.60": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 138,
+          "alert_rows": 0
+        },
+        "0.80": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 138,
+          "alert_rows": 0
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 3371,
+          "mean_score": 0.05963151278050758,
+          "observed_rate": 0.02046870364876891
+        },
+        {
+          "lower": 0.1,
+          "rows": 826,
+          "mean_score": 0.12564378064959716,
+          "observed_rate": 0.08353510895883777
+        },
+        {
+          "lower": 0.2,
+          "rows": 20,
+          "mean_score": 0.2544658283386405,
+          "observed_rate": 0.0
+        },
+        {
+          "lower": 0.3,
+          "rows": 7,
+          "mean_score": 0.30900510088903516,
+          "observed_rate": 0.0
+        }
+      ]
+    },
+    "South Kalimantan": {
+      "rows": 4224,
+      "positives": 3102,
+      "positive_rate": 0.734375,
+      "accuracy_at_0_50": 0.7746212121212122,
+      "balanced_accuracy_at_0_50": 0.7620700117571206,
+      "always_hotspot_accuracy": 0.734375,
+      "always_no_hotspot_accuracy": 0.265625,
+      "pr_auc": 0.9295135864733728,
+      "ap_lift_over_prevalence": 1.2657206283892737,
+      "roc_auc": 0.8318220319016769,
+      "brier": 0.14396699177229838,
+      "score_quantiles": {
+        "min": 0.09858296048237321,
+        "median": 0.7469602848760508,
+        "p90": 0.9999823729418186,
+        "max": 0.9999999999999951
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.8085407239819005,
+          "recall": 0.9216634429400387,
+          "tp": 2859,
+          "fp": 677,
+          "fn": 243,
+          "alert_rows": 3536
+        },
+        "0.50": {
+          "precision": 0.8917638483965015,
+          "recall": 0.7888459058671825,
+          "tp": 2447,
+          "fp": 297,
+          "fn": 655,
+          "alert_rows": 2744
+        },
+        "0.60": {
+          "precision": 0.9318823055219669,
+          "recall": 0.7453255963894262,
+          "tp": 2312,
+          "fp": 169,
+          "fn": 790,
+          "alert_rows": 2481
+        },
+        "0.80": {
+          "precision": 0.9508196721311475,
+          "recall": 0.5983236621534493,
+          "tp": 1856,
+          "fp": 96,
+          "fn": 1246,
+          "alert_rows": 1952
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 1,
+          "mean_score": 0.09858296048237321,
+          "observed_rate": 0.0
+        },
+        {
+          "lower": 0.1,
+          "rows": 35,
+          "mean_score": 0.16428484521979642,
+          "observed_rate": 0.05714285714285714
+        },
+        {
+          "lower": 0.2,
+          "rows": 372,
+          "mean_score": 0.26405766792031554,
+          "observed_rate": 0.3817204301075269
+        },
+        {
+          "lower": 0.3,
+          "rows": 597,
+          "mean_score": 0.35137474142240765,
+          "observed_rate": 0.440536013400335
+        },
+        {
+          "lower": 0.4,
+          "rows": 475,
+          "mean_score": 0.4461440812762927,
+          "observed_rate": 0.5221052631578947
+        },
+        {
+          "lower": 0.5,
+          "rows": 263,
+          "mean_score": 0.5485490863735442,
+          "observed_rate": 0.5133079847908745
+        },
+        {
+          "lower": 0.6,
+          "rows": 280,
+          "mean_score": 0.6504232299159276,
+          "observed_rate": 0.8607142857142858
+        },
+        {
+          "lower": 0.7,
+          "rows": 249,
+          "mean_score": 0.7544661869979848,
+          "observed_rate": 0.8634538152610441
+        },
+        {
+          "lower": 0.8,
+          "rows": 418,
+          "mean_score": 0.8585851786807226,
+          "observed_rate": 0.9569377990430622
+        },
+        {
+          "lower": 0.9,
+          "rows": 1534,
+          "mean_score": 0.9798916766025426,
+          "observed_rate": 0.9491525423728814
+        }
+      ]
+    },
+    "West Kalimantan": {
+      "rows": 4224,
+      "positives": 1110,
+      "positive_rate": 0.2627840909090909,
+      "accuracy_at_0_50": 0.9015151515151515,
+      "balanced_accuracy_at_0_50": 0.8372528597962124,
+      "always_hotspot_accuracy": 0.2627840909090909,
+      "always_no_hotspot_accuracy": 0.7372159090909092,
+      "pr_auc": 0.915526372208978,
+      "ap_lift_over_prevalence": 3.4839490055952465,
+      "roc_auc": 0.9710294109138039,
+      "brier": 0.07404098538083795,
+      "score_quantiles": {
+        "min": 0.015647819039997898,
+        "median": 0.10119926441762792,
+        "p90": 0.9999977657128024,
+        "max": 1.0
+      },
+      "thresholds": {
+        "0.35": {
+          "precision": 0.8992731048805815,
+          "recall": 0.7801801801801802,
+          "tp": 866,
+          "fp": 97,
+          "fn": 244,
+          "alert_rows": 963
+        },
+        "0.50": {
+          "precision": 0.9016203703703703,
+          "recall": 0.7018018018018019,
+          "tp": 779,
+          "fp": 85,
+          "fn": 331,
+          "alert_rows": 864
+        },
+        "0.60": {
+          "precision": 0.8960880195599022,
+          "recall": 0.6603603603603604,
+          "tp": 733,
+          "fp": 85,
+          "fn": 377,
+          "alert_rows": 818
+        },
+        "0.80": {
+          "precision": 0.8884514435695539,
+          "recall": 0.6099099099099099,
+          "tp": 677,
+          "fp": 85,
+          "fn": 433,
+          "alert_rows": 762
+        }
+      },
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "rows": 2085,
+          "mean_score": 0.05932893788359456,
+          "observed_rate": 0.0014388489208633094
+        },
+        {
+          "lower": 0.1,
+          "rows": 967,
+          "mean_score": 0.13446052813932566,
+          "observed_rate": 0.10548086866597725
+        },
+        {
+          "lower": 0.2,
+          "rows": 167,
+          "mean_score": 0.22937664911842498,
+          "observed_rate": 0.6107784431137725
+        },
+        {
+          "lower": 0.3,
+          "rows": 81,
+          "mean_score": 0.3458985319912714,
+          "observed_rate": 0.9012345679012346
+        },
+        {
+          "lower": 0.4,
+          "rows": 60,
+          "mean_score": 0.4284026522084721,
+          "observed_rate": 0.85
+        },
+        {
+          "lower": 0.5,
+          "rows": 46,
+          "mean_score": 0.5689772411425511,
+          "observed_rate": 1.0
+        },
+        {
+          "lower": 0.6,
+          "rows": 36,
+          "mean_score": 0.6603336432719266,
+          "observed_rate": 1.0
+        },
+        {
+          "lower": 0.7,
+          "rows": 20,
+          "mean_score": 0.7473621985647005,
+          "observed_rate": 1.0
+        },
+        {
+          "lower": 0.8,
+          "rows": 31,
+          "mean_score": 0.8763140552493647,
+          "observed_rate": 1.0
+        },
+        {
+          "lower": 0.9,
+          "rows": 731,
+          "mean_score": 0.9948271923417703,
+          "observed_rate": 0.8837209302325582
+        }
+      ]
+    }
+  }
+}

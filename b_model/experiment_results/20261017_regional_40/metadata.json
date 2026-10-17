@@ -1,0 +1,18 @@
+{
+  "source_sha256": "83c226e5c9fd72c00bbfd487c0fa488147ac7ac90fe939ae64a25f2e0074f945",
+  "complete_rows": 653760,
+  "incomplete_rows_excluded": 2880,
+  "status": "Retrospective: periods and LR settings previously inspected. No tuning or promotion.",
+  "libraries": {
+    "numpy": "2.5.4",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.6.1",
+    "xgboost": "3.4.1"
+  },
+  "ranking": "Top 5 independently per horizon; no probability cutoff; cell_id ascending breaks ties.",
+  "snapshot_policy": "Primary: daily 00:00 UTC; secondary: every available hour. Not distinct events or dispatches.",
+  "quiet_policy": "Separate budget among cells with observed hotspots_in_cell_24h == 0; unknowns excluded.",
+  "fit_policy": "Retrain each model before each evaluation; fit preprocessing on train and sigmoid on calibration only.",
+  "runtime_seconds": 290.5974446090004,
+  "completed_models": 36
+}

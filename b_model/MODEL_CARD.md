@@ -1,5 +1,14 @@
 # Model card — Peat Fire Early-Warning Model
 
+The current geographic handoff is **40 peat-centered cells across five Kalimantan
+provinces**, using `conf/replay_regional.yaml` and `model_regional_40/`.
+See [REGIONAL_RESULTS.md](REGIONAL_RESULTS.md) for the new chronological
+evaluation, baseline comparison, scope limits and software checks. Previous
+33-cell metrics below are historical and must not be attributed to the new scope.
+The shared target remains future nominal/high VIIRS detection anywhere in each
+cell, including detections outside its peat polygons. This is a historical replay,
+not current-hour data. Source coverage remains human-declared.
+
 The latest auto training path is a Snap ML/XGBoost ensemble with
 two causal internal leading indicators and fivefold quiet-positive weighting.
 It preserves temporal embargoes, separately fitted calibration and frozen risk

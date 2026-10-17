@@ -118,3 +118,37 @@ def test_export_is_accepted_by_actual_pic1_inference(tmp_path):
     result = run_predictions(features_path, models, tmp_path / "risk.json", history_path=None)
     assert len(result) == 9
     assert {r["model_version"] for r in result} == {"test-experiment"}
+
+
+def test_extended_xgboost_export_is_portable_and_runs_actual_inference(tmp_path):
+    from xgboost import XGBClassifier
+    from b_model.leading_indicators import ENSEMBLE_FEATURES, PIPELINE_VERSION
+    from b_model.portable_xgboost import PortableBooster
+    from b_model.predict import run_predictions
+    from b_model.features import generate_mock_data_if_missing
+    rng=np.random.default_rng(12)
+    raw=pd.DataFrame(rng.normal(size=(120,29)),columns=ENSEMBLE_FEATURES)
+    y=(raw.temp_c>0).to_numpy(dtype=int)
+    imputer=SimpleImputer(strategy='median').fit(raw.iloc[:80])
+    train,cal=imputer.transform(raw.iloc[:80]),imputer.transform(raw.iloc[80:])
+    models=tmp_path/'models';models.mkdir()
+    for h in HORIZONS:
+        base=XGBClassifier(n_estimators=3,max_depth=2,n_jobs=2).fit(train,y[:80])
+        calibrated=calibrate(base,cal,y[80:],h,'sigmoid')
+        expected=calibrated.predict_proba(cal)
+        export_bundle(models,h,{'backend':'xgboost'},'sigmoid',base,calibrated,imputer,
+            StandardScaler().fit(train),cal,y[80:],{'seed':42,'model_version':'test-ensemble',
+                'feature_signs':[1]*29,'training_data':{}},feature_columns=ENSEMBLE_FEATURES)
+        import joblib
+        loaded=joblib.load(models/f'model_{h}h.joblib')
+        assert isinstance(loaded['base_primary'].get_booster(),PortableBooster)
+        np.testing.assert_array_equal(loaded['primary_model'].predict_proba(cal),expected)
+    (models/'artifact_manifest.json').write_text(json.dumps({'schema_version':'1.0','models':{
+        str(h):{'filename':f'model_{h}h.joblib','format':'joblib','model_version':'test-ensemble',
+            'feature_order':ENSEMBLE_FEATURES,'positive_class':1,'feature_pipeline':PIPELINE_VERSION}
+        for h in HORIZONS}}))
+    features,history=tmp_path/'features.json',tmp_path/'history.parquet'
+    generate_mock_data_if_missing(features_path=features,history_path=history,num_cells=3,days_history=4,force=True)
+    result=run_predictions(features,models,tmp_path/'risk.json',history_path=history)
+    assert len(result)==9
+    assert all(f['feature'] in FEATURE_COLUMNS for r in result for f in r['top_factors'])

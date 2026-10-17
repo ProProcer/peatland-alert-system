@@ -1,0 +1,30 @@
+{
+  "records": 120,
+  "cells": 40,
+  "snapshot": "2026-10-16T00:00:00Z",
+  "horizons": [
+    24,
+    48,
+    72
+  ],
+  "wall_seconds": 2.5798125760011317,
+  "under_60_seconds": true,
+  "scope_and_contract_checks": "passed",
+  "environment": "Local CPU, two OMP/BLAS threads; no LinuxONE timing claim.",
+  "risk_levels": {
+    "LOW": 75,
+    "CRITICAL": 24,
+    "MODERATE": 14,
+    "HIGH": 7
+  },
+  "model_version": [
+    "v1-regional40-20261017"
+  ],
+  "command": [
+    ".venv/bin/python",
+    "-m",
+    "b_model.predict",
+    "--config-name",
+    "replay_regional"
+  ]
+}

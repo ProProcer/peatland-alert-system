@@ -1,0 +1,33 @@
+{
+  "scope": "regional_40",
+  "mode": "historical_replay",
+  "snapshot": "2026-10-16T00:00:00Z",
+  "cell_count": 40,
+  "risk_records": 120,
+  "features": "data/demo/role_a_real/regional_40/features.json",
+  "features_parquet": "data/demo/role_a_real/regional_40/features.parquet",
+  "history": "data/demo/role_a_real/regional_40/history.parquet",
+  "cells": "data/demo/role_a_real/regional_40/cells.geojson",
+  "water_sources": "data/demo/role_a_real/water_sources.geojson",
+  "model_dir": "b_model/model_regional_40",
+  "risk": "b_model/experiment_results/20261017_regional_40/risk.json",
+  "config": "b_model/conf/replay_regional.yaml",
+  "report": "b_model/REGIONAL_RESULTS.md",
+  "model_quality_gate": "b_model/model_regional_40/quality_gate.json",
+  "command": [
+    ".venv/bin/python",
+    "-m",
+    "b_model.predict",
+    "--config-name",
+    "replay_regional"
+  ],
+  "quality_status": "provisional_retrospective_candidate",
+  "integration_note": "C/D/E must switch matching features, geometry, history and risk together. data/processed remains the separate 33-cell scope. No shared A/C files were changed.",
+  "source_fingerprints": {
+    "history.parquet": "83c226e5c9fd72c00bbfd487c0fa488147ac7ac90fe939ae64a25f2e0074f945",
+    "features.json": "84195afd80e1be21d3df2fef85bd2be1d80f42cbf9f5e7d642bfe2b9cfd3d696",
+    "features.parquet": "1e97585142f99204df1ce79c3fcb53f3d5bbf98af65bc03b6b53741e3e53aec6",
+    "cells.geojson": "62d1bd5737fb7cb8ca1014d263c1b52a87a8d4b62ee9ae1b82805a2e3436b816"
+  },
+  "risk_sha256": "f6efa735f78660318fa5f5b800c61e31b13156ed259d72a11d9ae16b9f9306dd"
+}

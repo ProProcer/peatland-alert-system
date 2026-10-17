@@ -1,0 +1,10 @@
+# Current 40-cell B handoff. Always use matching A geometry/features/history.
+defaults:
+  - config
+  - _self_
+
+paths:
+  features: data/demo/role_a_real/regional_40/features.json
+  history: data/demo/role_a_real/regional_40/history.parquet
+  model_dir: b_model/model_regional_40
+  output: b_model/experiment_results/20261017_regional_40/risk.json

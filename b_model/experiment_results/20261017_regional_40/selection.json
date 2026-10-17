@@ -1,0 +1,140 @@
+{
+  "selected": {
+    "24": {
+      "horizon_h": 24,
+      "key": "logistic_regression",
+      "spec": {
+        "backend": "logistic_regression"
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.3317685124245562,
+      "mean_brier": 0.05003224432074649
+    },
+    "48": {
+      "horizon_h": 48,
+      "key": "logistic_regression",
+      "spec": {
+        "backend": "logistic_regression"
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.36365751167936605,
+      "mean_brier": 0.06218146995440894
+    },
+    "72": {
+      "horizon_h": 72,
+      "key": "logistic_regression",
+      "spec": {
+        "backend": "logistic_regression"
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.3639921231463352,
+      "mean_brier": 0.07165626912001843
+    }
+  },
+  "leaderboard": [
+    {
+      "horizon_h": 24,
+      "key": "dryness_baseline",
+      "spec": {
+        "backend": "dryness_baseline"
+      },
+      "calibration": "sigmoid",
+      "eligible": false,
+      "mean_pr_auc": 0.19868352631617633,
+      "mean_brier": 0.08909223869106031
+    },
+    {
+      "horizon_h": 24,
+      "key": "logistic_regression",
+      "spec": {
+        "backend": "logistic_regression"
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.3317685124245562,
+      "mean_brier": 0.05003224432074649
+    },
+    {
+      "horizon_h": 24,
+      "key": "xgboost",
+      "spec": {
+        "backend": "xgboost"
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.16677037560664684,
+      "mean_brier": 0.09197179379280722
+    },
+    {
+      "horizon_h": 48,
+      "key": "dryness_baseline",
+      "spec": {
+        "backend": "dryness_baseline"
+      },
+      "calibration": "sigmoid",
+      "eligible": false,
+      "mean_pr_auc": 0.24198930416718353,
+      "mean_brier": 0.10965480904198832
+    },
+    {
+      "horizon_h": 48,
+      "key": "logistic_regression",
+      "spec": {
+        "backend": "logistic_regression"
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.36365751167936605,
+      "mean_brier": 0.06218146995440894
+    },
+    {
+      "horizon_h": 48,
+      "key": "xgboost",
+      "spec": {
+        "backend": "xgboost"
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.2213588028676049,
+      "mean_brier": 0.10870531852840078
+    },
+    {
+      "horizon_h": 72,
+      "key": "dryness_baseline",
+      "spec": {
+        "backend": "dryness_baseline"
+      },
+      "calibration": "sigmoid",
+      "eligible": false,
+      "mean_pr_auc": 0.2736509660410004,
+      "mean_brier": 0.11868326999660761
+    },
+    {
+      "horizon_h": 72,
+      "key": "logistic_regression",
+      "spec": {
+        "backend": "logistic_regression"
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.3639921231463352,
+      "mean_brier": 0.07165626912001843
+    },
+    {
+      "horizon_h": 72,
+      "key": "xgboost",
+      "spec": {
+        "backend": "xgboost"
+      },
+      "calibration": "sigmoid",
+      "eligible": true,
+      "mean_pr_auc": 0.19837898568972243,
+      "mean_brier": 0.12937722472538438
+    }
+  ],
+  "frozen_before": "final_2026",
+  "rule": "Mean development AP, then mean Brier; baseline is reference only."
+}

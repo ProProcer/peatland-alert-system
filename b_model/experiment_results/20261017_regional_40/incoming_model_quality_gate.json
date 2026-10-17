@@ -1,0 +1,39 @@
+{
+  "accepted": false,
+  "scope": "Minimal candidate gate on its own recorded evaluation; not operational approval.",
+  "horizons": {
+    "24": {
+      "accepted": false,
+      "reasons": [
+        "average_precision_does_not_beat_recorded_baseline",
+        "no_positive_recall_at_recorded_cutoff"
+      ],
+      "pr_auc": 0.18628813799878752,
+      "baseline_pr_auc": 0.4961656013460335,
+      "recall": 0.0,
+      "lead_time_hours": null
+    },
+    "48": {
+      "accepted": false,
+      "reasons": [
+        "average_precision_does_not_beat_recorded_baseline",
+        "no_positive_recall_at_recorded_cutoff"
+      ],
+      "pr_auc": 0.2078980934749966,
+      "baseline_pr_auc": 0.5916399838046366,
+      "recall": 0.0,
+      "lead_time_hours": null
+    },
+    "72": {
+      "accepted": false,
+      "reasons": [
+        "average_precision_does_not_beat_recorded_baseline",
+        "no_positive_recall_at_recorded_cutoff"
+      ],
+      "pr_auc": 0.22618406672102187,
+      "baseline_pr_auc": 0.6494101497809645,
+      "recall": 0.0,
+      "lead_time_hours": null
+    }
+  }
+}

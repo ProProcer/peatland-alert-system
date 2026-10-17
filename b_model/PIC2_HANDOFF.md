@@ -1,5 +1,17 @@
 # PIC 2 → PIC 1: training and inference agreement
 
+## Current 40-cell regional handoff
+
+Run `python -m b_model.predict --config-name replay_regional`. All matching paths
+are recorded in `b_model/CURRENT_HANDOFF.json`; use A's `regional_40/` features,
+history and geometry with B's `model_regional_40/` and regional `risk.json`.
+Forty cells require 120 unique cell/horizon records at the replay timestamp.
+Do not mix these with `data/processed/` or the old 33-cell replay. Schema 1.0,
+27 shared features, UTC Z timestamps, units and fixed risk boundaries are unchanged.
+`REGIONAL_RESULTS.md` records the selected models and remaining quality limits.
+The incoming uploaded model is retained separately; its quality gate can fail
+without hiding software-correctness regressions or changing probabilities.
+
 ## Leading-indicator ensemble extension
 
 The latest `train.py` auto backend selects Snap ML or XGBoost, with custom

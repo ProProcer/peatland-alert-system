@@ -183,7 +183,13 @@ def probability_metrics(y, probabilities) -> dict:
             bins.append({"lower": i / 10, "rows": int(mask.sum()),
                 "mean_score": float(p[mask].mean()), "observed_rate": float(y[mask].mean())})
     prevalence = float(y.mean())
+    default = thresholds['0.50']
+    tn = len(y) - default['tp'] - default['fp'] - default['fn']
+    accuracy = (default['tp'] + tn) / len(y)
     return {"rows": len(y), "positives": int(y.sum()), "positive_rate": prevalence,
+        "accuracy_at_0_50": accuracy,
+        "balanced_accuracy_at_0_50": (default['recall'] + tn / int((y == 0).sum())) / 2 if both else None,
+        "always_hotspot_accuracy": prevalence, "always_no_hotspot_accuracy": 1 - prevalence,
         "pr_auc": ap, "ap_lift_over_prevalence": ap / prevalence if ap is not None and prevalence else None,
         "roc_auc": float(roc_auc_score(y, p)) if both else None,
         "brier": float(brier_score_loss(y, p)),
@@ -235,24 +241,37 @@ def partition_summary(parts: dict) -> dict:
         "positives": {str(h): int(p[f"target_{h}h"].sum()) for h in HORIZONS}} for name, p in parts.items()}
 
 
-def export_bundle(folder, h, spec, method, base, calibrated, imputer, scaler, Xcal, ycal, metadata):
+def export_bundle(folder, h, spec, method, base, calibrated, imputer, scaler, Xcal, ycal, metadata,
+                  feature_columns=None):
+    columns = list(FEATURE_COLUMNS if feature_columns is None else feature_columns)
     settings = TrainingConfig()
     if spec["backend"] == "logistic_regression":
         raw = np.abs(base.named_steps["logisticregression"].coef_[0])
+    elif spec['backend'] == 'xgboost':
+        raw = np.asarray(base.feature_importances_, dtype=float)
     else:
         raw = np.maximum(0, permutation_importance(base, Xcal, ycal, scoring="average_precision",
             n_repeats=3, max_samples=min(10000, len(ycal)), random_state=metadata["seed"]).importances_mean)
-    priorities = np.array([settings.explanation.priority_multipliers.get(c, 1) for c in FEATURE_COLUMNS])
+    priorities = np.array([settings.explanation.priority_multipliers.get(c, 1) for c in columns])
     raw *= priorities
     weights = raw / raw.sum() if raw.sum() else np.ones(len(raw)) / len(raw)
     signs = np.asarray(metadata["feature_signs"])
     bundle = {"horizon_h": h, "schema_version": SCHEMA_VERSION, "model_version": metadata["model_version"],
-        "feature_columns": list(FEATURE_COLUMNS), "imputer": imputer, "scaler": scaler,
+        "feature_columns": columns, "imputer": imputer, "scaler": scaler,
         "primary_model": calibrated, "model": calibrated, "base_primary": base,
         "signed_feature_weights": weights * signs, "feature_weights": weights * signs,
         "feature_signs": signs, "snapml_used": False,
         "training_data": metadata["training_data"], "experiment_spec": spec,
         "explanation_config": asdict(settings.explanation), "calibration_method": method}
+    if spec['backend'] == 'xgboost':
+        from b_model.leading_indicators import PIPELINE_VERSION
+        from b_model.portable_xgboost import PortableBooster
+        bundle['feature_pipeline'] = PIPELINE_VERSION
+        # Persist stable inference Model IO rather than platform-specific RNG state.
+        base.get_booster().__class__ = PortableBooster
+        estimator = calibrated.calibrated_classifiers_[0].estimator
+        estimator = getattr(estimator, 'estimator', estimator)
+        estimator.get_booster().__class__ = PortableBooster
     joblib.dump(bundle, folder / f"model_{h}h.joblib")
 
 

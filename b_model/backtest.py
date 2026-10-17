@@ -15,11 +15,11 @@ import numpy as np
 from omegaconf import OmegaConf
 import pandas as pd
 from sklearn.impute import SimpleImputer
-from xgboost import XGBClassifier
+from xgboost import XGBClassifier, __version__ as xgboost_version
 
 from b_model.config import FEATURE_COLUMNS, HORIZONS, PROJECT_ROOT
 from b_model.experiment import (calibrate, fit_model, load_history,
-    partition_summary, probability_metrics, split_window, utc, write_json)
+    partition_summary, prepare, probability_metrics, select_candidates, split_window, utc, write_json)
 from b_model.leading_indicators import (ENGINEERED_FEATURES, ENSEMBLE_FEATURES,
     add_leading_indicators, cold_start_sample_weights)
 
@@ -103,7 +103,7 @@ def run(plan: dict) -> None:
     history = history.merge(indicators, on=["cell_id", "ts"], how="left", validate="one_to_one")
     metadata = {"source_sha256": source_sha, "complete_rows": len(history), "incomplete_rows_excluded": incomplete,
         "status": "Retrospective: periods and LR settings previously inspected. No tuning or promotion.",
-        "libraries": {name: version(name) for name in ("numpy", "pandas", "scikit-learn", "xgboost-cpu")},
+        "libraries": {**{name: version(name) for name in ("numpy", "pandas", "scikit-learn")}, "xgboost": xgboost_version},
         "ranking": "Top 5 independently per horizon; no probability cutoff; cell_id ascending breaks ties.",
         "snapshot_policy": "Primary: daily 00:00 UTC; secondary: every available hour. Not distinct events or dispatches.",
         "quiet_policy": "Separate budget among cells with observed hotspots_in_cell_24h == 0; unknowns excluded.",
@@ -112,21 +112,35 @@ def run(plan: dict) -> None:
     results, daily = [], []
     start = time.perf_counter()
     for window in plan["windows"]:
+        if window['name'] == plan.get('select_before_window'):
+            selection_rows = [{'key': r['backend'], 'horizon_h': r['horizon_h'], 'fold': r['window'],
+                'spec': {'backend': r['backend']}, 'calibration': 'sigmoid', 'validation': r['metrics']}
+                for r in results]
+            selected, leaderboard = select_candidates(selection_rows,
+                list(dict.fromkeys(r['window'] for r in results)))
+            write_json(evidence / 'selection.json', {'selected': selected, 'leaderboard': leaderboard,
+                'frozen_before': window['name'], 'rule': 'Mean development AP, then mean Brier; baseline is reference only.'})
         parts = split_window(history, window)
         write_json(evidence / f"split_{window['name']}.json", partition_summary(parts))
         val = parts["validation"]
-        for backend in ("logistic_regression", "xgboost"):
-            columns = FEATURE_COLUMNS if backend == "logistic_regression" else ENSEMBLE_FEATURES
+        backends = ['logistic_regression', 'xgboost']
+        if plan.get('include_dryness_baseline', False):
+            backends.append('dryness_baseline')
+        for backend in backends:
+            columns = ENSEMBLE_FEATURES if backend == 'xgboost' else FEATURE_COLUMNS
             if parts["train"][columns].isna().all().any():
                 raise ValueError("Cannot fit a training median to an entirely missing predictor")
             imputer = SimpleImputer(strategy="median").fit(parts["train"][columns])
             matrices = {key: imputer.transform(part[columns]) for key, part in parts.items()}
+            if backend == 'dryness_baseline':
+                _, _, arrays = prepare(parts)
+                matrices = arrays['baseline']
             for h in HORIZONS:
                 begin = time.perf_counter()
                 ys = {key: part[f"target_{h}h"].to_numpy(dtype=int) for key, part in parts.items()}
                 weighting = None
-                if backend == "logistic_regression":
-                    model = fit_model({"backend": backend, "c": plan["logistic_c"][str(h)]},
+                if backend in ('logistic_regression', 'dryness_baseline'):
+                    model = fit_model({"backend": backend, "c": plan["logistic_c"][str(h)] if backend == 'logistic_regression' else 1.0},
                         plan["seed"], matrices["train"], ys["train"])
                 else:
                     settings = dict(plan["xgboost"])
@@ -163,6 +177,9 @@ def run(plan: dict) -> None:
                 print(f"{stem}: AP={result['metrics']['pr_auc']:.4f}, quiet AP={result['quiet_metrics']['pr_auc']}, "
                     f"daily top5 hits={result['budgets']['daily_00z_all']['hits']}", flush=True)
     pd.concat(daily, ignore_index=True).to_csv(evidence / "daily_budget.csv", index=False)
+    pd.DataFrame([{'window':r['window'], 'backend':r['backend'], 'horizon_h':r['horizon_h'],
+        'cadence_pool':key, **metric} for r in results for key,metric in r['budgets'].items()]
+        ).to_csv(evidence / 'budget_summary.csv', index=False)
     metadata["runtime_seconds"] = time.perf_counter() - start
     metadata["completed_models"] = len(results)
     assert hashlib.sha256(source.read_bytes()).hexdigest() == source_sha

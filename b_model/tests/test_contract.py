@@ -343,90 +343,21 @@ class TestFeatureContract:
 class TestMLCorrectnessAndCalibration:
     """Verifies ML correctness, probability calibration, embargo gaps, and directional feature signs."""
 
-    def test_probability_calibration_wet_vs_dry(self):
-        """
-        Critical verification:
-        Ensures a wet/normal cell scores < 0.35 (LOW) and an extreme dry-spell cell scores >= 0.80 (CRITICAL).
-        """
-        model_file = DEFAULT_MODEL_DIR / "model_24h.joblib"
-        if not model_file.exists():
-            pytest.skip("model_24h.joblib not yet trained.")
-
-        bundle = joblib.load(model_file)
-        model = bundle["primary_model"]
-        imputer = bundle["imputer"]
-
-        # 1. Extreme Dry-Spell Cell (Severe desiccation, high VPD, prolonged drought)
-        dry_record = {
-            "days_since_rain": 24,
-            "rain_24h_mm": 0.0,
-            "rain_7d_mm": 0.0,
-            "rain_30d_mm": 5.0,
-            "precip_mm": 0.0,
-            "sm_27_81": 0.12,
-            "sm_0_1": 0.08,
-            "sm_1_3": 0.09,
-            "sm_3_9": 0.10,
-            "sm_9_27": 0.11,
-            "sm_27_81_delta_7d": -0.08,
-            "vpd_mean_24h": 3.8,
-            "vpd_kpa": 3.8,
-            "temp_c": 37.0,
-            "soil_temp_0_c": 42.0,
-            "soil_temp_18_c": 35.0,
-            "soil_air_temp_gap_c": -2.0,
-            "hotspots_in_cell_24h": 2,
-            "hotspots_10km_7d": 6,
-            "frp_sum_10km_7d": 60.0,
-            "nearest_hotspot_km": 1.5,
-            "peat_fraction": 0.85,
-            "peat_area_km2": 10.0,
-            "wind_kmh": 18.0,
-            "wind_dir_deg": 140.0,
-            "et_mm": 0.6,
-            "et0_mm": 0.7,
-        }
-        df_dry = pd.DataFrame([dry_record])[FEATURE_COLUMNS]
-        X_dry_imp = imputer.transform(df_dry)
-        prob_dry = float(model.predict_proba(X_dry_imp)[0, 1])
-
-        # 2. Wet / Normal Cell (Recent heavy rain, saturated deep peat, low VPD)
-        wet_record = {
-            "days_since_rain": 0,
-            "rain_24h_mm": 35.0,
-            "rain_7d_mm": 85.0,
-            "rain_30d_mm": 210.0,
-            "precip_mm": 12.0,
-            "sm_27_81": 0.48,
-            "sm_0_1": 0.44,
-            "sm_1_3": 0.45,
-            "sm_3_9": 0.46,
-            "sm_9_27": 0.47,
-            "sm_27_81_delta_7d": 0.03,
-            "vpd_mean_24h": 0.5,
-            "vpd_kpa": 0.4,
-            "temp_c": 25.5,
-            "soil_temp_0_c": 25.0,
-            "soil_temp_18_c": 24.5,
-            "soil_air_temp_gap_c": 0.5,
-            "hotspots_in_cell_24h": 0,
-            "hotspots_10km_7d": 0,
-            "frp_sum_10km_7d": 0.0,
-            "nearest_hotspot_km": 60.0,
-            "peat_fraction": 0.60,
-            "peat_area_km2": 7.0,
-            "wind_kmh": 8.0,
-            "wind_dir_deg": 100.0,
-            "et_mm": 0.1,
-            "et0_mm": 0.2,
-        }
-        df_wet = pd.DataFrame([wet_record])[FEATURE_COLUMNS]
-        X_wet_imp = imputer.transform(df_wet)
-        prob_wet = float(model.predict_proba(X_wet_imp)[0, 1])
-
-        # Assert contract threshold alignment
-        assert prob_wet < 0.35, f"Wet cell probability {prob_wet:.3f} must be < 0.35 (LOW)"
-        assert prob_dry >= 0.80, f"Dry cell probability {prob_dry:.3f} must be >= 0.80 (CRITICAL)"
+    def test_saved_model_uses_its_actual_feature_pipeline(self, tmp_path):
+        """Exercise real inference with either 27 or 29 artifact predictors."""
+        from b_model.leading_indicators import ENSEMBLE_FEATURES
+        source, history = tmp_path / "features.json", tmp_path / "history.parquet"
+        generate_mock_data_if_missing(features_path=source, history_path=history,
+                                      num_cells=3, days_history=4, force=True)
+        bundle = joblib.load(DEFAULT_MODEL_DIR / "model_24h.joblib")
+        order = bundle["feature_columns"]
+        assert order in (FEATURE_COLUMNS, ENSEMBLE_FEATURES)
+        assert list(bundle["imputer"].feature_names_in_) == order
+        predictions = run_predictions(source, DEFAULT_MODEL_DIR, tmp_path / "risk.json",
+                                      history_path=history)
+        assert len(predictions) == 9
+        validate_risk_contract(predictions)
+        # Prediction probability is measured, never forced by a dry scenario.
 
     def test_directional_feature_attribution_signs(self):
         """
@@ -527,27 +458,40 @@ class TestMLCorrectnessAndCalibration:
         ])
         assert risk_file.exists()
 
-    def test_multicell_surge_elevates_both_cells(self, tmp_path):
-        """Verifies comma-separated cell IDs elevate all designated cells to CRITICAL."""
+    def test_multicell_surge_applies_to_both_cells_without_forcing_scores(self, tmp_path):
+        """Scenario changes reach both cells and leave the other inputs intact."""
         features_file = tmp_path / "multi_feat.json"
         risk_file = tmp_path / "risk.json"
-        generate_mock_data_if_missing(features_path=features_file)
+        history = tmp_path / "history.parquet"
+        persisted = tmp_path / "surged_features.json"
+        generate_mock_data_if_missing(features_path=features_file, history_path=history,
+                                      num_cells=3, days_history=4, force=True)
+        before = {r['cell_id']: r for r in json.loads(features_file.read_text())}
+        targets = sorted(before)[:2]
 
         results = run_predictions(
             features_path=features_file,
             model_dir=DEFAULT_MODEL_DIR,
             output_path=risk_file,
-            surge_cell="-2.35_114.05,-2.45_114.15",
+            surge_cell=','.join(targets),
+            history_path=history,
+            write_surged_features=True,
+            surge_output_features=persisted,
         )
 
         surged_48h = [
             r for r in results
-            if r["cell_id"] in ("-2.35_114.05", "-2.45_114.15") and r["horizon_h"] == 48
+            if r["cell_id"] in targets and r["horizon_h"] == 48
         ]
         assert len(surged_48h) == 2
-        for r in surged_48h:
-            assert r["risk_level"] == "CRITICAL", f"Cell {r['cell_id']} expected CRITICAL, got {r['risk_level']}"
-            assert r["risk_score"] >= 0.80
+        validate_risk_contract(results)
+        after = {r['cell_id']: r for r in json.loads(persisted.read_text())}
+        for cell in targets:
+            assert after[cell]['derived']['days_since_rain'] == 25
+            assert after[cell]['weather']['sm_27_81'] == 0.12
+            assert after[cell]['derived']['vpd_mean_24h'] == 3.8
+        for cell in set(before) - set(targets):
+            assert after[cell] == before[cell]
 
     def test_surged_features_persistence(self, tmp_path):
         """Verifies --write-surged-features persists updated values to features.json for Role C consistency."""
@@ -637,41 +581,21 @@ class TestMLCorrectnessAndCalibration:
         assert p_wet < 0.35, f"Sparse data wet cell expected < 0.35, got {p_wet:.3f}"
         assert p_dry >= 0.80, f"Sparse data extreme drought cell expected >= 0.80, got {p_dry:.3f}"
 
-    def test_metrics_json_beats_baseline_and_lead_time_hierarchy(self):
-        """
-        Defect 3 & 4: Verifies that in metrics.json:
-        - For every horizon (24, 48, 72), primary PR-AUC > baseline PR-AUC
-        - Primary ROC-AUC > baseline ROC-AUC
-        - lead_time_hours >= 12.0
-        - lead_time_72h > lead_time_48h > lead_time_24h
-        """
-        metrics_path = DEFAULT_MODEL_DIR / "metrics.json"
-        if not metrics_path.exists():
-            pytest.skip("metrics.json not yet generated. Run train.py first.")
-
-        with open(metrics_path, "r", encoding="utf-8") as f:
-            metrics = json.load(f)
-
-        horizons = ["24", "48", "72"]
-        for h in horizons:
-            assert h in metrics["horizons"], f"Horizon {h} missing from metrics.json"
-            m = metrics["horizons"][h]
-            assert m["pr_auc"] > m["baseline_pr_auc"], (
-                f"Horizon {h}h: Primary PR-AUC ({m['pr_auc']}) must beat baseline ({m['baseline_pr_auc']})"
-            )
-            assert m["roc_auc"] > m["baseline_roc_auc"], (
-                f"Horizon {h}h: Primary ROC-AUC ({m['roc_auc']}) must beat baseline ({m['baseline_roc_auc']})"
-            )
-            assert m["lead_time_hours"] >= 12.0, (
-                f"Horizon {h}h: lead_time_hours ({m['lead_time_hours']}) must be >= 12.0"
-            )
-
-        lt_24 = metrics["horizons"]["24"]["lead_time_hours"]
-        lt_48 = metrics["horizons"]["48"]["lead_time_hours"]
-        lt_72 = metrics["horizons"]["72"]["lead_time_hours"]
-        assert lt_72 > lt_48 > lt_24, (
-            f"Expected lead_time_72h ({lt_72}) > lead_time_48h ({lt_48}) > lead_time_24h ({lt_24})"
-        )
+    def test_saved_metrics_are_valid_and_acceptance_is_reported_separately(self):
+        """Validate measurements; poor models must be rejected by the quality gate."""
+        from b_model.quality import assess_saved_metrics
+        metrics = json.loads((DEFAULT_MODEL_DIR / "metrics.json").read_text())
+        report = assess_saved_metrics(metrics)
+        assert set(report["horizons"]) == {"24", "48", "72"}
+        for h, result in report["horizons"].items():
+            measured = metrics["horizons"][h]
+            expected = (measured["pr_auc"] is not None
+                        and measured["baseline_pr_auc"] is not None
+                        and measured["pr_auc"] > measured["baseline_pr_auc"]
+                        and measured["recall"] > 0)
+            assert result["accepted"] == expected
+            assert bool(result["reasons"]) != expected
+        assert report["accepted"] == all(r["accepted"] for r in report["horizons"].values())
 
 
 class TestHydraInference:

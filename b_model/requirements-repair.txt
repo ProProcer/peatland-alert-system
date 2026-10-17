@@ -1,0 +1,3 @@
+# Trusted artifact recovery and its tests; not needed for normal inference.
+-r requirements-training.txt
+py-ubjson>=0.16,<1
