@@ -8,6 +8,15 @@ Read [TEAM_PLAYBOOK.md](TEAM_PLAYBOOK.md) first. The original [PDF](TEAM_PLAYBOO
 
 Requires Python 3.12 and Bash. Docker is optional. Run from the repository root:
 
+The raw FIRMS CSVs use [Git LFS](https://git-lfs.com/). Install Git LFS, then retrieve the source files before processing raw data:
+
+```bash
+git lfs install --local
+git lfs pull
+```
+
+See [data/raw/README.md](data/raw/README.md) for the source inventory and LFS usage.
+
 ```bash
 # Install the shared tools and your role's dependencies (a, b, c, d, e, or all).
 bash scripts/setup.sh e
@@ -45,9 +54,9 @@ d_frontend/          D: starter handoff viewer, static mocks
 e_platform/          E: server, Dockerfiles, evidence and submission folders
 scripts/             Setup and pipeline commands (E)
 config/              Shared demo decisions (E)
-data/raw/            Bundled peat/FIRMS sources; other downloads ignored
+data/raw/            Peat source, FIRMS CSVs via Git LFS, API notes
 data/processed/      Existing/generated role outputs
-data/demo/           Disposable mock pipeline outputs (ignored)
+data/demo/           Separate mock pipeline outputs
 ```
 
 ## Commands
@@ -84,6 +93,7 @@ Keep this inventory current as dependencies or datasets are added. Suggested rol
 | Library / tool | Use | Project link |
 | --- | --- | --- |
 | Python standard library | CLI, local server, mock workflow, integration tests | [Python](https://www.python.org/) |
+| Git LFS | Store large raw CSV and OSM PBF source files | [Git LFS](https://git-lfs.com/) |
 | NumPy | Numerical features and modeling | [NumPy](https://numpy.org/) |
 | pandas | Hourly data and model inputs | [pandas](https://pandas.pydata.org/) |
 | Apache Arrow / PyArrow | Parquet handoffs | [Apache Arrow](https://arrow.apache.org/) |

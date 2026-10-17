@@ -16,17 +16,6 @@ htmlcov/
 .DS_Store
 node_modules/
 dist/
-data/raw/*
-!data/raw/README.md
-!data/raw/Indonesia_Peat_Lands.geojson
-!data/raw/DL_FIRE_J1V-C2_824564.zip
-!data/raw/DL_FIRE_J2V-C2_824565.zip
-data/demo/
-data/processed/*.parquet
-data/processed/*.geojson
-data/processed/dispatch.json
-data/processed/*.tmp
-data/processed/*.log
 c_agent/state/
 c_agent/logs/
 *.log
