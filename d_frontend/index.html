@@ -7,6 +7,7 @@
 <script src="response.js?v=timeline-cards-fixed-19" defer></script>
 <script src="explain.js?v=move-resize-7" defer></script>
 <script src="navigation.js?v=shared-nav-1" defer></script>
+<script src="live-refresh.js?v=1" defer></script>
 <link rel="stylesheet" href="easter-egg.css?v=burgundy-2"><script src="easter-egg.js?v=1" defer></script></head>
 <body>
 <a class="skip-link" href="#main">Skip to overview</a>
@@ -42,6 +43,7 @@
     <section class="page-heading" id="overview"><div><h1>Kalimantan<span class="title-period">.</span></h1><p class="heading-copy">A regional view of peatland conditions, fire risk, and simulated response.</p></div><div class="snapshot"><span class="label">FEATURE SNAPSHOT · UTC</span><strong id="snapshot-date">Awaiting data</strong><span id="snapshot-time">—</span></div></section>
     <div class="toolbar"><div class="toolbar-group dataset-control"><label for="dataset">Data source</label><select id="dataset" aria-describedby="dataset-info"><option value="auto">Loading datasets…</option></select></div><div class="toolbar-group forecast-control"><label for="horizon">Forecast window</label><select id="horizon"><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option></select></div></div>
     <p id="dataset-info" class="visually-hidden"></p>
+    <div id="live-refresh-controls" hidden><button id="live-refresh" class="refresh-button" type="button">Refresh live data</button><span id="live-refresh-status" role="status" aria-live="polite">Automatic updates start at each hour.</span></div>
     <p id="status" class="feed-status visually-hidden" role="status"></p>
     <div class="workspace-grid">
       <div class="status-column">

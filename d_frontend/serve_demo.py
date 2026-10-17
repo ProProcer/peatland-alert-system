@@ -17,9 +17,10 @@ FILES = ('features.json', 'cells.geojson', 'risk.json', 'dispatch.json')
 
 
 class DemoHandler(SimpleHTTPRequestHandler):
-    def __init__(self, *args, demo_root, live_root=None, **kwargs):
+    def __init__(self, *args, demo_root, live_root=None, refresh_callback=None, **kwargs):
         self.demo_root = Path(demo_root).resolve()
         self.live_root = Path(live_root).resolve() if live_root is not None else None
+        self.refresh_callback = refresh_callback
         super().__init__(*args, directory=str(ROOT / 'd_frontend'), **kwargs)
 
     def live_directory(self):
@@ -122,9 +123,9 @@ class DemoHandler(SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def do_POST(self):
-        if self.path != '/response/run':
+        if self.path not in ('/response/run', '/live/refresh'):
             return self.json_response({'error': 'Unknown operation'}, 404)
-        if self.live_root is not None:
+        if self.live_root is not None and self.path == '/response/run':
             return self.json_response({'error': 'Live responses run automatically with each validated snapshot.'}, 409)
         # Mutations are same-origin and JSON-only; no external notification endpoint exists.
         origin = self.headers.get('Origin')
@@ -137,6 +138,12 @@ class DemoHandler(SimpleHTTPRequestHandler):
             if not 0 < size <= 4096:
                 raise ValueError('Invalid request size')
             options = json.loads(self.rfile.read(size))
+            if self.path == '/live/refresh':
+                if self.live_root is None or self.refresh_callback is None:
+                    return self.json_response({'error': 'Live refresh is unavailable in demo mode.'}, 409)
+                if not self.refresh_callback():
+                    return self.json_response({'error': 'A refresh is already running or queued.'}, 409)
+                return self.json_response({'state': 'queued'}, 202)
             from d_frontend.response_api import run_response
             result = run_response(self.demo_root / DATASETS['coverage'][0], options)
             return self.json_response(result)
@@ -144,8 +151,9 @@ class DemoHandler(SimpleHTTPRequestHandler):
             return self.json_response({'error': str(exc)}, 400)
 
 
-def make_server(demo_root=ROOT / 'data/demo', port=8001, *, host='127.0.0.1', live_root=None):
-    return ThreadingHTTPServer((host, port), partial(DemoHandler, demo_root=demo_root, live_root=live_root))
+def make_server(demo_root=ROOT / 'data/demo', port=8001, *, host='127.0.0.1', live_root=None, refresh_callback=None):
+    return ThreadingHTTPServer((host, port), partial(DemoHandler, demo_root=demo_root, live_root=live_root,
+                                                   refresh_callback=refresh_callback))
 
 
 def main():

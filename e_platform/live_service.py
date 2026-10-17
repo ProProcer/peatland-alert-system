@@ -191,23 +191,44 @@ class Scheduler:
             raise ValueError("Refresh interval must be 60..86400 seconds")
         self.runtime, self.interval, self.options = runtime, interval, options
         self.stop = threading.Event()
+        self.wake = threading.Event()
+        self.guard = threading.Lock()
+        self.busy = False
         self.thread = threading.Thread(target=self.loop, name="live-refresh", daemon=True)
+
+    def request_refresh(self):
+        with self.guard:
+            if self.busy or self.wake.is_set() or self.stop.is_set():
+                return False
+            self.wake.set()
+            return True
+
+    def seconds_until_boundary(self):
+        return self.interval - time.time() % self.interval
 
     def loop(self):
         while not self.stop.is_set():
+            with self.guard:
+                self.busy = True
+                self.wake.clear()
             try:
                 manifest = refresh_once(self.runtime, **self.options)
                 print(f"Live snapshot published: {manifest['snapshot']} ({manifest['cell_count']} cells)", flush=True)
             except Exception as exc:
                 print(f"Live refresh failed; retaining last good snapshot: {redact(str(exc))}", flush=True)
-            # Failure retries use the same interval; no quota-consuming tight loop.
-            self.stop.wait(self.interval)
+            finally:
+                with self.guard:
+                    self.busy = False
+            # Wall-clock boundaries avoid drift from provider/processing latency.
+            # Manual requests wake this same worker; they never create a second run.
+            self.wake.wait(self.seconds_until_boundary())
 
     def start(self):
         self.thread.start()
 
     def close(self):
         self.stop.set()
+        self.wake.set()
 
 
 def main():
@@ -231,7 +252,8 @@ def main():
         return
     from d_frontend.serve_demo import make_server
     scheduler = Scheduler(args.runtime_dir, interval=args.interval_seconds, **options)
-    with make_server(port=args.port, host=args.host, live_root=args.runtime_dir) as server:
+    with make_server(port=args.port, host=args.host, live_root=args.runtime_dir,
+                     refresh_callback=scheduler.request_refresh) as server:
         def stop(signum, frame):
             scheduler.close()
             threading.Thread(target=server.shutdown, daemon=True).start()

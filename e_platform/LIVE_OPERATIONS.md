@@ -1,10 +1,15 @@
 # Automatic live dashboard
 
 The service refreshes all 40 configured Kalimantan cells immediately at startup
-and hourly after each attempt. It fetches modeled weather and FIRMS NRT data,
+and at the start of each clock hour. It fetches modeled weather and FIRMS NRT data,
 validates features, runs the fixed regional model for 24/48/72 hours, generates
 simulated Role C responses, validates all handoffs, and atomically publishes a
 complete snapshot. The dashboard polls for published snapshots every minute.
+The **Refresh live data** button requests the same complete pipeline immediately
+and shows progress until it succeeds or fails. Overlapping requests are rejected;
+manual refreshes do not shift the next hourly run. A run still active at an hour
+boundary completes before the next available boundary; missed runs are not queued.
+Fetching and processing take time, so the new snapshot appears after the hour.
 This schedules inference; it does not retrain or change risk thresholds.
 
 ## Install and run
@@ -98,8 +103,9 @@ configured to start after host reboot for this to be automatic.
   reachable; inspect `state`/`stale` to assess data freshness.
 
 Use `--interval-seconds` to change the default 3600 seconds (allowed range:
-60–86400). Frequent provider requests consume quota. The scheduler waits this
-interval after a run completes. Schema 1.0 and the selected model's thresholds
+60–86400). Frequent provider requests consume quota. The scheduler waits until
+the next wall-clock boundary (3600 means each whole UTC hour).
+Schema 1.0 and the selected model's thresholds
 are unchanged; automatic collection is not evidence of operational model quality.
 
 ## Verification
@@ -109,6 +115,7 @@ python -m unittest discover -s e_platform/tests -v
 python -m unittest a_data.tests.test_live_continuity d_frontend.test_serve_demo -v
 node d_frontend/test_data.cjs
 node d_frontend/test_status.cjs
+node d_frontend/test_live_refresh.cjs
 python -m contracts.validate
 ```
 

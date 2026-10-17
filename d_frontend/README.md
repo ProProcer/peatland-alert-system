@@ -10,6 +10,9 @@ Start `python -m e_platform.live_service` to view automatically refreshed live
 inputs, predictions and simulated responses on port 8001. The browser checks for
 new complete generations every minute, displays their feature timestamp, and
 flags stale data/refresh errors. The automatic service owns the response run;
+automatic refreshes start at each clock hour. **Refresh live data** requests a
+complete data fetch, inference and simulated-response run immediately, with
+progress feedback and protection against overlapping runs.
 manual generation is disabled in this mode. It never falls back to bundled
 historical data while waiting for live data. The regular `serve_demo` command
 continues to serve the historical demo. See

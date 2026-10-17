@@ -113,8 +113,73 @@ class LivePipelineTests(unittest.TestCase):
             def stop_after_first_wait(interval):
                 waits.append(interval)
                 scheduler.stop.set()
-            with patch.object(scheduler.stop, "wait", side_effect=stop_after_first_wait):
-                with patch("e_platform.live_service.refresh_once", side_effect=ValueError("retry later")) as run:
+            with patch.object(scheduler.wake, "wait", side_effect=stop_after_first_wait):
+                with patch("e_platform.live_service.time.time", return_value=3600 + 57 * 60), \
+                     patch("e_platform.live_service.refresh_once", side_effect=ValueError("retry later")) as run:
                     scheduler.loop()
             self.assertEqual(run.call_count, 1)
-            self.assertEqual(waits, [3600])
+            self.assertEqual(waits, [180])
+
+    def test_manual_requests_coalesce_and_do_not_overlap(self):
+        scheduler = Scheduler('unused')
+        self.assertTrue(scheduler.request_refresh())
+        self.assertFalse(scheduler.request_refresh())
+        scheduler.wake.clear()
+        scheduler.busy = True
+        self.assertFalse(scheduler.request_refresh())
+        scheduler.busy = False
+        with patch('e_platform.live_service.time.time', return_value=7200):
+            self.assertEqual(scheduler.seconds_until_boundary(), 3600)
+        scheduler.close()
+        self.assertFalse(scheduler.request_refresh())
+
+    def test_manual_request_wakes_waiting_worker(self):
+        scheduler = Scheduler('unused')
+        waiting = threading.Event()
+        real_wait = scheduler.wake.wait
+        runs = []
+        def wait(timeout):
+            waiting.set()
+            return real_wait(timeout)
+        def refresh(*args, **kwargs):
+            runs.append(1)
+            if len(runs) == 2:
+                scheduler.close()
+            return {'snapshot': 'test', 'cell_count': 40}
+        with patch.object(scheduler.wake, 'wait', side_effect=wait), \
+             patch('e_platform.live_service.refresh_once', side_effect=refresh):
+            scheduler.start()
+            try:
+                self.assertTrue(waiting.wait(5))
+                self.assertTrue(scheduler.request_refresh())
+                scheduler.thread.join(5)
+                self.assertFalse(scheduler.thread.is_alive())
+                self.assertEqual(len(runs), 2)
+            finally:
+                scheduler.close()
+                scheduler.thread.join(5)
+
+    def test_manual_http_refresh_is_async_and_same_origin(self):
+        scheduler = Scheduler('unused')
+        with tempfile.TemporaryDirectory() as folder, \
+             make_server(port=0, live_root=folder, refresh_callback=scheduler.request_refresh) as server:
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            connection = HTTPConnection('127.0.0.1', server.server_port, timeout=5)
+            def post(origin=None):
+                headers = {'Content-Type': 'application/json'}
+                if origin:
+                    headers['Origin'] = origin
+                connection.request('POST', '/live/refresh', '{}', headers)
+                response = connection.getresponse()
+                response.read()
+                return response.status
+            try:
+                self.assertEqual(post('https://external.example'), 403)
+                self.assertFalse(scheduler.wake.is_set())
+                self.assertEqual(post(), 202)
+                self.assertEqual(post(), 409)
+            finally:
+                connection.close()
+                server.shutdown()
+                thread.join(timeout=5)
