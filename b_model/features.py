@@ -6,6 +6,7 @@ Strictly adheres to Contract 3.1 (/data/processed/features.json).
 import json
 import re
 from datetime import datetime
+from types import MappingProxyType
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 import numpy as np
@@ -23,35 +24,32 @@ from b_model.config import (
 logger = setup_logger("b_model.features")
 
 
-def flatten_feature_record(record: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Flattens a single nested JSON record adhering to Contract 3.1 into a flat dictionary.
-    Excludes non-numeric list attributes like 'polygon_ids'.
-    Converts nulls to np.nan.
+# Immutable keys, copied from frozen Contract 3.1; no inferred API field names.
+FEATURE_KEYS = MappingProxyType({
+    group: frozenset(columns) | ({"polygon_ids"} if group == "peat" else set())
+    for group, columns in FEATURE_GROUPS.items()
+})
+RECORD_KEYS = frozenset({"schema_version", "cell_id", "ts", "lat", "lon", *FEATURE_KEYS})
+COUNT_FIELDS = frozenset({"days_since_rain", "hotspots_in_cell_24h", "hotspots_10km_7d"})
+NONNEGATIVE_FIELDS = frozenset({
+    "peat_area_km2", "precip_mm", "wind_kmh", "wind_dir_deg", "vpd_kpa", "et_mm", "et0_mm",
+    "rain_24h_mm", "rain_7d_mm", "rain_30d_mm", "vpd_mean_24h", "frp_sum_10km_7d",
+    "nearest_hotspot_km", *COUNT_FIELDS,
+})
 
-    Args:
-        record: Dictionary conforming to Contract 3.1
 
-    Returns:
-        Flat dictionary with cell metadata and feature columns
-    """
-    flat: Dict[str, Any] = {
-        "schema_version": record.get("schema_version", SCHEMA_VERSION),
-        "cell_id": str(record["cell_id"]),
-        "ts": str(record["ts"]),
-        "lat": float(record["lat"]) if record.get("lat") is not None else np.nan,
-        "lon": float(record["lon"]) if record.get("lon") is not None else np.nan,
-    }
+class FeatureValidationError(ValueError):
+    """A malformed handoff, identified by zero-based record index and field path."""
 
-    # Extract all nested sub-objects: peat, weather, derived, fire
-    for group in ["peat", "weather", "derived", "fire"]:
-        group_data = record.get(group) or {}
-        for key, val in group_data.items():
-            if key == "polygon_ids":
-                # polygon_ids is a metadata list, not a numerical ML feature
-                continue
-            flat[key] = np.nan if val is None else val
 
+def flatten_feature_record(record: Dict[str, Any], record_index: int = 0) -> Dict[str, Any]:
+    """Validate and copy only canonical fields; retain missing measurements as NaN."""
+    validate_feature_record(record, record_index)
+    flat = {key: record[key] for key in ("schema_version", "cell_id", "ts", "lat", "lon")}
+    for group, columns in FEATURE_GROUPS.items():
+        for column in columns:
+            value = record[group][column]
+            flat[column] = np.nan if value is None else value
     return flat
 
 
@@ -84,9 +82,7 @@ def flatten_features_json(
     else:
         raise ValueError(f"Unexpected JSON root type in {json_path}: {type(raw_data)}")
 
-    for record in raw_list:
-        validate_feature_record(record)
-    flattened = [flatten_feature_record(rec) for rec in raw_list]
+    flattened = [flatten_feature_record(rec, index) for index, rec in enumerate(raw_list)]
     df = pd.DataFrame(flattened)
     if df.duplicated(["cell_id", "ts"]).any():
         raise ValueError("Duplicate feature (cell_id, ts)")
@@ -96,7 +92,7 @@ def flatten_features_json(
 
     # Deduplicate multi-hour inputs: keep latest timestamp per cell_id
     if latest_only and "cell_id" in df.columns and "ts" in df.columns:
-        df = df.assign(_time=pd.to_datetime(df["ts"], utc=True)).sort_values("_time")
+        df = df.assign(_time=pd.to_datetime(df["ts"], utc=True, format="ISO8601")).sort_values("_time")
         df = df.drop_duplicates("cell_id", keep="last").drop(columns="_time")
 
     # Ensure all canonical feature columns exist in exact order
@@ -130,34 +126,72 @@ def _invalid_constant(value):
     raise ValueError(f"Non-finite JSON number: {value}")
 
 
-def validate_feature_record(record):
-    """Reject corrupt metadata/measurements before any model transformation."""
-    if record.get("schema_version") != SCHEMA_VERSION:
-        raise ValueError("Expected schema_version 1.0")
+def validate_feature_record(record, record_index=0):
+    """Enforce frozen keys, types, ranges and coordinate conventions before flattening."""
+    def fail(path, message):
+        raise FeatureValidationError(f"record[{record_index}].{path}: {message}")
+
+    def keys(value, expected, path):
+        if not isinstance(value, dict):
+            fail(path, "expected an object")
+        missing, extra = expected - value.keys(), value.keys() - expected
+        if missing:
+            fail(f"{path}.{sorted(missing)[0]}".strip("."), "required field missing")
+        if extra:
+            fail(f"{path}.{sorted(extra)[0]}".strip("."), "unexpected field")
+
+    keys(record, RECORD_KEYS, "")
+    if record["schema_version"] != SCHEMA_VERSION:
+        fail("schema_version", "expected 1.0")
     ts = record["ts"]
     if not isinstance(ts, str) or not re.fullmatch(
         r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z", ts
     ):
-        raise ValueError("Timestamp must be ISO-8601 UTC ending in Z")
-    datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        fail("ts", "expected ISO-8601 UTC ending in Z")
+    try:
+        datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    except ValueError:
+        fail("ts", "invalid calendar timestamp")
     lat, lon = record["lat"], record["lon"]
-    if (type(lat) not in (int, float) or type(lon) not in (int, float)
-            or not -90 < lat < 90 or not -180 < lon < 180):
-        raise ValueError("Invalid lat/lon coordinates")
-    if record["cell_id"] != f"{lat:.2f}_{lon:.2f}":
-        raise ValueError("cell_id does not match lat/lon")
-    for value in (lat, lon):
+    for name, value, limit in (("lat", lat, 90), ("lon", lon, 180)):
+        if type(value) not in (int, float) or not -limit < value < limit:
+            fail(name, "coordinate outside valid range")
         if not np.isclose((value - 0.05) / 0.1, round((value - 0.05) / 0.1), rtol=0, atol=1e-7):
-            raise ValueError("Cell centers must be on .x5")
-    for group, columns in FEATURE_GROUPS.items():
-        values = record.get(group, {})
-        for column in columns:
-            value = values.get(column)
-            if value is not None and (type(value) not in (int, float)
-                                      or not np.isfinite(value) or value == -999):
-                raise ValueError(f"Invalid measurement: {column}; missing values must be null")
-    if all(record.get("weather", {}).get(c) is None for c in FEATURE_GROUPS["weather"]):
-        raise ValueError("All-null weather is prohibited")
+            fail(name, "cell centers must be on .x5")
+    if record["cell_id"] != f"{lat:.2f}_{lon:.2f}":
+        fail("cell_id", "does not match lat/lon")
+    for group, expected in FEATURE_KEYS.items():
+        values = record[group]
+        keys(values, expected, group)
+        for column in FEATURE_GROUPS[group]:
+            value, path = values[column], f"{group}.{column}"
+            if value is None:
+                if column == "peat_fraction":
+                    fail(path, "required peat metadata cannot be null")
+                continue
+            if type(value) not in (int, float):
+                fail(path, "expected a finite number or null")
+            try:
+                finite = np.isfinite(float(value))
+            except OverflowError:
+                finite = False
+            if not finite or value == -999:
+                fail(path, "expected a finite measurement; use null for missing values")
+            if column in COUNT_FIELDS and value % 1 != 0:
+                fail(path, "expected an integer count")
+            if column in NONNEGATIVE_FIELDS and value < 0:
+                fail(path, "must be nonnegative")
+            if column == "peat_fraction" and not 0.05 <= value <= 1:
+                fail(path, "must be in [0.05, 1]")
+            if column.startswith("sm_") and column != "sm_27_81_delta_7d" and not 0 <= value <= 1:
+                fail(path, "soil moisture must be in [0, 1]")
+            if column == "wind_dir_deg" and value > 360:
+                fail(path, "must be in [0, 360]")
+    polygons = record["peat"]["polygon_ids"]
+    if not isinstance(polygons, list) or any(not isinstance(v, str) or not v for v in polygons):
+        fail("peat.polygon_ids", "expected an array of nonempty identifiers")
+    if all(record["weather"][c] is None for c in FEATURE_GROUPS["weather"]):
+        fail("weather", "all-null weather is prohibited")
 
 
 def align_history_schema(df: pd.DataFrame, history_path: Path) -> pd.DataFrame:
@@ -177,15 +211,34 @@ def align_history_schema(df: pd.DataFrame, history_path: Path) -> pd.DataFrame:
     for field in schema:
         if field.name not in columns:
             continue
-        if pa.types.is_integer(field.type) and result[field.name].isna().any():
-            if (result[field.name].dropna() % 1 != 0).any():
-                raise ValueError(f"Fractional integer feature: {field.name}")
-            result[field.name] = result[field.name].astype(f"Int{field.type.bit_width}")
+        series = result[field.name]
+        values = series.dropna()
+        if pa.types.is_integer(field.type):
+            dtype = np.dtype(field.type.to_pandas_dtype())
+            limits = np.iinfo(dtype)
+            for value in values:
+                # Python integer comparison avoids float rounding at int64/uint64 bounds.
+                if not np.isfinite(value) or value % 1 != 0:
+                    raise FeatureValidationError(f"history.{field.name}: fractional/nonfinite integer")
+                if not limits.min <= int(value) <= limits.max:
+                    raise FeatureValidationError(f"history.{field.name}: integer exceeds {dtype} bounds")
+            nullable = ("UInt" if pa.types.is_unsigned_integer(field.type) else "Int") + str(field.type.bit_width)
+            result[field.name] = series.astype(nullable if series.isna().any() else dtype)
+        elif pa.types.is_floating(field.type):
+            dtype = np.dtype(field.type.to_pandas_dtype())
+            if any(abs(value) > np.finfo(dtype).max for value in values):
+                raise FeatureValidationError(f"history.{field.name}: floating-point overflow")
+            result[field.name] = series.astype(dtype)
+        elif pa.types.is_string(field.type) or pa.types.is_large_string(field.type):
+            if not all(isinstance(value, str) for value in values):
+                raise FeatureValidationError(f"history.{field.name}: expected strings")
+            result[field.name] = series.astype(object)
         else:
-            dtype = field.type.to_pandas_dtype()
-            if pa.types.is_integer(field.type) and (result[field.name] % 1 != 0).any():
-                raise ValueError(f"Fractional integer feature: {field.name}")
-            result[field.name] = result[field.name].astype(dtype)
+            raise FeatureValidationError(f"history.{field.name}: unsupported predictor dtype {field.type}")
+        if field.name in FEATURE_COLUMNS:
+            numeric = result[field.name].dropna().to_numpy(dtype=float)
+            if not np.isfinite(numeric).all() or (numeric == -999).any():
+                raise FeatureValidationError(f"history.{field.name}: invalid value after dtype conversion")
     return result
 
 

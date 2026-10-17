@@ -119,6 +119,7 @@ class PathsConfig:
     history: Optional[str] = str(DEFAULT_HISTORY_PATH)
     model_dir: str = str(DEFAULT_MODEL_DIR)
     output: str = str(DEFAULT_RISK_PATH)
+    demo_features_out: Optional[str] = None
 
 
 @dataclass
@@ -134,11 +135,23 @@ class InferenceConfig:
     horizons: List[int] = field(default_factory=lambda: list(HORIZONS))
     imputation: ImputationConfig = field(default_factory=ImputationConfig)
     max_seconds: float = 60.0
+    surge_cell: Optional[str] = None
 
 
 def register_config() -> None:
     from hydra.core.config_store import ConfigStore
     ConfigStore.instance().store(name="inference_schema", node=InferenceConfig)
+
+
+def load_inference_config():
+    """Compose the same YAML/environment defaults for the legacy CLI."""
+    from hydra import compose, initialize_config_dir
+    from hydra.core.global_hydra import GlobalHydra
+    register_config()
+    if GlobalHydra.instance().is_initialized():
+        return compose(config_name="config")
+    with initialize_config_dir(version_base="1.3", config_dir=str(PACKAGE_DIR / "conf")):
+        return compose(config_name="config")
 
 
 def validate_config(config):
