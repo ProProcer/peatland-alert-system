@@ -1,5 +1,18 @@
 # Role B — ML lead
 
+**Final hackathon handoff:** read [FINAL_HANDOFF.md](FINAL_HANDOFF.md) and use
+`python -m b_model.predict --config-name replay_regional` for the main 40-cell
+demo. Role B's implementation and retrospective evaluation are complete; the
+model remains provisional for historical replay and human review. Operational
+fire-alert readiness has not been established.
+
+The interrupted recency/source-audit handoff has been verified locally; see
+[RECENCY_RESULTS.md](RECENCY_RESULTS.md#independent-handoff-verification) and the
+saved completion report. `python -m b_model.verify_recency_handoff` checks frozen
+selection, re-scores the selected models/policies, verifies source hashes and
+runs the actual inference CLI without promoting a candidate or writing shared
+feeds. It requires a fresh output directory; use `--output-dir` for repeats.
+
 ## Recency, calibrated alert operating points, and source audit
 
 [RECENCY_RESULTS.md](RECENCY_RESULTS.md) compares full history, recent 180/365-day

@@ -1,5 +1,10 @@
 # PIC 2 → PIC 1: training and inference agreement
 
+The finalized hackathon delivery, exact consumer commands, verification results
+and outstanding source/integration limitations are in [FINAL_HANDOFF.md](FINAL_HANDOFF.md).
+Use `CURRENT_HANDOFF.json` / `replay_regional` for the main demo; the recency
+candidate remains separate for review.
+
 ## Current 40-cell regional handoff
 
 Run `python -m b_model.predict --config-name replay_regional`. All matching paths

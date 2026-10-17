@@ -1,5 +1,33 @@
 # Recency, alert operating points and source consistency — 2026-10-17
 
+## Independent handoff verification
+
+The interrupted session's outputs have now been independently checked on the
+Windows checkout. All **144 model tests passed, with no skips**, and all 18
+shared contract fixtures/processed feeds validated. The 60 saved model/fold
+comparisons agree with all 120 all-cell/quiet daily-budget groups. Development
+selection was reproduced using only development rows. The three selected
+artifacts were re-scored from the fingerprinted history: their policy-calibration
+thresholds, final overall/quiet metrics, fixed-budget counts and later-policy
+metrics match the saved evidence within numerical roundoff. A fresh consumer CLI
+produced the matching 120-record replay in 5.72 seconds locally.
+
+The current handoff, current regional artifacts and shared processed files were
+fingerprinted before/after verification and remained unchanged. All four raw
+FIRMS source fingerprints match the recorded audit. The source-consistency status
+remains unresolved; no missing export metadata or overlapping data was recovered.
+The full-history control was checked against saved daily aggregates, rather than
+refitted or independently re-scored: original ignored 60-fit run artifacts are
+not included in the transferred checkout. No new performance claims, selection,
+training or promotion occurred during this check.
+
+Evidence: [completion_verification.json](experiment_results/20261017_recency/completion_verification.json).
+To repeat, use a fresh verification output directory:
+
+```bash
+python -m b_model.verify_recency_handoff --output-dir b_model/runs/another_recency_verification
+```
+
 The requested five-strategy study is complete: 60 fits across four dated periods and three horizons. A 12-month training window was selected for 24/48 hours and a 6-month window for 72 hours using development data only. On the later period, these choices modestly improve quiet-cell ranking and same-budget hits. Probability errors and cutoff-based performance do not improve consistently, and calibration-chosen alert filters miss many positives. The current regional handoff remains unchanged; an isolated candidate and research operating points are available for review.
 
 ## Frozen design
