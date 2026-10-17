@@ -4,20 +4,25 @@ Read `TEAM_PLAYBOOK.md` and `contracts/CONTRACTS.md`. Own this folder and `data/
 
 ```bash
 bash scripts/setup.sh c
-source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Unix/macOS: source .venv/bin/activate
 make mock
 python -m c_agent.agent --mock --data-dir data/demo --output data/demo/dispatch.json
+python -m c_agent.agent --data-dir contracts/examples --output data/demo/dispatch.json
 python -m contracts.validate --kind dispatch data/demo/dispatch.json
+python -m unittest discover -s c_agent/tests -v
 ```
 
-`agent.py --mock` validates the three inputs and replays `mock_output.json`; it is a fixed fixture, not the decision policy. It contains a CRITICAL dispatch with all five bilingual audience messages and `water_source: null`. The live entry point exits until implemented. Start the real policy in `agent.py`, record decisions in `decision_rules.md`, keep small inputs in `fixtures/`, and add behavior tests in `tests/`.
+On Windows without activating the venv, call `.venv\Scripts\python.exe` instead of `python` so `jsonschema` resolves.
 
-Build next:
+`--mock` validates the three inputs and replays `mock_output.json` (fixed CRITICAL fixture with all five bilingual messages and `water_source: null`). Live mode runs the deterministic policy in `policy.py`, persists dedupe/cooldown state under `state/` (gitignored), and appends simulated notification lines to `logs/`.
 
-1. Implement deterministic policy before message generation. Start with the examples in `decision_rules.md`; define how multiple horizons resolve into one cell's active incident.
-2. Persist deduplication and cooldown state in the ignored `state/` directory. Escalate only when severity rises; cluster adjacent CRITICAL cells into one incident and target.
-3. Use structured coordinates/numbers from validated inputs. An optional LLM can phrase messages and rationale; it cannot invent destinations, measurements or actions. Include Indonesian `id` and English `en` for every listed audience.
-4. Decide whether to add documented OSM canal/river data or a handmade fixture. Keep `water_source: null` until data exists; do not fabricate routing or distance.
-5. Write `dispatch.json` atomically; append simulated notifications to ignored `logs/`. Make `--data-dir` and `--output` work in the live adapter so E can run the pipeline anywhere.
+Policy summary (see `decision_rules.md`):
+
+1. Resolve each cell to one driving horizon (highest level, then score, then shortest horizon).
+2. CRITICAL → `DISPATCH` to all five audiences; edge-adjacent CRITICAL clusters also get `BRIEF` for leadership.
+3. HIGH with falling `sm_27_81_delta_7d` → `SMS_WARN` (MPA) and `REWET` (BRGM).
+4. One active incident per cell; escalate only when severity rises; default 6h cooldown.
+5. Message text is templated from structured fields only. Keep `water_source: null` until OSM or a handmade canal list exists.
 
 Done when CRITICAL input creates a valid dispatch with all five messages, reruns do not duplicate active incidents, escalation is tested, and no real notification is sent.
