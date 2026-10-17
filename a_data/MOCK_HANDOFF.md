@@ -59,3 +59,7 @@ The input matrix has three rows and 27 columns. Missing values become `NaN` in B
 ## Message to Role B
 
 > Role A's schema 1.0 mock is ready at `a_data/mock_output.json`, with three matching cells in `a_data/fixtures/cells.geojson`. It covers complete dry conditions, wet conditions with explicit zero counts, and partial source coverage represented by nulls. All 27 canonical model input columns are present. See `a_data/MOCK_HANDOFF.md` for commands and scenarios, and `a_data/HANDOFF_PLAN.md` for the proposed historical labels, missing-value policy, and chronological split to confirm. All mock observations are synthetic.
+
+## Supporting water mock for Role C
+
+The separate [water handoff](WATER_HANDOFF.md) supplies synthetic water candidates and expected nearest-source examples for these cell IDs. Role C owns embedding the selected four-field `water_source` into its simulated dispatch output.

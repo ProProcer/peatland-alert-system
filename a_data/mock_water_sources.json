@@ -1,0 +1,41 @@
+[
+  {
+    "source_id": "mock_canal_001",
+    "name": "Mock canal A",
+    "is_mock": true,
+    "osm_id": null,
+    "lat": -2.33,
+    "lon": 114.02,
+    "kind": "canal",
+    "water_available": null,
+    "access": null,
+    "intermittent": null,
+    "seasonal": null
+  },
+  {
+    "source_id": "mock_river_001",
+    "name": "Mock river A",
+    "is_mock": true,
+    "osm_id": null,
+    "lat": -2.43,
+    "lon": 114.13,
+    "kind": "river",
+    "water_available": null,
+    "access": null,
+    "intermittent": null,
+    "seasonal": null
+  },
+  {
+    "source_id": "mock_pond_001",
+    "name": "Mock pond A",
+    "is_mock": true,
+    "osm_id": null,
+    "lat": -2.54,
+    "lon": 114.27,
+    "kind": "pond",
+    "water_available": null,
+    "access": null,
+    "intermittent": null,
+    "seasonal": null
+  }
+]

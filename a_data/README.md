@@ -12,6 +12,10 @@ Create an isolated feature/geometry bundle from the repository root:
 python -m a_data.refresh --mock --output-dir data/demo/role_a_mock
 ```
 
+## Water mock for Role C
+
+[mock_water_sources.json](mock_water_sources.json) contains three synthetic canal, river, and pond candidates. [fixtures/water_lookup_examples.json](fixtures/water_lookup_examples.json) supplies nearest-source examples for the mock cells, a shifted incident target, and an empty candidate list. See [WATER_HANDOFF.md](WATER_HANDOFF.md) for the catalogue layout, calculated distances, and ready-to-forward message. Role C can load these supporting fixtures directly; they are separate from the feature/geometry mock export.
+
 ## Setup and real ingestion
 
 ```bash

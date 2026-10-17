@@ -6,6 +6,7 @@ The following source files are tracked so the team can use the same inputs:
 - `DL_FIRE_J1V-C2_824564/` — extracted FIRMS archive and NRT CSV files for J1V-C2, stored with Git LFS.
 - `DL_FIRE_J2V-C2_824565/` — extracted FIRMS archive and NRT CSV files for J2V-C2, stored with Git LFS.
 - `open-meteo_api.md` — saved forecast and historical request templates.
+- `kalimantan-261016.osm.pbf` — [Geofabrik Kalimantan OSM extract](https://download.geofabrik.de/asia/indonesia/kalimantan-261016.osm.pbf), stored with Git LFS for planned water-feature extraction. Credit OpenStreetMap contributors; see the [attribution and licence](https://www.openstreetmap.org/copyright).
 
 Raw CSV and `.osm.pbf` files are tracked with [Git LFS](https://git-lfs.com/) through the root `.gitattributes`. One FIRMS CSV exceeds GitHub's regular Git file limit. After cloning or pulling this repository, run the following from the repository root to retrieve the actual source files:
 
