@@ -198,9 +198,29 @@ option, not a substitute for A's labeled historical dataset.
 
 Sigmoid calibration is the configured default; it does not force high-risk scores
 to reach a demo threshold. The legacy direct Python API keeps its old guarded
-calibration and short synthetic split behavior for backward compatibility. New
+calibration, but all entry points now require the full temporal embargo. New
 metrics retain measured lead times, including null when unobserved, without forcing
 a minimum or an increasing sequence across horizons.
+
+Average Precision (PR-AUC) is the primary metric and the permutation-importance
+scorer. Balanced class weights are mandatory for every supported estimator.
+Each horizon logs and saves `optimal_threshold`, chosen by maximum F1 over the
+validation precision-recall curve (ties choose the highest threshold). The bundle
+also stores this value; its manifest and inference interface remain unchanged.
+`validation_tuned_metrics` describes the selected operating point and is optimistic
+because it uses the same validation labels for selection and scoring. Evaluate a
+frozen threshold on a later untouched period before claiming improvement.
+Existing precision/recall/F1 remain at cutoff 0.50, and risk boundaries remain
+0.35/0.60/0.80. The diagnostic threshold does not alter inference probabilities.
+Single-class validation records a null optimal threshold. PR-AUC retains full
+precision to avoid rounding rare-event differences away.
+
+Parquet native datetime columns are accepted and normalized to UTC; naive native
+datetime values are interpreted as UTC. String timestamps must still end in `Z`.
+The default split remains 55% training / 20% calibration / 25% validation, before
+purging 72-hour gaps. To reserve the latest 20% for validation, use
+`split.train_ratio=0.60 split.calibration_ratio=0.20`; calibration remains separate
+from fitting and final evaluation. Short data fails instead of shrinking gaps.
 
 Read [PIC2_HANDOFF.md](PIC2_HANDOFF.md) before changing settings that inference also
 uses. Dryness currently affects the baseline only. Explanation priorities affect

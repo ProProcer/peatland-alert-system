@@ -34,6 +34,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     average_precision_score,
     f1_score,
+    precision_recall_curve,
     precision_score,
     recall_score,
     roc_auc_score,
@@ -156,22 +157,25 @@ def temporal_train_val_split(
     """
     2-way temporal split with an embargo/purge gap.
     """
-    df = df.sort_values("ts").reset_index(drop=True)
-    df["_ts_dt"] = pd.to_datetime(df["ts"])
+    if not 0 < train_ratio < 1 or embargo_hours < max(HORIZONS):
+        raise ValueError("Use a train_ratio in (0, 1) and an embargo of at least 72 hours")
+    df = df.copy()
+    df["_ts_dt"] = pd.to_datetime(df["ts"], utc=True, errors="raise")
+    if df["_ts_dt"].isna().any():
+        raise ValueError("Split timestamps must not be missing")
+    df = df.sort_values("_ts_dt").reset_index(drop=True)
     unique_timestamps = np.sort(df["_ts_dt"].unique())
 
     split_index = int(len(unique_timestamps) * train_ratio)
+    if not 0 < split_index < len(unique_timestamps):
+        raise ValueError("History is too short for a chronological split")
     val_start = unique_timestamps[split_index]
-
-    total_hours = (val_start - unique_timestamps[0]).total_seconds() / 3600.0
-    if total_hours > embargo_hours * 1.5:
-        train_cutoff = val_start - pd.Timedelta(hours=embargo_hours)
-    else:
-        short_gap = max(1, int(total_hours * 0.10))
-        train_cutoff = val_start - pd.Timedelta(hours=short_gap)
+    train_cutoff = val_start - pd.Timedelta(hours=embargo_hours)
 
     df_train = df[df["_ts_dt"] < train_cutoff].copy().drop(columns=["_ts_dt"])
     df_val = df[df["_ts_dt"] >= val_start].copy().drop(columns=["_ts_dt"])
+    if df_train.empty or df_val.empty:
+        raise ValueError("History is too short for the requested embargo")
     return df_train, df_val
 
 
@@ -180,29 +184,35 @@ def temporal_train_calib_val_split(
     train_ratio: float = 0.55,
     calib_ratio: float = 0.20,
     embargo_hours: int = 72,
-    strict_embargo: bool = False,
+    strict_embargo: bool = True,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Performs a 3-way chronological split:
     Train (~55%) -> 72h Embargo -> Calibration (~20%) -> 72h Embargo -> Validation (~25%).
     Ensures calibration is fit on its own chronological slice and never on the final evaluation set.
     """
-    df = df.sort_values("ts").reset_index(drop=True)
-    df["_ts_dt"] = pd.to_datetime(df["ts"])
+    if (not 0 < train_ratio < 1 or not 0 < calib_ratio < 1
+            or train_ratio + calib_ratio >= 1):
+        raise ValueError("Training and calibration ratios must leave validation data")
+    if not strict_embargo or embargo_hours < max(HORIZONS):
+        raise ValueError("Strict temporal validation requires an embargo of at least 72 hours")
+    df = df.copy()
+    df["_ts_dt"] = pd.to_datetime(df["ts"], utc=True, errors="raise")
+    if df["_ts_dt"].isna().any():
+        raise ValueError("Split timestamps must not be missing")
+    df = df.sort_values("_ts_dt").reset_index(drop=True)
     unique_ts = np.sort(df["_ts_dt"].unique())
 
     total_unique = len(unique_ts)
     idx_train_end = max(1, int(total_unique * train_ratio))
     idx_calib_end = max(idx_train_end + 1, int(total_unique * (train_ratio + calib_ratio)))
+    if idx_calib_end >= total_unique:
+        raise ValueError("History is too short for three chronological partitions")
 
     calib_start = unique_ts[idx_train_end]
     val_start = unique_ts[idx_calib_end]
 
-    total_hours = (unique_ts[-1] - unique_ts[0]).total_seconds() / 3600.0
-    if strict_embargo or total_hours > embargo_hours * 3.5:
-        gap = pd.Timedelta(hours=embargo_hours)
-    else:
-        gap = pd.Timedelta(hours=max(1, int(total_hours * 0.03)))
+    gap = pd.Timedelta(hours=embargo_hours)
 
     train_cutoff = calib_start - gap
     calib_cutoff = val_start - gap
@@ -225,6 +235,24 @@ def temporal_train_calib_val_split(
         val_start,
     )
     return df_train, df_calib, df_val
+
+
+def optimal_f1_threshold(y_true: np.ndarray, probabilities: np.ndarray) -> Dict[str, Any]:
+    """Describe the best validation F1 operating point; not an unbiased estimate.
+
+    The terminal PR-curve point has no threshold. Ties choose the highest
+    threshold to reduce alerts. Single-class validation cannot select a threshold.
+    """
+    if len(np.unique(y_true)) < 2:
+        return {"optimal_threshold": None, "precision": None, "recall": None, "f1": None}
+    precision, recall, thresholds = precision_recall_curve(y_true, probabilities)
+    denominator = precision[:-1] + recall[:-1]
+    scores = np.divide(2 * precision[:-1] * recall[:-1], denominator,
+                       out=np.zeros_like(denominator), where=denominator > 0)
+    best = np.flatnonzero(scores == scores.max())[-1]
+    return {"optimal_threshold": float(thresholds[best]),
+            "precision": float(precision[best]), "recall": float(recall[best]),
+            "f1": float(scores[best])}
 
 
 def compute_lead_time_hours(
@@ -386,13 +414,12 @@ def train_pipeline(
     """
     Train all horizons and save fitted state plus resolved experiment settings.
     Configured calls require labeled history and a strict chronological protocol.
-    Calls without settings retain the older synthetic-data compatibility path.
+    Calls without settings retain legacy calibration and synthetic-data helpers,
+    while still enforcing the full chronological embargo.
     """
     settings = validate_training_config(training_config or TrainingConfig())
     if training_config is None:
-        # Preserve the direct API used by existing short synthetic tests. The
-        # configured CLI uses strict embargo and genuine held-out calibration.
-        settings.split.strict_embargo = False
+        # Retain legacy calibration for the direct API, with strict temporal gaps.
         settings.calibration.method = "legacy_guarded"
     settings.paths.history = str(history_path.resolve())
     settings.paths.model_dir = str(model_dir.resolve())
@@ -428,11 +455,17 @@ def train_pipeline(
         missing = required - set(df_raw.columns)
         if missing:
             raise ValueError(f"Training history requires canonical features and producer-supplied future labels; missing: {sorted(missing)}")
+        native_datetime = pd.api.types.is_datetime64_any_dtype(df_raw["ts"])
+        if not native_datetime and not df_raw["ts"].map(lambda value: isinstance(value, str) and value.endswith("Z")).all():
+            raise ValueError("Training timestamps must be UTC strings ending in Z")
+        timestamps = pd.to_datetime(df_raw["ts"], utc=True, errors="raise")
+        if timestamps.isna().any():
+            raise ValueError("Training timestamps must not be missing")
+        # Naive Parquet datetime columns are interpreted as UTC; normalize once
+        # so sorting, serialized split ranges and downstream code share one form.
+        df_raw["ts"] = timestamps.map(lambda value: value.isoformat().replace("+00:00", "Z"))
         if df_raw.duplicated(["cell_id", "ts"]).any():
             raise ValueError("Duplicate (cell_id, ts) in training history")
-        if not df_raw["ts"].map(lambda value: isinstance(value, str) and value.endswith("Z")).all():
-            raise ValueError("Training timestamps must be UTC strings ending in Z")
-        pd.to_datetime(df_raw["ts"], utc=True, errors="raise")
         targets = [TARGET_COLS[h] for h in HORIZONS]
         original_count = len(df_raw)
         df_raw = df_raw.dropna(subset=targets).copy()
@@ -494,6 +527,7 @@ def train_pipeline(
         "model_version": MODEL_VERSION,
         "snapml_accelerated": backend == "snapml",
         "model_backend": backend,
+        "primary_metric": "average_precision",
         "training_config": asdict(settings),
         "training_data": {"path": str(resolved_path.resolve()),
                           "sha256": hashlib.sha256(resolved_path.read_bytes()).hexdigest(),
@@ -574,7 +608,7 @@ def train_pipeline(
             if len(importance_X) > 0 and len(np.unique(importance_y)) > 1:
                 perm_result = permutation_importance(
                     base_primary, importance_X, importance_y,
-                    n_repeats=settings.explanation.permutation_repeats, random_state=settings.seed, scoring="roc_auc"
+                    n_repeats=settings.explanation.permutation_repeats, random_state=settings.seed, scoring="average_precision"
                 )
                 raw_weights = np.maximum(0.0, perm_result.importances_mean)
             else:
@@ -613,6 +647,9 @@ def train_pipeline(
         prec = float(precision_score(y_val, preds_val, zero_division=0))
         rec = float(recall_score(y_val, preds_val, zero_division=0))
         f1 = float(f1_score(y_val, preds_val, zero_division=0))
+        threshold_result = optimal_f1_threshold(y_val, probs_val)
+        logger.info("Horizon %dh validation optimal_threshold=%s (maximum validation F1=%s; diagnostic only)",
+                    horizon, threshold_result["optimal_threshold"], threshold_result["f1"])
 
         baseline_pr = float(average_precision_score(y_val, baseline_probs_val)) if len(np.unique(y_val)) > 1 else None
         baseline_roc = float(roc_auc_score(y_val, baseline_probs_val)) if len(np.unique(y_val)) > 1 else None
@@ -620,13 +657,18 @@ def train_pipeline(
         lead_time = compute_lead_time_hours(df_val, y_val, probs_val, horizon_h=horizon)
 
         horizon_metrics = {
-            "pr_auc": round(pr_auc, 3) if pr_auc is not None else None,
+            "pr_auc": pr_auc,
+            "optimal_threshold": threshold_result["optimal_threshold"],
+            "validation_tuned_metrics": threshold_result,
+            "threshold_selection_split": "validation",
+            "threshold_selection_note": "Diagnostic selected on validation; tuned F1 is optimistic. Requires untouched future evaluation. Does not change risk-level boundaries.",
+            "classification_threshold": 0.50,
             "roc_auc": round(roc_auc, 3) if roc_auc is not None else None,
             "precision": round(prec, 3),
             "recall": round(rec, 3),
             "f1": round(f1, 3),
             "lead_time_hours": lead_time,
-            "baseline_pr_auc": round(baseline_pr, 3) if baseline_pr is not None else None,
+            "baseline_pr_auc": baseline_pr,
             "baseline_roc_auc": round(baseline_roc, 3) if baseline_roc is not None else None,
         }
         all_metrics["horizons"][str(horizon)] = horizon_metrics
@@ -658,6 +700,8 @@ def train_pipeline(
             "baseline_config": asdict(settings.baseline),
             "explanation_config": asdict(settings.explanation),
             "training_data": all_metrics["training_data"],
+            "optimal_threshold": threshold_result["optimal_threshold"],
+            "threshold_selection_split": "validation",
         }
 
         artifact_path = model_dir / f"model_{horizon}h.joblib"

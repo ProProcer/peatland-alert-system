@@ -25,6 +25,8 @@ Policy summary (see `decision_rules.md`):
 4. One active incident per cell; escalate only when severity rises; default 6h cooldown.
 5. Message text is templated from structured fields only.
 6. Water candidates come from Role A (`a_data/mock_water_sources.json`, or `--water-sources` / `data-dir/water_sources.json`). C attaches the nearest source to each dispatch; missing catalogue → `null`. A nearest source farther than 15 km (`--max-water-km`, `0` disables) is also `null`.
+
+   C now supports Role A's `WaterIndex` (spatial index with metric projection) when `water_sources.geojson` is available and Role A's dependencies (osmium, shapely, pyproj) are installed. Falls back to simple Haversine distance for JSON array catalogues.
 7. Optional `--llm`: with `GEMINI_API_KEY` set (or `ANTHROPIC_API_KEY`; force with `LLM_PROVIDER=gemini|anthropic`; model via `AGENT_MODEL`, confirm the id in Google AI Studio), `llm.py` rephrases the templated messages. Coordinates, targets, priorities, audiences, water and all numbers stay deterministic. The rewrite is used only if it keeps the same audiences, starts with `Simulasi` / `Simulation`, adds no number absent from the facts or template, and keeps `mpa` SMS ≤160 characters; otherwise the template is used. The model is called only when a new dispatch is minted, never on a dedupe reuse. Standard library only (no SDK, nothing extra to install on LinuxONE).
 8. Live mode stops with a clear message if `features.json`, `risk.json` or `cells.geojson` is missing; it never substitutes mocks.
 

@@ -19,28 +19,33 @@
     ],
     "messages": {
       "manggala_agni": {
-        "id": "Simulasi: siapkan patroli ke -2.35, 114.05; risiko 0.87 dalam 48 jam.",
-        "en": "Simulation: prepare a patrol to -2.35, 114.05; risk 0.87 over 48 hours."
+        "id": "Simulasi: Segera siapkan patroli ke -2.35, 114.05 dengan nilai risiko 0.91 dalam 72 jam. Sumber air terdekat adalah canal di -2.33, 114.02 (jarak 4.007 km).",
+        "en": "Simulation: Prepare a field patrol to -2.35, 114.05 with a risk score of 0.91 over 72 hours. The nearest water source is a canal at -2.33, 114.02 (4.007 km away)."
       },
       "mpa": {
-        "id": "Simulasi: warga di sekitar -2.35, 114.05 diminta waspada dan tidak membakar lahan.",
-        "en": "Simulation: communities near -2.35, 114.05 should remain alert and avoid land burning."
+        "id": "Simulasi: Warga di sekitar -2.35, 114.05 diminta tetap waspada dan tidak membakar lahan.",
+        "en": "Simulation: Communities near -2.35, 114.05 must stay alert and refrain from burning land."
       },
       "bpbd": {
-        "id": "Simulasi: koordinasikan kesiapsiagaan pada -2.35, 114.05; sumber air belum tersedia.",
-        "en": "Simulation: coordinate readiness at -2.35, 114.05; water-source data is unavailable."
+        "id": "Simulasi: Lakukan koordinasi kesiapsiagaan di wilayah -2.35, 114.05. Sumber air terdekat terpantau canal di -2.33, 114.02 (4.007 km).",
+        "en": "Simulation: Coordinate disaster readiness at -2.35, 114.05. The nearest water source is a canal at -2.33, 114.02 (4.007 km)."
       },
       "brgm": {
-        "id": "Simulasi: tinjau kebutuhan pembasahan pada -2.35, 114.05; kelembapan gambut dalam 0.14 m³/m³.",
-        "en": "Simulation: assess rewetting needs at -2.35, 114.05; deep soil moisture is 0.14 m³/m³."
+        "id": "Simulasi: Mohon evaluasi kebutuhan pembasahan gambut di -2.35, 114.05; kelembapan gambut dalam tercatat 0.14 m³/m³.",
+        "en": "Simulation: Assess peatland rewetting requirements at -2.35, 114.05; deep soil moisture is measured at 0.14 m³/m³."
       },
       "leadership": {
-        "id": "Simulasi: satu sel berisiko kritis pada horizon 48 jam; koordinasikan kesiapsiagaan.",
-        "en": "Simulation: one cell is critical at the 48-hour horizon; coordinate readiness."
+        "id": "Simulasi: Laporan 1 sel status kritis pada horizon 72 jam, tercatat 22 hari berturut-turut tanpa hujan ≥1 mm.",
+        "en": "Simulation: 1 critical cell detected within the 72-hour horizon, with 22 days recorded without rain ≥1 mm."
       }
     },
-    "water_source": null,
-    "rationale": "Synthetic fixture: risk 0.87 for 48h; 22 days since rain; deep soil moisture 0.14 m³/m³. No actual dispatch.",
+    "water_source": {
+      "lat": -2.33,
+      "lon": 114.02,
+      "distance_km": 4.007,
+      "kind": "canal"
+    },
+    "rationale": "Risk 0.91 for 72h on -2.35_114.05; 22 days since rain; deep soil moisture 0.14 (Δ7d -0.06). Top factors: days_since_rain=0.34, sm_27_81_delta_7d=0.24, vpd_mean_24h=0.19. Sumber air terdekat: canal di -2.33, 114.02 (4.007 km). Simulated alert only.",
     "status": "PENDING"
   }
 ]

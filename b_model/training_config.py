@@ -139,8 +139,8 @@ def validate_training_config(config) -> TrainingConfig:
         raise ValueError("seed must be an unsigned 32-bit integer")
     if result.model.backend not in {"auto", "hist_gradient_boosting", "snapml", "logistic_regression"}:
         raise ValueError("Unsupported model backend")
-    if result.model.class_weight not in ("balanced", None):
-        raise ValueError("class_weight must be balanced or null")
+    if result.model.class_weight != "balanced":
+        raise ValueError("class_weight must be balanced for rare-event training")
     for name in ("max_iter", "max_depth", "min_samples_leaf", "logistic_max_iter"):
         if getattr(result.model, name) <= 0:
             raise ValueError(f"model.{name} must be positive")
