@@ -11,6 +11,7 @@ from contracts.validate import ROOT, validate_file, validate_payload
 
 from c_agent.policy import decide, dispatch_timestamp
 from c_agent.state_store import StateStore, format_ts
+from c_agent.water import load_water_catalogue, resolve_water_catalogue_path
 
 PACKAGE = Path(__file__).resolve().parent
 
@@ -53,6 +54,7 @@ def dispatch_live(
     *,
     state_path: Path | None = None,
     log_path: Path | None = None,
+    water_sources: Path | None = None,
     cooldown_hours: float = 6.0,
     now: datetime | None = None,
 ) -> list:
@@ -60,12 +62,19 @@ def dispatch_live(
     risk_rows = validate_file("risk", data_dir / "risk.json")
     validate_file("cells", data_dir / "cells.geojson")
 
+    catalogue_path = resolve_water_catalogue_path(water_sources, data_dir)
+    water_candidates = load_water_catalogue(catalogue_path)
+    if catalogue_path is None:
+        print("C: no water catalogue found; water_source will be null")
+    else:
+        print(f"C: loaded {len(water_candidates)} water candidate(s) from {catalogue_path}")
+
     store = StateStore(state_path or PACKAGE / "state" / "incidents.json", cooldown_hours=cooldown_hours)
     if now is None and risk_rows:
         latest_risk_ts = max(row["ts"] for row in risk_rows)
         now = dispatch_timestamp(latest_risk_ts)
 
-    payload, created = decide(features, risk_rows, store, now=now)
+    payload, created = decide(features, risk_rows, store, now=now, water_candidates=water_candidates)
     validate_payload("dispatch", payload)
     store.save()
     _atomic_write(output, payload)
@@ -81,6 +90,12 @@ def main() -> None:
     parser.add_argument("--output", type=Path)
     parser.add_argument("--state-path", type=Path, default=None)
     parser.add_argument("--log-path", type=Path, default=None)
+    parser.add_argument(
+        "--water-sources",
+        type=Path,
+        default=None,
+        help="Role A water catalogue JSON (default: data-dir/water_sources.json or a_data/mock_water_sources.json)",
+    )
     parser.add_argument("--cooldown-hours", type=float, default=6.0)
     args = parser.parse_args()
     output = args.output or args.data_dir / "dispatch.json"
@@ -92,6 +107,7 @@ def main() -> None:
         output,
         state_path=args.state_path,
         log_path=args.log_path,
+        water_sources=args.water_sources,
         cooldown_hours=args.cooldown_hours,
     )
 

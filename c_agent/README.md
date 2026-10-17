@@ -23,6 +23,7 @@ Policy summary (see `decision_rules.md`):
 2. CRITICAL → `DISPATCH` to all five audiences; edge-adjacent CRITICAL clusters also get `BRIEF` for leadership.
 3. HIGH with falling `sm_27_81_delta_7d` → `SMS_WARN` (MPA) and `REWET` (BRGM).
 4. One active incident per cell; escalate only when severity rises; default 6h cooldown.
-5. Message text is templated from structured fields only. Keep `water_source: null` until OSM or a handmade canal list exists.
+5. Message text is templated from structured fields only.
+6. Water candidates come from Role A (`a_data/mock_water_sources.json`, or `--water-sources` / `data-dir/water_sources.json`). C attaches the nearest source to each dispatch; missing catalogue → `null`.
 
 Done when CRITICAL input creates a valid dispatch with all five messages, reruns do not duplicate active incidents, escalation is tested, and no real notification is sent.

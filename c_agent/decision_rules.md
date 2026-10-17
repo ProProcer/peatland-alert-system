@@ -1,6 +1,8 @@
 # Decision policy — Role C (schema 1.0)
 
-Status: **live deterministic policy implemented** in `policy.py`. Messages are templated from structured fields only (no LLM). Alerts are simulated to `logs/`; no real SMS is sent. `water_source` is always `null` until a water dataset is agreed.
+Status: **live deterministic policy implemented** in `policy.py`. Messages are templated from structured fields only (no LLM). Alerts are simulated to `logs/`; no real SMS is sent.
+
+Water candidates are owned by Role A (`a_data/mock_water_sources.json`, see `a_data/WATER_HANDOFF.md`). Role C only computes nearest-to-`target` Haversine distance (R = 6371.0088 km) and emits the schema 1.0 four-field `water_source`. If the catalogue is missing or empty → `water_source: null`.
 
 ## Horizon resolution
 
@@ -33,4 +35,4 @@ State file: `c_agent/state/incidents.json` (gitignored). Default cooldown: **6 h
 
 ## Coordinates and nulls
 
-JSON uses `lat` / `lon`. GeoJSON from Role A stays `[lon, lat]` and is not rewritten here. Missing measurements remain `null`. Water routing is unavailable → `water_source: null`.
+JSON uses `lat` / `lon`. GeoJSON from Role A stays `[lon, lat]` and is not rewritten here. Missing measurements remain `null`. Lookup uses the dispatch `target` (not `cell_id` alone), matching A's shifted-target example.
