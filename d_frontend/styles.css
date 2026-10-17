@@ -414,3 +414,18 @@ body.sidebar-closed .main-shell { margin-left:0; }
 .response-workspace .timeline-view { background:white; padding:7px 12px; min-height:36px; font-size:12px; }
 @media(max-width:1000px) { #panel-analysis .response-analysis { grid-template-columns:minmax(0,1fr); } }
 @media(max-width:450px) { .timeline-card { padding:14px; }.timeline-events { padding-left:6px; }.timeline-entry { padding-left:16px; }.timeline-card-heading h5 { font-size:14px; } }
+
+/* Decorative peatland vignette; independent of monitoring and fire data. */
+.app-header { gap:12px; }
+.header-peatland { width:178px; height:56px; margin-left:auto; flex:0 0 auto; pointer-events:none; }
+.header-peatland svg { width:100%; height:100%; overflow:visible; }
+.header-peatland .peat-flame { transform-box:fill-box; transform-origin:50% 100%; animation:header-peat-flicker 2.4s ease-in-out infinite alternate; }
+.header-peatland .peat-flame-b { animation-delay:-.8s; animation-duration:2s; }
+.header-peatland .peat-flame-c { animation-delay:-1.5s; animation-duration:2.8s; }
+.header-peatland .peat-smoke { animation:header-peat-smoke 5s ease-in-out infinite; }
+.header-peatland .peat-embers { animation:header-peat-embers 3.8s ease-in-out infinite; }
+@keyframes header-peat-flicker { from { transform:scale(.95,.88) rotate(-2deg); } to { transform:scale(1.03,1.08) rotate(2deg); } }
+@keyframes header-peat-smoke { 0%,100% { transform:translateY(1px); opacity:.2; } 50% { transform:translate(2px,-3px); opacity:.4; } }
+@keyframes header-peat-embers { 0%,100% { transform:translateY(0); opacity:.3; } 50% { transform:translate(2px,-5px); opacity:.7; } }
+@media(max-width:600px) { .header-peatland { width:115px; height:40px; } }
+@media(prefers-reduced-motion:reduce) { .header-peatland .peat-flame,.header-peatland .peat-smoke,.header-peatland .peat-embers { animation:none; } }

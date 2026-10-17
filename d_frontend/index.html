@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f6f5f1">
 <title>Kalimantan Watch · Peatland outlook</title>
-<link rel="stylesheet" href="styles.css?v=timeline-cards-fixed-19"><script src="app.js?v=forecast-right-17" defer></script>
+<link rel="stylesheet" href="styles.css?v=peatland-header-20"><script src="app.js?v=forecast-right-17" defer></script>
 <script src="response.js?v=timeline-cards-fixed-19" defer></script>
 <script src="explain.js?v=historial-label-6" defer></script>
 <script src="navigation.js?v=shared-nav-1" defer></script>
@@ -18,7 +18,26 @@
   </nav>
 </aside>
 <main id="main" class="main-shell">
-  <header class="app-header"><div class="header-navigation"><button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Close navigation" title="Close navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><div class="breadcrumb">Kalimantan <span>/</span> Home </div></div></header>
+  <header class="app-header"><div class="header-navigation"><button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Close navigation" title="Close navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><div class="breadcrumb">Kalimantan <span>/</span> Home </div></div><div class="header-peatland" aria-hidden="true">
+<svg viewBox="0 0 190 60" focusable="false">
+  <defs>
+    <linearGradient id="header-peat-soil" x2="0" y2="1"><stop stop-color="#8b7454"/><stop offset="1" stop-color="#493f32"/></linearGradient>
+    <linearGradient id="header-peat-flame" x2="0" y2="1"><stop stop-color="#ffc56a"/><stop offset=".55" stop-color="#ee9149"/><stop offset="1" stop-color="#c35b36"/></linearGradient>
+    <radialGradient id="header-peat-glow"><stop stop-color="#eea65a" stop-opacity=".3"/><stop offset="1" stop-color="#eea65a" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="114" cy="40" rx="52" ry="18" fill="url(#header-peat-glow)"/>
+  <path d="M6 44Q34 34 59 40T112 39T184 43L182 53Q126 58 71 55T6 50Z" fill="url(#header-peat-soil)"/>
+  <path d="M6 44Q34 34 59 40T112 39T184 43" fill="none" stroke="#8a9b75" stroke-width="3" stroke-linecap="round"/>
+  <path d="m18 44 2-6m5 5 3-5m38 6 2-5m88 5 2-5m8 5 3-4" stroke="#a5b28c" stroke-width="1.5" stroke-linecap="round"/>
+  <g fill="#5a725c"><path d="M37 10 26 30h7l-9 10h27L42 30h7Z"/><path d="M67 17 58 32h6l-7 9h21l-7-9h6Z"/><path d="m153 12-10 19h7l-8 11h24l-8-11h6Z"/></g>
+  <path d="M37 34v12m30-10v9m86-8v9" stroke="#655641" stroke-width="3" stroke-linecap="round"/>
+  <g class="peat-smoke" fill="none" stroke="#9c9a8b" stroke-width="2" stroke-linecap="round" opacity=".35"><path d="M104 25c-9-9 6-10 0-19"/><path d="M126 25c-6-7 5-10 1-15"/></g>
+  <g class="peat-flame peat-flame-a"><path d="M93 45c-9-6-5-13 0-18-1 6 4 6 4 10 4-3 4-7 3-11 10 11 10 20-1 22Z" fill="url(#header-peat-flame)"/><path d="M96 45c-3-3-1-6 1-8 0 3 5 5 2 8Z" fill="#ffdb8d"/></g>
+  <g class="peat-flame peat-flame-b"><path d="M111 45c-10-9-3-17 4-24-1 8 5 9 5 15 4-3 3-7 3-7 10 13 5 21-7 20Z" fill="url(#header-peat-flame)"/><path d="M114 46c-4-4-1-8 2-11-1 5 6 7 2 11Z" fill="#ffdb8d"/></g>
+  <g class="peat-flame peat-flame-c"><path d="M132 45c-6-6-3-11 2-17-1 5 3 6 3 9l3-4c6 8 3 15-4 15Z" fill="url(#header-peat-flame)"/></g>
+  <g class="peat-embers" fill="#e7a052"><circle cx="108" cy="19" r="1.2"/><circle cx="130" cy="22" r="1"/></g>
+  <path d="M82 49q29 4 61-1" fill="none" stroke="#d39055" stroke-width="1.4" opacity=".6"/>
+</svg></div></header>
   <div class="page-content">
     <section class="page-heading" id="overview"><div><h1>Kalimantan<span class="title-period">.</span></h1><p class="heading-copy">A regional view of peatland conditions, fire risk, and simulated response.</p></div><div class="snapshot"><span class="label">FEATURE SNAPSHOT · UTC</span><strong id="snapshot-date">Awaiting data</strong><span id="snapshot-time">—</span></div></section>
     <div class="toolbar"><div class="toolbar-group dataset-control"><label for="dataset">Data source</label><select id="dataset" aria-describedby="dataset-info"><option value="auto">Loading datasets…</option></select></div><div class="toolbar-group forecast-control"><label for="horizon">Forecast window</label><select id="horizon"><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option></select></div></div>
