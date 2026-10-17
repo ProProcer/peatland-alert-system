@@ -7,7 +7,7 @@
     "lon": 114.05,
     "peat": {
       "peat_fraction": 0.55,
-      "peat_area_km2": 6.5,
+      "peat_area_km2": 67.95,
       "polygon_ids": [
         "{DF27C432-B000-4A61-A123-8899AABBCCDD}"
       ]
@@ -24,7 +24,7 @@
       "sm_27_81": 0.14,
       "vpd_kpa": 3.6,
       "soil_temp_0_c": 38.5,
-      "soil_temp_18_c": 35.0,
+      "soil_temp_18_c": 34.5,
       "et_mm": 0.4,
       "et0_mm": 0.5
     },
@@ -52,7 +52,7 @@
     "lon": 114.15,
     "peat": {
       "peat_fraction": 0.75,
-      "peat_area_km2": 7.7,
+      "peat_area_km2": 92.65,
       "polygon_ids": [
         "{DF27C432-B004-4A61-A123-8899AABBCCDD}"
       ]
@@ -69,7 +69,7 @@
       "sm_27_81": 0.44,
       "vpd_kpa": 0.7,
       "soil_temp_0_c": 29.0,
-      "soil_temp_18_c": 25.5,
+      "soil_temp_18_c": 25.8,
       "et_mm": 0.2,
       "et0_mm": 0.3
     },
@@ -86,7 +86,7 @@
       "hotspots_in_cell_24h": 0,
       "hotspots_10km_7d": 0,
       "frp_sum_10km_7d": 0.0,
-      "nearest_hotspot_km": 45.0
+      "nearest_hotspot_km": null
     }
   },
   {
@@ -97,41 +97,41 @@
     "lon": 114.25,
     "peat": {
       "peat_fraction": 0.7,
-      "peat_area_km2": 7.4,
+      "peat_area_km2": 86.46,
       "polygon_ids": [
         "{DF27C432-B008-4A61-A123-8899AABBCCDD}"
       ]
     },
     "weather": {
-      "temp_c": 26.5,
-      "precip_mm": 8.5,
-      "wind_kmh": 16.0,
-      "wind_dir_deg": 200,
-      "sm_0_1": 0.4,
-      "sm_1_3": 0.41,
-      "sm_3_9": 0.42,
-      "sm_9_27": 0.42,
-      "sm_27_81": 0.44,
-      "vpd_kpa": 0.7,
-      "soil_temp_0_c": 29.0,
-      "soil_temp_18_c": 25.5,
-      "et_mm": 0.2,
-      "et0_mm": 0.3
+      "temp_c": 31.0,
+      "precip_mm": 0.0,
+      "wind_kmh": null,
+      "wind_dir_deg": null,
+      "sm_0_1": 0.24,
+      "sm_1_3": 0.25,
+      "sm_3_9": 0.26,
+      "sm_9_27": 0.27,
+      "sm_27_81": 0.3,
+      "vpd_kpa": 1.8,
+      "soil_temp_0_c": 33.5,
+      "soil_temp_18_c": null,
+      "et_mm": null,
+      "et0_mm": 0.35
     },
     "derived": {
-      "rain_24h_mm": 16.0,
-      "rain_7d_mm": 48.0,
-      "rain_30d_mm": 145.0,
-      "days_since_rain": 0,
-      "sm_27_81_delta_7d": 0.02,
-      "vpd_mean_24h": 0.7,
-      "soil_air_temp_gap_c": 0.1
+      "rain_24h_mm": 0.4,
+      "rain_7d_mm": 12.0,
+      "rain_30d_mm": null,
+      "days_since_rain": 2,
+      "sm_27_81_delta_7d": null,
+      "vpd_mean_24h": 1.6,
+      "soil_air_temp_gap_c": null
     },
     "fire": {
-      "hotspots_in_cell_24h": 0,
-      "hotspots_10km_7d": 0,
-      "frp_sum_10km_7d": 0.0,
-      "nearest_hotspot_km": 45.0
+      "hotspots_in_cell_24h": null,
+      "hotspots_10km_7d": null,
+      "frp_sum_10km_7d": null,
+      "nearest_hotspot_km": null
     }
   }
 ]

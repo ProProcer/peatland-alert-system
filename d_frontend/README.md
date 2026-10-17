@@ -41,3 +41,7 @@ using [standard raster tiles](https://tile.openstreetmap.org/) at zoom 6.
 Tiles require internet access; cell geometry and selection work without tiles.
 The map preserves visible attribution and does not prefetch or bulk-download tiles.
 Role E should include this dataset in the root dependency/source inventory.
+
+Map navigation: drag to pan within the regional bounds; scroll over the map to
+zoom around the pointer. Zoom buttons remain available. A drag does not select a
+risk cell; click or use Enter/Space to select one.

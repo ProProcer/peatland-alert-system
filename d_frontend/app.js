@@ -12,8 +12,10 @@ const mapNW = project([mapBounds.west, mapBounds.north]);
 const mapSE = project([mapBounds.east, mapBounds.south]);
 const regionView = [mapNW[0], mapNW[1], mapSE[0] - mapNW[0], mapSE[1] - mapNW[1]];
 function setMapView(view) {
-  mapView = view;
-  document.querySelector("#map").setAttribute("viewBox", view.join(" "));
+  const width = Math.min(regionView[2], Math.max(20, view[2]));
+  const height = width * regionView[3] / regionView[2];
+  mapView = [Math.max(regionView[0], Math.min(view[0], mapSE[0] - width)), Math.max(regionView[1], Math.min(view[1], mapSE[1] - height)), width, height];
+  document.querySelector("#map").setAttribute("viewBox", mapView.join(" "));
 }
 function svgElement(tag, attributes) {
   const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
@@ -55,12 +57,71 @@ function renderMap(horizon) {
   }
   if (!regionalCells().length) document.querySelector("#map-detail").textContent = "No cell geometry is available within the Kalimantan regional bounds.";
 }
-function zoomMap(factor) {
+function zoomMap(factor, anchor) {
   const [x, y, width, height] = mapView || regionView;
   const nextWidth = Math.min(regionView[2], Math.max(20, width * factor));
   const nextHeight = nextWidth * regionView[3] / regionView[2];
-  setMapView([Math.max(regionView[0], Math.min(x + (width - nextWidth) / 2, mapSE[0] - nextWidth)), Math.max(regionView[1], Math.min(y + (height - nextHeight) / 2, mapSE[1] - nextHeight)), nextWidth, nextHeight]);
+  const [ax, ay] = anchor || [x + width / 2, y + height / 2];
+  setMapView([ax - (ax - x) * nextWidth / width, ay - (ay - y) * nextHeight / height, nextWidth, nextHeight]);
 }
+
+const mapElement = document.querySelector("#map");
+let mapDrag = null;
+let suppressMapClick = false;
+function pointerOnMap(event, inverse = mapElement.getScreenCTM()?.inverse()) {
+  if (!inverse) return null;
+  const point = mapElement.createSVGPoint();
+  point.x = event.clientX;
+  point.y = event.clientY;
+  return point.matrixTransform(inverse);
+}
+mapElement.addEventListener("wheel", event => {
+  event.preventDefault();
+  if (mapDrag) return;
+  const point = pointerOnMap(event);
+  if (!point) return;
+  // Normalize wheel units: pixels, lines, or pages; cap large trackpad bursts.
+  const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? mapElement.clientHeight : 1;
+  const delta = Math.max(-200, Math.min(200, event.deltaY * unit));
+  zoomMap(Math.exp(delta * .003), [point.x, point.y]);
+}, { passive: false });
+mapElement.addEventListener("pointerdown", event => {
+  if (event.button !== 0 || mapDrag) return;
+  const inverse = mapElement.getScreenCTM()?.inverse();
+  const point = pointerOnMap(event, inverse);
+  if (!point) return;
+  suppressMapClick = false;
+  mapDrag = { id: event.pointerId, inverse, point, view: (mapView || regionView).slice(), x: event.clientX, y: event.clientY, moved: false };
+});
+mapElement.addEventListener("pointermove", event => {
+  if (!mapDrag || event.pointerId !== mapDrag.id) return;
+  if (!mapDrag.moved && Math.hypot(event.clientX - mapDrag.x, event.clientY - mapDrag.y) < 5) return;
+  if (!mapDrag.moved) {
+    mapDrag.moved = true;
+    mapElement.setPointerCapture(event.pointerId);
+    mapElement.classList.add("is-dragging");
+  }
+  const point = pointerOnMap(event, mapDrag.inverse);
+  setMapView([mapDrag.view[0] + mapDrag.point.x - point.x, mapDrag.view[1] + mapDrag.point.y - point.y, mapDrag.view[2], mapDrag.view[3]]);
+});
+function finishMapDrag(event) {
+  if (!mapDrag || event.pointerId !== mapDrag.id) return;
+  suppressMapClick = mapDrag.moved;
+  mapDrag = null;
+  mapElement.classList.remove("is-dragging");
+  if (mapElement.hasPointerCapture(event.pointerId)) mapElement.releasePointerCapture(event.pointerId);
+}
+mapElement.addEventListener("pointerup", finishMapDrag);
+mapElement.addEventListener("pointercancel", finishMapDrag);
+mapElement.addEventListener("lostpointercapture", finishMapDrag);
+mapElement.addEventListener("pointerleave", event => { if (mapDrag && !mapDrag.moved) finishMapDrag(event); });
+mapElement.addEventListener("click", event => {
+  if (suppressMapClick && event.detail !== 0) {
+    event.stopPropagation();
+    event.preventDefault();
+    suppressMapClick = false;
+  }
+}, true);
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
