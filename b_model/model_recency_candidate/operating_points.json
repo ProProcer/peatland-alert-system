@@ -1,0 +1,158 @@
+{
+  "status": "Research review only; no change to fixed risk levels or C policy.",
+  "cadence": "daily_00z",
+  "budget": 5,
+  "scope": "regional_40",
+  "horizons": {
+    "24": {
+      "strategy": "recent_365d",
+      "policies": {
+        "all": {
+          "threshold": 0.7559675856082185,
+          "selection_split": "policy_calibration_only",
+          "objective": "maximum F1 after daily top-k cap; highest threshold breaks ties",
+          "calibration_metrics": {
+            "rows": 240,
+            "snapshots": 6,
+            "positives": 80,
+            "threshold": 0.7559675856082185,
+            "budget": 5,
+            "alerts": 30,
+            "hits": 26,
+            "false_alerts": 4,
+            "missed_positive_windows": 54,
+            "precision": 0.8666666666666667,
+            "recall": 0.325,
+            "f1": 0.4727272727272727,
+            "maximum_alerts_per_snapshot": 5,
+            "mean_alerts_per_snapshot": 5.0
+          }
+        },
+        "quiet": {
+          "threshold": 0.3251226896216581,
+          "selection_split": "policy_calibration_only",
+          "objective": "maximum F1 after daily top-k cap; highest threshold breaks ties",
+          "calibration_metrics": {
+            "rows": 159,
+            "snapshots": 6,
+            "positives": 19,
+            "threshold": 0.3251226896216581,
+            "budget": 5,
+            "alerts": 15,
+            "hits": 10,
+            "false_alerts": 5,
+            "missed_positive_windows": 9,
+            "precision": 0.6666666666666666,
+            "recall": 0.5263157894736842,
+            "f1": 0.5882352941176471,
+            "maximum_alerts_per_snapshot": 5,
+            "mean_alerts_per_snapshot": 2.5
+          }
+        }
+      },
+      "probability_calibration_end": "2026-09-09T23:00:00Z",
+      "policy_calibration_start": "2026-09-13T00:00:00Z",
+      "policy_calibration_end": "2026-09-18T23:00:00Z"
+    },
+    "48": {
+      "strategy": "recent_365d",
+      "policies": {
+        "all": {
+          "threshold": 0.9421681996172895,
+          "selection_split": "policy_calibration_only",
+          "objective": "maximum F1 after daily top-k cap; highest threshold breaks ties",
+          "calibration_metrics": {
+            "rows": 240,
+            "snapshots": 6,
+            "positives": 97,
+            "threshold": 0.9421681996172895,
+            "budget": 5,
+            "alerts": 30,
+            "hits": 29,
+            "false_alerts": 1,
+            "missed_positive_windows": 68,
+            "precision": 0.9666666666666667,
+            "recall": 0.29896907216494845,
+            "f1": 0.4566929133858268,
+            "maximum_alerts_per_snapshot": 5,
+            "mean_alerts_per_snapshot": 5.0
+          }
+        },
+        "quiet": {
+          "threshold": 0.53175889653942,
+          "selection_split": "policy_calibration_only",
+          "objective": "maximum F1 after daily top-k cap; highest threshold breaks ties",
+          "calibration_metrics": {
+            "rows": 159,
+            "snapshots": 6,
+            "positives": 29,
+            "threshold": 0.53175889653942,
+            "budget": 5,
+            "alerts": 15,
+            "hits": 12,
+            "false_alerts": 3,
+            "missed_positive_windows": 17,
+            "precision": 0.8,
+            "recall": 0.41379310344827586,
+            "f1": 0.5454545454545454,
+            "maximum_alerts_per_snapshot": 5,
+            "mean_alerts_per_snapshot": 2.5
+          }
+        }
+      },
+      "probability_calibration_end": "2026-09-09T23:00:00Z",
+      "policy_calibration_start": "2026-09-13T00:00:00Z",
+      "policy_calibration_end": "2026-09-18T23:00:00Z"
+    },
+    "72": {
+      "strategy": "recent_180d",
+      "policies": {
+        "all": {
+          "threshold": 0.9883787623189585,
+          "selection_split": "policy_calibration_only",
+          "objective": "maximum F1 after daily top-k cap; highest threshold breaks ties",
+          "calibration_metrics": {
+            "rows": 240,
+            "snapshots": 6,
+            "positives": 107,
+            "threshold": 0.9883787623189585,
+            "budget": 5,
+            "alerts": 30,
+            "hits": 30,
+            "false_alerts": 0,
+            "missed_positive_windows": 77,
+            "precision": 1.0,
+            "recall": 0.2803738317757009,
+            "f1": 0.43795620437956206,
+            "maximum_alerts_per_snapshot": 5,
+            "mean_alerts_per_snapshot": 5.0
+          }
+        },
+        "quiet": {
+          "threshold": 0.3240781975971186,
+          "selection_split": "policy_calibration_only",
+          "objective": "maximum F1 after daily top-k cap; highest threshold breaks ties",
+          "calibration_metrics": {
+            "rows": 159,
+            "snapshots": 6,
+            "positives": 35,
+            "threshold": 0.3240781975971186,
+            "budget": 5,
+            "alerts": 28,
+            "hits": 15,
+            "false_alerts": 13,
+            "missed_positive_windows": 20,
+            "precision": 0.5357142857142857,
+            "recall": 0.42857142857142855,
+            "f1": 0.47619047619047616,
+            "maximum_alerts_per_snapshot": 5,
+            "mean_alerts_per_snapshot": 4.666666666666667
+          }
+        }
+      },
+      "probability_calibration_end": "2026-09-09T23:00:00Z",
+      "policy_calibration_start": "2026-09-13T00:00:00Z",
+      "policy_calibration_end": "2026-09-18T23:00:00Z"
+    }
+  }
+}

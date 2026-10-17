@@ -1,0 +1,39 @@
+{
+  "recipient": "Role A / data owner",
+  "delivery": "Prepared only; no external message sent.",
+  "required_to_resolve": "Original export receipts/settings or same-date re-exports using explicit identical filters.",
+  "proposed_new_controlled_bbox_west_south_east_north": [
+    108,
+    -5,
+    120,
+    5
+  ],
+  "bbox_note": "Proposed control box, not claimed original coverage; apply the same existing Kalimantan boundary and frozen 40-cell IDs afterward.",
+  "satellites": [
+    "N20",
+    "N21"
+  ],
+  "processing_products": [
+    "archive/standard",
+    "NRT"
+  ],
+  "dates": "A common seven-day period available in both products, determined from official availability or retained NRT archives; do not assume overlap exists.",
+  "filters": "Same collection, confidence n/h, day/night selection, spatial scope; retain type and versions without silently changing eligibility.",
+  "save": [
+    "query URL with credentials removed",
+    "product ID and collection",
+    "explicit query bbox/region",
+    "start/end UTC and inclusivity",
+    "confidence/type/day-night filters",
+    "download timestamp",
+    "file SHA-256",
+    "coverage/availability declaration"
+  ],
+  "compare": [
+    "Counts by day/satellite/cell",
+    "Acquisition-time/location matches with documented coordinate tolerance",
+    "Confidence/type differences",
+    "Remaining unmatched detections and reasons"
+  ],
+  "if_no_overlap_available": "Record source attribution as unresolved; retain a consistent-product evaluation and acquire prospective paired observations when available."
+}

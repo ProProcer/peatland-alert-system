@@ -1,0 +1,24 @@
+history: data/demo/role_a_real/regional_40/history.parquet
+reference_windows: b_model/conf/backtest_regional.yaml
+output_dir: b_model/runs/recency_20261017
+evidence_dir: b_model/experiment_results/20261017_recency
+seed: 42
+embargo_hours: 72
+budget: 5
+logistic_c: {'24': 0.001, '48': 0.001, '72': 0.1}
+strategies:
+  - {name: full, recent_days: null, half_life_days: null}
+  - {name: recent_180d, recent_days: 180, half_life_days: null}
+  - {name: recent_365d, recent_days: 365, half_life_days: null}
+  - {name: decay_90d, recent_days: null, half_life_days: 90}
+  - {name: decay_180d, recent_days: null, half_life_days: 180}
+selection:
+  primary: mean_quiet_average_precision
+  minimum_overall_ap_fraction_of_full: 0.95
+  tie_break: mean_overall_brier_then_name
+policy:
+  calibration: first_half_sigmoid_then_72h_gap_then_second_half_policy
+  cadence: daily_00z
+  threshold_objective: maximum_f1_after_top_five_cap
+  tie_break: highest_threshold
+  pools: [all, quiet]

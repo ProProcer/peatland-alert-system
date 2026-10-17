@@ -1,5 +1,12 @@
 # Model card — Peat Fire Early-Warning Model
 
+The additional [recency and alert-policy study](RECENCY_RESULTS.md) is a separate
+review candidate, not a promotion. It preserves the shared forecast contract.
+The [source audit](SOURCE_CONSISTENCY.md) confirms the product handoff but cannot
+verify identical upstream export coverage: original query parameters and
+overlapping observations are unavailable. Evaluation remains conditional on the
+team's coverage declaration. The current regional handoff below is unchanged.
+
 The current geographic handoff is **40 peat-centered cells across five Kalimantan
 provinces**, using `conf/replay_regional.yaml` and `model_regional_40/`.
 See [REGIONAL_RESULTS.md](REGIONAL_RESULTS.md) for the new chronological

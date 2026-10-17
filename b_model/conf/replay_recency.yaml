@@ -1,0 +1,9 @@
+# Review-only candidate, separate from CURRENT_HANDOFF.json and shared feeds.
+defaults:
+  - config
+  - _self_
+paths:
+  features: data/demo/role_a_real/regional_40/features.json
+  history: data/demo/role_a_real/regional_40/history.parquet
+  model_dir: b_model/model_recency_candidate
+  output: b_model/experiment_results/20261017_recency/risk.json

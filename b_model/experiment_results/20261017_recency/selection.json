@@ -1,0 +1,156 @@
+{
+  "selected": {
+    "24": {
+      "strategy": "recent_365d",
+      "horizon_h": 24,
+      "mean_quiet_ap": 0.10565333935879713,
+      "mean_overall_ap": 0.32631488374690487,
+      "mean_brier": 0.05858740425331213,
+      "eligible": true
+    },
+    "48": {
+      "strategy": "recent_365d",
+      "horizon_h": 48,
+      "mean_quiet_ap": 0.17270880484133833,
+      "mean_overall_ap": 0.3615903373943568,
+      "mean_brier": 0.06744875899268514,
+      "eligible": true
+    },
+    "72": {
+      "strategy": "recent_180d",
+      "horizon_h": 72,
+      "mean_quiet_ap": 0.20085656892892997,
+      "mean_overall_ap": 0.36157759432414244,
+      "mean_brier": 0.07081846412324332,
+      "eligible": true
+    }
+  },
+  "leaderboard": [
+    {
+      "strategy": "decay_180d",
+      "horizon_h": 24,
+      "mean_quiet_ap": 0.10387694854908051,
+      "mean_overall_ap": 0.32850287702215897,
+      "mean_brier": 0.058874156757973396,
+      "eligible": true
+    },
+    {
+      "strategy": "decay_90d",
+      "horizon_h": 24,
+      "mean_quiet_ap": 0.10313340984621082,
+      "mean_overall_ap": 0.3236211124181744,
+      "mean_brier": 0.06057346367643853,
+      "eligible": true
+    },
+    {
+      "strategy": "full",
+      "horizon_h": 24,
+      "mean_quiet_ap": 0.10436986336823457,
+      "mean_overall_ap": 0.3317685124245562,
+      "mean_brier": 0.0575948225903374,
+      "eligible": true
+    },
+    {
+      "strategy": "recent_180d",
+      "horizon_h": 24,
+      "mean_quiet_ap": 0.11326976085083695,
+      "mean_overall_ap": 0.30924211529786777,
+      "mean_brier": 0.05847466512590325,
+      "eligible": false
+    },
+    {
+      "strategy": "recent_365d",
+      "horizon_h": 24,
+      "mean_quiet_ap": 0.10565333935879713,
+      "mean_overall_ap": 0.32631488374690487,
+      "mean_brier": 0.05858740425331213,
+      "eligible": true
+    },
+    {
+      "strategy": "decay_180d",
+      "horizon_h": 48,
+      "mean_quiet_ap": 0.17034784075846945,
+      "mean_overall_ap": 0.36174967727131807,
+      "mean_brier": 0.06760345927398152,
+      "eligible": true
+    },
+    {
+      "strategy": "decay_90d",
+      "horizon_h": 48,
+      "mean_quiet_ap": 0.16751187678357646,
+      "mean_overall_ap": 0.35832513236924096,
+      "mean_brier": 0.06857607550424773,
+      "eligible": true
+    },
+    {
+      "strategy": "full",
+      "horizon_h": 48,
+      "mean_quiet_ap": 0.1724155444439148,
+      "mean_overall_ap": 0.36365751167936594,
+      "mean_brier": 0.06695317956736686,
+      "eligible": true
+    },
+    {
+      "strategy": "recent_180d",
+      "horizon_h": 48,
+      "mean_quiet_ap": 0.18178095065788483,
+      "mean_overall_ap": 0.3445624795365041,
+      "mean_brier": 0.06582351370853817,
+      "eligible": false
+    },
+    {
+      "strategy": "recent_365d",
+      "horizon_h": 48,
+      "mean_quiet_ap": 0.17270880484133833,
+      "mean_overall_ap": 0.3615903373943568,
+      "mean_brier": 0.06744875899268514,
+      "eligible": true
+    },
+    {
+      "strategy": "decay_180d",
+      "horizon_h": 72,
+      "mean_quiet_ap": 0.19889469953065866,
+      "mean_overall_ap": 0.3635492715650764,
+      "mean_brier": 0.07463839610294484,
+      "eligible": true
+    },
+    {
+      "strategy": "decay_90d",
+      "horizon_h": 72,
+      "mean_quiet_ap": 0.19627141187346298,
+      "mean_overall_ap": 0.36160659458305977,
+      "mean_brier": 0.07434249935306132,
+      "eligible": true
+    },
+    {
+      "strategy": "full",
+      "horizon_h": 72,
+      "mean_quiet_ap": 0.2002603856978178,
+      "mean_overall_ap": 0.3639921231463352,
+      "mean_brier": 0.07541358638050481,
+      "eligible": true
+    },
+    {
+      "strategy": "recent_180d",
+      "horizon_h": 72,
+      "mean_quiet_ap": 0.20085656892892997,
+      "mean_overall_ap": 0.36157759432414244,
+      "mean_brier": 0.07081846412324332,
+      "eligible": true
+    },
+    {
+      "strategy": "recent_365d",
+      "horizon_h": 72,
+      "mean_quiet_ap": 0.1980477887654087,
+      "mean_overall_ap": 0.36287236079347024,
+      "mean_brier": 0.07580743719498208,
+      "eligible": true
+    }
+  ],
+  "frozen_before": "final_2026",
+  "objective": {
+    "primary": "mean_quiet_average_precision",
+    "minimum_overall_ap_fraction_of_full": 0.95,
+    "tie_break": "mean_overall_brier_then_name"
+  }
+}

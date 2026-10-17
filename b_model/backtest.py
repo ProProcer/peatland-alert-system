@@ -42,17 +42,16 @@ def budget_metrics(frame: pd.DataFrame, scores, labels, budget: int) -> tuple[di
     rows = frame[["ts", "cell_id"]].copy()
     rows["score"], rows["label"] = p, y.astype(int)
     rows = rows.sort_values(["ts", "score", "cell_id"], ascending=[True, False, True])
-    per_time = []
-    for ts, group in rows.groupby("ts", sort=True):
-        selected = group.iloc[:budget]
-        boundary_tie = len(group) > budget and group.score.iloc[budget - 1] == group.score.iloc[budget]
-        positives = int(group.label.sum())
-        per_time.append({"ts": ts, "eligible_cells": len(group), "positives": positives,
-            "alerts": len(selected), "hits": int(selected.label.sum()),
-            "random_expected_hits": len(selected) * positives / len(group),
-            "boundary_tie": bool(boundary_tie)})
-    detail = pd.DataFrame(per_time, columns=["ts", "eligible_cells", "positives", "alerts",
-        "hits", "random_expected_hits", "boundary_tie"])
+    rank = rows.groupby('ts', sort=True).cumcount()
+    rows['_selected'] = rank < budget
+    rows['_hit'] = rows.label.where(rows['_selected'], 0)
+    detail = rows.groupby('ts', sort=True).agg(eligible_cells=('cell_id','size'),
+        positives=('label','sum'), alerts=('_selected','sum'), hits=('_hit','sum'))
+    detail['random_expected_hits'] = detail.alerts * detail.positives / detail.eligible_cells
+    kth = rows.loc[rank.eq(budget-1)].set_index('ts').score
+    following = rows.loc[rank.eq(budget)].set_index('ts').score
+    detail['boundary_tie'] = kth.eq(following).reindex(detail.index, fill_value=False)
+    detail = detail.reset_index()
     hits, alerts, positives = [int(detail[c].sum()) for c in ("hits", "alerts", "positives")]
     expected = float(detail.random_expected_hits.sum())
     result = {"snapshots": len(detail), "eligible_rows": len(rows), "budget": budget,
