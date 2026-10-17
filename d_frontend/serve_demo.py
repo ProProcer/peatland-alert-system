@@ -32,6 +32,12 @@ class DemoHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = unquote(urlsplit(self.path).path)
+        if path == '/response/status':
+            from d_frontend.response_api import response_bundle
+            try:
+                return self.json_response(response_bundle(self.demo_root / DATASETS['coverage'][0]))
+            except (ValueError, OSError):
+                return self.json_response({'error': 'Response data is invalid or unreadable'}, 500)
         if path == '/demo/catalog.json':
             datasets = []
             for key, (folder, label, description) in DATASETS.items():
@@ -61,6 +67,26 @@ class DemoHandler(SimpleHTTPRequestHandler):
         if path.startswith('/data/'):
             return self.json_response({'error': 'Select a demo dataset'}, 404)
         return super().do_GET()
+
+    def do_POST(self):
+        if self.path != '/response/run':
+            return self.json_response({'error': 'Unknown operation'}, 404)
+        # Mutations are same-origin and JSON-only; no external notification endpoint exists.
+        origin = self.headers.get('Origin')
+        if origin and origin != f"http://{self.headers.get('Host')}":
+            return self.json_response({'error': 'Cross-origin operation rejected'}, 403)
+        if self.headers.get('Content-Type', '').split(';')[0] != 'application/json':
+            return self.json_response({'error': 'Expected JSON'}, 415)
+        try:
+            size = int(self.headers.get('Content-Length', '0'))
+            if not 0 < size <= 4096:
+                raise ValueError('Invalid request size')
+            options = json.loads(self.rfile.read(size))
+            from d_frontend.response_api import run_response
+            result = run_response(self.demo_root / DATASETS['coverage'][0], options)
+            return self.json_response(result)
+        except (ValueError, OSError, SystemExit) as exc:
+            return self.json_response({'error': str(exc)}, 400)
 
 
 def make_server(demo_root=ROOT / 'data/demo', port=8001):

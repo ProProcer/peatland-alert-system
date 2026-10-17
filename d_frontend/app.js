@@ -141,14 +141,15 @@ function renderMap(horizon) {
     const title = svgElement("title", {});
     title.textContent = description;
     cell.append(title);
-    const select = () => {
+    const select = (event) => {
       selectedCell = id;
       for (const other of map.querySelectorAll(".map-cell")) other.setAttribute("aria-pressed", other === cell);
       for (const other of map.querySelectorAll('.risk-map-marker')) other.setAttribute('aria-pressed', other === marker);
       document.querySelector("#map-detail").textContent = description;
+      window.dispatchEvent(new CustomEvent('cell-explain', {detail: {id, feature: featureRow, risk, horizon, anchor: marker, keyboard: event?.type === 'keydown' || event?.detail === 0}}));
     };
     cell.addEventListener("click", select);
-    cell.addEventListener("keydown", event => { if (["Enter", " "].includes(event.key)) { event.preventDefault(); select(); } });
+    cell.addEventListener("keydown", event => { if (["Enter", " "].includes(event.key)) { event.preventDefault(); select(event); } });
     riskLayer.append(cell);
     const points = feature.geometry.coordinates[0].map(project);
     const xs = points.map(point => point[0]), ys = points.map(point => point[1]);
@@ -158,7 +159,7 @@ function renderMap(horizon) {
     markerTitle.textContent = `Grid center ${id} (not a fire location). ${description}`;
     marker.append(markerTitle);
     marker.addEventListener('click', select);
-    marker.addEventListener('keydown', event => { if (['Enter', ' '].includes(event.key)) { event.preventDefault(); select(); } });
+    marker.addEventListener('keydown', event => { if (['Enter', ' '].includes(event.key)) { event.preventDefault(); select(event); } });
     const label = svgElement("text", { x: cx, y: cy, "text-anchor": "middle", "dominant-baseline": "central", class: "risk-map-label", "data-cell-width": Math.max(...xs) - Math.min(...xs), "aria-hidden": "true" });
     label.textContent = risk ? `${risk.risk_level} · ${risk.risk_score.toFixed(2)}` : "NO FORECAST";
     centerLayer.append(marker);
@@ -417,6 +418,7 @@ async function reload() {
       sources.append(item);
     }
     render();
+    window.dispatchEvent(new CustomEvent('response-feeds', { detail: Object.fromEntries(Object.entries(feeds).map(([key, feed]) => [key, feed.data])) }));
     if (dataset) {
       const times = [...new Set(feeds.features.data.map(row => row.ts))].sort();
       document.querySelector('#dataset-info').textContent = `${dataset.description} Feature time: ${times.join(', ')}. ${feeds.cells.data.features.length} monitored cells. Weather and soil moisture are modeled; all notifications are simulated.`;
@@ -441,6 +443,7 @@ async function reload() {
       document.querySelector('#priority-list').replaceChildren(element('p', 'Dataset unavailable.', 'subtle'));
       document.querySelector('#priority-caption').textContent = 'Refresh the feeds to try again.';
       feeds = {};
+      window.dispatchEvent(new CustomEvent("response-feeds", { detail: {features: [], dispatch: []} }));
     }
   }
 }
@@ -470,7 +473,62 @@ document.querySelector("#map-cells").addEventListener("click", () => {
 loadPeatland();
 
 const navigationLinks = document.querySelectorAll('.nav-link');
-for (const link of navigationLinks) link.setAttribute('aria-label', link.querySelector('span').textContent);
+const navigationDescriptions = {
+  '#overview': 'View the regional outlook and key conditions.',
+  '#map-section': 'Explore mapped peatland and monitoring points.',
+  '#risk-section': 'Inspect cell forecasts and contributing factors.',
+  '#dispatch-section': 'Review simulated response actions and messages.',
+  '#data-notes': 'Check data sources, timestamps and limitations.',
+};
+const navigationTooltip = document.createElement('div');
+navigationTooltip.id = 'navigation-tooltip';
+navigationTooltip.className = 'navigation-tooltip';
+navigationTooltip.setAttribute('role', 'tooltip');
+navigationTooltip.hidden = true;
+document.body.append(navigationTooltip);
+let tooltipTimer;
+function hideNavigationTooltip() {
+  clearTimeout(tooltipTimer);
+  navigationTooltip.hidden = true;
+}
+for (const link of navigationLinks) {
+  const label = link.querySelector('span').textContent;
+  link.setAttribute('aria-label', label);
+  const description = document.createElement('span');
+  description.id = `nav-description-${link.hash.slice(1)}`;
+  description.className = 'visually-hidden';
+  description.textContent = navigationDescriptions[link.hash] || label;
+  link.append(description);
+  link.setAttribute('aria-describedby', description.id);
+  const showTooltip = () => {
+    clearTimeout(tooltipTimer);
+    navigationTooltip.replaceChildren();
+    const title = document.createElement('strong');
+    title.textContent = label;
+    const text = document.createElement('span');
+    text.textContent = description.textContent;
+    navigationTooltip.append(title, text);
+    navigationTooltip.hidden = false;
+    const bounds = link.getBoundingClientRect();
+    const tooltipBounds = navigationTooltip.getBoundingClientRect();
+    const left = bounds.right + 10 + tooltipBounds.width <= window.innerWidth - 12
+      ? bounds.right + 10 : Math.max(12, Math.min(bounds.left, window.innerWidth - tooltipBounds.width - 12));
+    const top = bounds.right + 10 + tooltipBounds.width <= window.innerWidth - 12
+      ? bounds.top + (bounds.height - tooltipBounds.height) / 2 : bounds.bottom + 10;
+    navigationTooltip.style.left = `${left}px`;
+    navigationTooltip.style.top = `${Math.max(12, Math.min(top, window.innerHeight - tooltipBounds.height - 12))}px`;
+  };
+  link.addEventListener('mouseenter', showTooltip);
+  link.addEventListener('focus', showTooltip);
+  link.addEventListener('mouseleave', () => { tooltipTimer = setTimeout(hideNavigationTooltip, 120); });
+  link.addEventListener('blur', hideNavigationTooltip);
+  link.addEventListener('click', hideNavigationTooltip);
+}
+navigationTooltip.addEventListener('mouseenter', () => clearTimeout(tooltipTimer));
+navigationTooltip.addEventListener('mouseleave', hideNavigationTooltip);
+document.addEventListener('keydown', event => { if (event.key === 'Escape') hideNavigationTooltip(); });
+window.addEventListener('resize', hideNavigationTooltip);
+window.addEventListener('scroll', hideNavigationTooltip, true);
 function activateNavigation(id) {
   for (const link of navigationLinks) {
     const active = link.getAttribute('href') === `#${id}`;
@@ -498,6 +556,7 @@ discoverDatasets().then(reload).catch(showStartupError);
 const sidebarToggle = document.querySelector('#sidebar-toggle');
 const sidebar = document.querySelector('#sidebar');
 function setSidebarOpen(open) {
+  hideNavigationTooltip();
   sidebar.hidden = !open;
   document.body.classList.toggle('sidebar-closed', !open);
   sidebarToggle.setAttribute('aria-expanded', String(open));

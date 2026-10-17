@@ -1,0 +1,470 @@
+[
+  {
+    "schema_version": "1.0",
+    "dispatch_id": "d_20261016_0001",
+    "cell_id": "-0.05_116.35",
+    "ts": "2026-10-16T00:05:00Z",
+    "action": "DISPATCH",
+    "priority": 1,
+    "target": {
+      "lat": -0.05,
+      "lon": 116.35
+    },
+    "audiences": [
+      "manggala_agni",
+      "mpa",
+      "bpbd",
+      "brgm",
+      "leadership"
+    ],
+    "messages": {
+      "manggala_agni": {
+        "id": "Simulasi: siapkan patroli ke -0.05, 116.35; risiko 0.93 dalam 72 jam; sumber air belum tersedia.",
+        "en": "Simulation: prepare a patrol to -0.05, 116.35; risk 0.93 over 72 hours; water-source data is unavailable."
+      },
+      "mpa": {
+        "id": "Simulasi: warga di sekitar -0.05, 116.35 diminta waspada dan tidak membakar lahan.",
+        "en": "Simulation: communities near -0.05, 116.35 should remain alert and avoid land burning."
+      },
+      "bpbd": {
+        "id": "Simulasi: koordinasikan kesiapsiagaan pada -0.05, 116.35; sumber air belum tersedia.",
+        "en": "Simulation: coordinate readiness at -0.05, 116.35; water-source data is unavailable."
+      },
+      "brgm": {
+        "id": "Simulasi: tinjau kebutuhan pembasahan pada -0.05, 116.35; kelembapan gambut dalam 0.14 m³/m³.",
+        "en": "Simulation: assess rewetting needs at -0.05, 116.35; deep soil moisture is 0.14 m³/m³."
+      },
+      "leadership": {
+        "id": "Simulasi: 1 sel kritis (horizon 72 jam); 1 hari tanpa hujan ≥1 mm.",
+        "en": "Simulation: 1 critical cell(s) at the 72-hour horizon; 1 day(s) without ≥1 mm rain."
+      }
+    },
+    "water_source": null,
+    "rationale": "Risk 0.93 for 72h on -0.05_116.35; 1 days since rain; deep soil moisture 0.14 (Δ7d 0.00). Top factors: hotspots_in_cell_24h=0.40, hotspots_10km_7d=0.29, sm_27_81=0.11. Sumber air belum tersedia. Simulated alert only.",
+    "status": "PENDING"
+  },
+  {
+    "schema_version": "1.0",
+    "dispatch_id": "d_20261016_0002",
+    "cell_id": "-1.55_114.75",
+    "ts": "2026-10-16T00:05:00Z",
+    "action": "DISPATCH",
+    "priority": 1,
+    "target": {
+      "lat": -1.55,
+      "lon": 114.75
+    },
+    "audiences": [
+      "manggala_agni",
+      "mpa",
+      "bpbd",
+      "brgm",
+      "leadership"
+    ],
+    "messages": {
+      "manggala_agni": {
+        "id": "Simulasi: siapkan patroli ke -1.55, 114.75; risiko 0.86 dalam 72 jam; sumber air belum tersedia.",
+        "en": "Simulation: prepare a patrol to -1.55, 114.75; risk 0.86 over 72 hours; water-source data is unavailable."
+      },
+      "mpa": {
+        "id": "Simulasi: warga di sekitar -1.55, 114.75 diminta waspada dan tidak membakar lahan.",
+        "en": "Simulation: communities near -1.55, 114.75 should remain alert and avoid land burning."
+      },
+      "bpbd": {
+        "id": "Simulasi: koordinasikan kesiapsiagaan pada -1.55, 114.75; sumber air belum tersedia.",
+        "en": "Simulation: coordinate readiness at -1.55, 114.75; water-source data is unavailable."
+      },
+      "brgm": {
+        "id": "Simulasi: tinjau kebutuhan pembasahan pada -1.55, 114.75; kelembapan gambut dalam 0.22 m³/m³.",
+        "en": "Simulation: assess rewetting needs at -1.55, 114.75; deep soil moisture is 0.22 m³/m³."
+      },
+      "leadership": {
+        "id": "Simulasi: 1 sel kritis (horizon 72 jam); 3 hari tanpa hujan ≥1 mm.",
+        "en": "Simulation: 1 critical cell(s) at the 72-hour horizon; 3 day(s) without ≥1 mm rain."
+      }
+    },
+    "water_source": null,
+    "rationale": "Risk 0.86 for 72h on -1.55_114.75; 3 days since rain; deep soil moisture 0.22 (Δ7d 0.01). Top factors: hotspots_10km_7d=1.14, frp_sum_10km_7d=0.12, nearest_hotspot_km=0.09. Sumber air belum tersedia. Simulated alert only.",
+    "status": "PENDING"
+  },
+  {
+    "schema_version": "1.0",
+    "dispatch_id": "d_20261016_0003",
+    "cell_id": "-2.05_114.15",
+    "ts": "2026-10-16T00:05:00Z",
+    "action": "DISPATCH",
+    "priority": 1,
+    "target": {
+      "lat": -2.05,
+      "lon": 114.15
+    },
+    "audiences": [
+      "manggala_agni",
+      "mpa",
+      "bpbd",
+      "brgm",
+      "leadership"
+    ],
+    "messages": {
+      "manggala_agni": {
+        "id": "Simulasi: siapkan patroli ke -2.05, 114.15; risiko 1.00 dalam 72 jam; sumber air belum tersedia.",
+        "en": "Simulation: prepare a patrol to -2.05, 114.15; risk 1.00 over 72 hours; water-source data is unavailable."
+      },
+      "mpa": {
+        "id": "Simulasi: warga di sekitar -2.05, 114.15 diminta waspada dan tidak membakar lahan.",
+        "en": "Simulation: communities near -2.05, 114.15 should remain alert and avoid land burning."
+      },
+      "bpbd": {
+        "id": "Simulasi: koordinasikan kesiapsiagaan pada -2.05, 114.15; sumber air belum tersedia.",
+        "en": "Simulation: coordinate readiness at -2.05, 114.15; water-source data is unavailable."
+      },
+      "brgm": {
+        "id": "Simulasi: tinjau kebutuhan pembasahan pada -2.05, 114.15; kelembapan gambut dalam 0.10 m³/m³.",
+        "en": "Simulation: assess rewetting needs at -2.05, 114.15; deep soil moisture is 0.10 m³/m³."
+      },
+      "leadership": {
+        "id": "Simulasi: 1 sel kritis (horizon 72 jam); 1 hari tanpa hujan ≥1 mm.",
+        "en": "Simulation: 1 critical cell(s) at the 72-hour horizon; 1 day(s) without ≥1 mm rain."
+      }
+    },
+    "water_source": null,
+    "rationale": "Risk 1.00 for 72h on -2.05_114.15; 1 days since rain; deep soil moisture 0.10 (Δ7d 0.02). Top factors: hotspots_10km_7d=2.70, frp_sum_10km_7d=0.17, sm_27_81=0.13. Sumber air belum tersedia. Simulated alert only.",
+    "status": "PENDING"
+  },
+  {
+    "schema_version": "1.0",
+    "dispatch_id": "d_20261016_0004",
+    "cell_id": "-2.45_111.65",
+    "ts": "2026-10-16T00:05:00Z",
+    "action": "DISPATCH",
+    "priority": 1,
+    "target": {
+      "lat": -2.45,
+      "lon": 111.65
+    },
+    "audiences": [
+      "manggala_agni",
+      "mpa",
+      "bpbd",
+      "brgm",
+      "leadership"
+    ],
+    "messages": {
+      "manggala_agni": {
+        "id": "Simulasi: siapkan patroli ke -2.45, 111.65; risiko 1.00 dalam 72 jam; sumber air belum tersedia.",
+        "en": "Simulation: prepare a patrol to -2.45, 111.65; risk 1.00 over 72 hours; water-source data is unavailable."
+      },
+      "mpa": {
+        "id": "Simulasi: warga di sekitar -2.45, 111.65 diminta waspada dan tidak membakar lahan.",
+        "en": "Simulation: communities near -2.45, 111.65 should remain alert and avoid land burning."
+      },
+      "bpbd": {
+        "id": "Simulasi: koordinasikan kesiapsiagaan pada -2.45, 111.65; sumber air belum tersedia.",
+        "en": "Simulation: coordinate readiness at -2.45, 111.65; water-source data is unavailable."
+      },
+      "brgm": {
+        "id": "Simulasi: tinjau kebutuhan pembasahan pada -2.45, 111.65; kelembapan gambut dalam 0.17 m³/m³.",
+        "en": "Simulation: assess rewetting needs at -2.45, 111.65; deep soil moisture is 0.17 m³/m³."
+      },
+      "leadership": {
+        "id": "Simulasi: 1 sel kritis (horizon 72 jam); 15 hari tanpa hujan ≥1 mm.",
+        "en": "Simulation: 1 critical cell(s) at the 72-hour horizon; 15 day(s) without ≥1 mm rain."
+      }
+    },
+    "water_source": null,
+    "rationale": "Risk 1.00 for 72h on -2.45_111.65; 15 days since rain; deep soil moisture 0.17 (Δ7d 0.00). Top factors: hotspots_10km_7d=1.61, hotspots_in_cell_24h=0.68, nearest_hotspot_km=0.11. Sumber air belum tersedia. Simulated alert only.",
+    "status": "PENDING"
+  },
+  {
+    "schema_version": "1.0",
+    "dispatch_id": "d_20261016_0005",
+    "cell_id": "-2.55_113.35",
+    "ts": "2026-10-16T00:05:00Z",
+    "action": "DISPATCH",
+    "priority": 1,
+    "target": {
+      "lat": -2.55,
+      "lon": 113.35
+    },
+    "audiences": [
+      "manggala_agni",
+      "mpa",
+      "bpbd",
+      "brgm",
+      "leadership"
+    ],
+    "messages": {
+      "manggala_agni": {
+        "id": "Simulasi: siapkan patroli ke -2.55, 113.35; risiko 1.00 dalam 72 jam; sumber air belum tersedia.",
+        "en": "Simulation: prepare a patrol to -2.55, 113.35; risk 1.00 over 72 hours; water-source data is unavailable."
+      },
+      "mpa": {
+        "id": "Simulasi: warga di sekitar -2.55, 113.35 diminta waspada dan tidak membakar lahan.",
+        "en": "Simulation: communities near -2.55, 113.35 should remain alert and avoid land burning."
+      },
+      "bpbd": {
+        "id": "Simulasi: koordinasikan kesiapsiagaan pada -2.55, 113.35; sumber air belum tersedia.",
+        "en": "Simulation: coordinate readiness at -2.55, 113.35; water-source data is unavailable."
+      },
+      "brgm": {
+        "id": "Simulasi: tinjau kebutuhan pembasahan pada -2.55, 113.35; kelembapan gambut dalam 0.15 m³/m³.",
+        "en": "Simulation: assess rewetting needs at -2.55, 113.35; deep soil moisture is 0.15 m³/m³."
+      },
+      "leadership": {
+        "id": "Simulasi: 1 sel kritis (horizon 72 jam); 16 hari tanpa hujan ≥1 mm.",
+        "en": "Simulation: 1 critical cell(s) at the 72-hour horizon; 16 day(s) without ≥1 mm rain."
+      }
+    },
+    "water_source": null,
+    "rationale": "Risk 1.00 for 72h on -2.55_113.35; 16 days since rain; deep soil moisture 0.15 (Δ7d 0.00). Top factors: hotspots_10km_7d=4.54, hotspots_in_cell_24h=0.84, frp_sum_10km_7d=0.35. Sumber air belum tersedia. Simulated alert only.",
+    "status": "PENDING"
+  },
+  {
+    "schema_version": "1.0",
+    "dispatch_id": "d_20261016_0006",
+    "cell_id": "-2.65_114.85",
+    "ts": "2026-10-16T00:05:00Z",
+    "action": "DISPATCH",
+    "priority": 1,
+    "target": {
+      "lat": -2.6166666666666667,
+      "lon": 114.91666666666667
+    },
+    "audiences": [
+      "manggala_agni",
+      "mpa",
+      "bpbd",
+      "brgm",
+      "leadership"
+    ],
+    "messages": {
+      "manggala_agni": {
+        "id": "Simulasi: siapkan patroli ke -2.62, 114.92; risiko 1.00 dalam 72 jam; sumber air belum tersedia.",
+        "en": "Simulation: prepare a patrol to -2.62, 114.92; risk 1.00 over 72 hours; water-source data is unavailable."
+      },
+      "mpa": {
+        "id": "Simulasi: warga di sekitar -2.62, 114.92 diminta waspada dan tidak membakar lahan.",
+        "en": "Simulation: communities near -2.62, 114.92 should remain alert and avoid land burning."
+      },
+      "bpbd": {
+        "id": "Simulasi: koordinasikan kesiapsiagaan pada -2.62, 114.92; sumber air belum tersedia.",
+        "en": "Simulation: coordinate readiness at -2.62, 114.92; water-source data is unavailable."
+      },
+      "brgm": {
+        "id": "Simulasi: tinjau kebutuhan pembasahan pada -2.62, 114.92; kelembapan gambut dalam 0.41 m³/m³.",
+        "en": "Simulation: assess rewetting needs at -2.62, 114.92; deep soil moisture is 0.41 m³/m³."
+      },
+      "leadership": {
+        "id": "Simulasi: 3 sel kritis (horizon 72 jam); 1 hari tanpa hujan ≥1 mm.",
+        "en": "Simulation: 3 critical cell(s) at the 72-hour horizon; 1 day(s) without ≥1 mm rain."
+      }
+    },
+    "water_source": null,
+    "rationale": "Risk 1.00 for 72h on -2.65_114.85; 1 days since rain; deep soil moisture 0.41 (Δ7d 0.01). Top factors: hotspots_10km_7d=3.06, hotspots_in_cell_24h=0.56, frp_sum_10km_7d=0.23. Sumber air belum tersedia. Simulated alert only.",
+    "status": "PENDING"
+  },
+  {
+    "schema_version": "1.0",
+    "dispatch_id": "d_20261016_0008",
+    "cell_id": "-2.85_110.85",
+    "ts": "2026-10-16T00:05:00Z",
+    "action": "DISPATCH",
+    "priority": 1,
+    "target": {
+      "lat": -2.85,
+      "lon": 110.85
+    },
+    "audiences": [
+      "manggala_agni",
+      "mpa",
+      "bpbd",
+      "brgm",
+      "leadership"
+    ],
+    "messages": {
+      "manggala_agni": {
+        "id": "Simulasi: siapkan patroli ke -2.85, 110.85; risiko 0.99 dalam 72 jam; sumber air belum tersedia.",
+        "en": "Simulation: prepare a patrol to -2.85, 110.85; risk 0.99 over 72 hours; water-source data is unavailable."
+      },
+      "mpa": {
+        "id": "Simulasi: warga di sekitar -2.85, 110.85 diminta waspada dan tidak membakar lahan.",
+        "en": "Simulation: communities near -2.85, 110.85 should remain alert and avoid land burning."
+      },
+      "bpbd": {
+        "id": "Simulasi: koordinasikan kesiapsiagaan pada -2.85, 110.85; sumber air belum tersedia.",
+        "en": "Simulation: coordinate readiness at -2.85, 110.85; water-source data is unavailable."
+      },
+      "brgm": {
+        "id": "Simulasi: tinjau kebutuhan pembasahan pada -2.85, 110.85; kelembapan gambut dalam 0.17 m³/m³.",
+        "en": "Simulation: assess rewetting needs at -2.85, 110.85; deep soil moisture is 0.17 m³/m³."
+      },
+      "leadership": {
+        "id": "Simulasi: 1 sel kritis (horizon 72 jam); 103 hari tanpa hujan ≥1 mm.",
+        "en": "Simulation: 1 critical cell(s) at the 72-hour horizon; 103 day(s) without ≥1 mm rain."
+      }
+    },
+    "water_source": null,
+    "rationale": "Risk 0.99 for 72h on -2.85_110.85; 103 days since rain; deep soil moisture 0.17 (Δ7d 0.00). Top factors: hotspots_10km_7d=1.85, days_since_rain=0.23, frp_sum_10km_7d=0.19. Sumber air belum tersedia. Simulated alert only.",
+    "status": "PENDING"
+  },
+  {
+    "schema_version": "1.0",
+    "dispatch_id": "d_20261016_0009",
+    "cell_id": "-3.05_114.95",
+    "ts": "2026-10-16T00:05:00Z",
+    "action": "DISPATCH",
+    "priority": 1,
+    "target": {
+      "lat": -3.05,
+      "lon": 114.95
+    },
+    "audiences": [
+      "manggala_agni",
+      "mpa",
+      "bpbd",
+      "brgm",
+      "leadership"
+    ],
+    "messages": {
+      "manggala_agni": {
+        "id": "Simulasi: siapkan patroli ke -3.05, 114.95; risiko 1.00 dalam 72 jam; sumber air belum tersedia.",
+        "en": "Simulation: prepare a patrol to -3.05, 114.95; risk 1.00 over 72 hours; water-source data is unavailable."
+      },
+      "mpa": {
+        "id": "Simulasi: warga di sekitar -3.05, 114.95 diminta waspada dan tidak membakar lahan.",
+        "en": "Simulation: communities near -3.05, 114.95 should remain alert and avoid land burning."
+      },
+      "bpbd": {
+        "id": "Simulasi: koordinasikan kesiapsiagaan pada -3.05, 114.95; sumber air belum tersedia.",
+        "en": "Simulation: coordinate readiness at -3.05, 114.95; water-source data is unavailable."
+      },
+      "brgm": {
+        "id": "Simulasi: tinjau kebutuhan pembasahan pada -3.05, 114.95; kelembapan gambut dalam 0.40 m³/m³.",
+        "en": "Simulation: assess rewetting needs at -3.05, 114.95; deep soil moisture is 0.40 m³/m³."
+      },
+      "leadership": {
+        "id": "Simulasi: 1 sel kritis (horizon 72 jam); 16 hari tanpa hujan ≥1 mm.",
+        "en": "Simulation: 1 critical cell(s) at the 72-hour horizon; 16 day(s) without ≥1 mm rain."
+      }
+    },
+    "water_source": null,
+    "rationale": "Risk 1.00 for 72h on -3.05_114.95; 16 days since rain; deep soil moisture 0.40 (Δ7d 0.01). Top factors: hotspots_10km_7d=2.43, frp_sum_10km_7d=0.20, vpd_mean_24h=0.16. Sumber air belum tersedia. Simulated alert only.",
+    "status": "PENDING"
+  },
+  {
+    "schema_version": "1.0",
+    "dispatch_id": "d_20261016_0010",
+    "cell_id": "-3.25_112.15",
+    "ts": "2026-10-16T00:05:00Z",
+    "action": "DISPATCH",
+    "priority": 1,
+    "target": {
+      "lat": -3.25,
+      "lon": 112.15
+    },
+    "audiences": [
+      "manggala_agni",
+      "mpa",
+      "bpbd",
+      "brgm",
+      "leadership"
+    ],
+    "messages": {
+      "manggala_agni": {
+        "id": "Simulasi: siapkan patroli ke -3.25, 112.15; risiko 1.00 dalam 48 jam; sumber air belum tersedia.",
+        "en": "Simulation: prepare a patrol to -3.25, 112.15; risk 1.00 over 48 hours; water-source data is unavailable."
+      },
+      "mpa": {
+        "id": "Simulasi: warga di sekitar -3.25, 112.15 diminta waspada dan tidak membakar lahan.",
+        "en": "Simulation: communities near -3.25, 112.15 should remain alert and avoid land burning."
+      },
+      "bpbd": {
+        "id": "Simulasi: koordinasikan kesiapsiagaan pada -3.25, 112.15; sumber air belum tersedia.",
+        "en": "Simulation: coordinate readiness at -3.25, 112.15; water-source data is unavailable."
+      },
+      "brgm": {
+        "id": "Simulasi: tinjau kebutuhan pembasahan pada -3.25, 112.15; kelembapan gambut dalam 0.16 m³/m³.",
+        "en": "Simulation: assess rewetting needs at -3.25, 112.15; deep soil moisture is 0.16 m³/m³."
+      },
+      "leadership": {
+        "id": "Simulasi: 1 sel kritis (horizon 48 jam); 80 hari tanpa hujan ≥1 mm.",
+        "en": "Simulation: 1 critical cell(s) at the 48-hour horizon; 80 day(s) without ≥1 mm rain."
+      }
+    },
+    "water_source": null,
+    "rationale": "Risk 1.00 for 48h on -3.25_112.15; 80 days since rain; deep soil moisture 0.16 (Δ7d 0.01). Top factors: hotspots_10km_7d=5.83, frp_sum_10km_7d=0.51, days_since_rain=0.33. Sumber air belum tersedia. Simulated alert only.",
+    "status": "PENDING"
+  },
+  {
+    "schema_version": "1.0",
+    "dispatch_id": "d_20261016_0007",
+    "cell_id": "-2.65_114.85",
+    "ts": "2026-10-16T00:05:00Z",
+    "action": "BRIEF",
+    "priority": 2,
+    "target": {
+      "lat": -2.6166666666666667,
+      "lon": 114.91666666666667
+    },
+    "audiences": [
+      "leadership"
+    ],
+    "messages": {
+      "leadership": {
+        "id": "Simulasi: gugus 3 sel kritis (-2.55_114.95, -2.65_114.85, -2.65_114.95); titik koordinasi -2.62, 114.92.",
+        "en": "Simulation: cluster of 3 critical cells (-2.55_114.95, -2.65_114.85, -2.65_114.95); coordination point -2.62, 114.92."
+      }
+    },
+    "water_source": null,
+    "rationale": "BRIEF for CRITICAL cluster of 3 cells (-2.55_114.95, -2.65_114.85, -2.65_114.95); target -2.62, 114.92. Simulated alert only.",
+    "status": "PENDING"
+  },
+  {
+    "schema_version": "1.0",
+    "dispatch_id": "d_20261016_0011",
+    "cell_id": "0.05_116.85",
+    "ts": "2026-10-16T00:05:00Z",
+    "action": "SMS_WARN",
+    "priority": 2,
+    "target": {
+      "lat": 0.05,
+      "lon": 116.85
+    },
+    "audiences": [
+      "mpa"
+    ],
+    "messages": {
+      "mpa": {
+        "id": "Simulasi: peringatan SMS — risiko 0.78 di 0.05, 116.85; kelembapan dalam turun 0.00 m³/m³ (7 hari).",
+        "en": "Simulation: SMS warning — risk 0.78 at 0.05, 116.85; deep soil moisture fell 0.00 m³/m³ over 7 days."
+      }
+    },
+    "water_source": null,
+    "rationale": "SMS_WARN for HIGH risk 0.78 at 72h on 0.05_116.85; sm_27_81_delta_7d=-0.00 (falling). Simulated alert only.",
+    "status": "PENDING"
+  },
+  {
+    "schema_version": "1.0",
+    "dispatch_id": "d_20261016_0012",
+    "cell_id": "0.05_116.85",
+    "ts": "2026-10-16T00:05:00Z",
+    "action": "REWET",
+    "priority": 3,
+    "target": {
+      "lat": 0.05,
+      "lon": 116.85
+    },
+    "audiences": [
+      "brgm"
+    ],
+    "messages": {
+      "brgm": {
+        "id": "Simulasi: tinjau pembasahan di 0.05, 116.85; sm_27_81=0.52 m³/m³, delta 7 hari=-0.00.",
+        "en": "Simulation: assess rewetting at 0.05, 116.85; sm_27_81=0.52 m³/m³, 7-day delta=-0.00."
+      }
+    },
+    "water_source": null,
+    "rationale": "REWET for HIGH risk 0.78 at 72h on 0.05_116.85; sm_27_81_delta_7d=-0.00 (falling). Simulated alert only.",
+    "status": "PENDING"
+  }
+]

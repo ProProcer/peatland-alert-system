@@ -57,10 +57,10 @@ assert.throws(() => vm.runInContext('validateFeedSet(entries)', context), /snaps
   const bundledCells = await vm.runInContext("loadFeed('cells.geojson', activeDataset)", context);
   const bundledRisk = await vm.runInContext("loadFeed('risk.json', activeDataset)", context);
   assert.equal(bundledCells.data.features.length, 40);
-  assert.equal(bundledRisk.data.length, 0);
+  assert.equal(bundledRisk.data.length, snapshot.feeds['risk.json'].length);
   assert.deepEqual(paths, ['/demo/catalog.json', 'assets/coverage-snapshot.json']);
   for (const filename of snapshot.files) assert.deepEqual(snapshot.feeds[filename], JSON.parse(fs.readFileSync(__dirname + '/../data/demo/role_a_real/regional_40/' + filename, 'utf8')));
-  console.log('PASS: plain static-server fallback loads the exact real 40-cell snapshot and no supplied predictions, without mock data.');
+  console.log('PASS: plain static-server fallback loads the exact real 40-cell snapshot and matching supplied predictions, without mock data.');
   console.log('PASS: interface exposes only the 40-cell coverage dataset and never falls back to mocks.');
   console.log('PASS: matched snapshots, rejection of mixed data, missing outputs, isolated dataset requests and failure handling.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

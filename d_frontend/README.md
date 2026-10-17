@@ -201,3 +201,33 @@ The new bundle is served only after all four feeds validate and `build_status.js
 says complete. Existing replay bundles and checked-in processed/model files are
 preserved. Restart `python -m d_frontend.serve_demo`, then refresh the page to see
 the new default dataset and its distributed center markers.
+
+
+## Response workspace
+
+Start `.venv/Scripts/python.exe -m d_frontend.serve_demo` and open port 8001.
+The Response log navigation opens the incident workspace: search/action/audience
+filters, targets and water sources, bilingual audience/SMS previews, social posts,
+individual and batch email previews, JSON/CSV downloads, response statistics and
+UTC timeline. Policy & engine includes cooldown, water radius, optional guarded
+LLM rephrasing and a simulated notification log. Keys stay server-side.
+
+Generate simulated responses invokes C against the matching regional_40 inputs,
+validates them, writes C's dispatch.json in that dataset, and persists state/logs
+under c_agent/state and c_agent/logs. No external notification is sent. Restart
+older demo servers to enable the new endpoints. Static hosting supports saved
+incidents and local dispatch/CSV/summary/timeline downloads; simulation and generated
+social/email previews require the local server. Run the standard snapshot exporter
+after generation to update standalone static copies.
+
+Verification: `.venv/Scripts/python.exe -m unittest d_frontend.test_response_api d_frontend.test_serve_demo -v`.
+
+
+Click any monitoring marker (or focus it and press Enter/Space) to open its floating
+model explanation. It includes the selected-horizon risk probability and fixed
+classification thresholds, supplied top factors with signed relative-magnitude
+bars, matching raw inputs/units, model version, and UTC snapshot. Expand the input
+list to inspect all 27 canonical measurements. These are supplied heuristic factors,
+not causal effects or exact calibrated-probability decompositions. Missing predictions
+and null measurements remain explicitly unavailable. Close with Escape or the close
+button; changing the forecast horizon updates an open explanation.
