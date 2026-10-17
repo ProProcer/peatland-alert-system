@@ -40,7 +40,15 @@ def current_snapshot(runtime=DEFAULT_RUNTIME):
     directory = (runtime / value["directory"]).resolve()
     if not directory.is_relative_to(runtime / "snapshots") or not directory.is_dir():
         raise ValueError("Invalid published live snapshot path")
-    if not all((directory / name).is_file() for name in (*FEEDS, "history.parquet", "pipeline_manifest.json")):
+    manifest_path = directory / "pipeline_manifest.json"
+    manifest = json.loads(manifest_path.read_text()) if manifest_path.is_file() else {}
+    history_file = manifest.get("history_file", "history.parquet")
+    if history_file not in ("history.parquet", "history.csv.gz"):
+        raise ValueError("Unsupported live history format")
+    required = (*FEEDS, history_file, "pipeline_manifest.json")
+    if history_file == "history.csv.gz":
+        required += ("history-manifest.json",)
+    if not all((directory / name).is_file() for name in required):
         raise ValueError("Published live snapshot is incomplete")
     return directory
 
@@ -106,15 +114,32 @@ def redact(message):
     return re.sub(r"(/(?:area|data_availability)/csv/)[^/\s]+/", r"\1[redacted]/", message)[:1000]
 
 
-def _stages():
+def _stages(portable_history=None):
     from a_data.live import refresh_live
     from b_model.predict import run_predictions
     from c_agent.agent import dispatch_live
-    return refresh_live, run_predictions, dispatch_live
+    if portable_history is None:
+        return refresh_live, run_predictions, dispatch_live
+
+    def ingest(source, work, context_dir=None):
+        from e_platform.portable_live import PortableLiveTables
+        return refresh_live(source, work, context_dir=context_dir,
+                            table_io=PortableLiveTables(portable_history, source))
+
+    def predict(**kwargs):
+        # Frozen LR artifacts use canonical JSON features, without history indicators.
+        from b_model.predict import load_artifact_manifest
+        manifest = load_artifact_manifest(kwargs["model_dir"])
+        if any(entry.get("feature_pipeline") for entry, _ in manifest.values()):
+            raise ValueError("CSV live mode supports canonical regional models only")
+        kwargs["history_path"] = None
+        return run_predictions(**kwargs)
+
+    return ingest, predict, dispatch_live
 
 
 def refresh_once(runtime=DEFAULT_RUNTIME, *, source_dir=None, model_dir=None,
-                 water_sources=None, stages=None):
+                 water_sources=None, stages=None, portable_history=None):
     """Publish a complete validated generation; failures retain last good data."""
     from contracts.validate import validate_directory
     runtime = Path(runtime).resolve()
@@ -133,7 +158,11 @@ def refresh_once(runtime=DEFAULT_RUNTIME, *, source_dir=None, model_dir=None,
         write_json(runtime / "status.json", {"state": "refreshing", "started_at": utc_now(),
                    "last_success_available": previous is not None})
         try:
-            ingest, predict, dispatch = stages or _stages()
+            if previous:
+                previous_csv = (previous / "history.csv.gz").is_file()
+                if previous_csv != (portable_history is not None):
+                    raise ValueError("Use a separate runtime directory when changing history format")
+            ingest, predict, dispatch = stages or _stages(portable_history)
             ingest(source_dir, work, context_dir=previous)
             predict(features_path=work / "features.json", history_path=work / "history.parquet",
                     model_dir=model_dir, output_path=work / "risk.json")
@@ -153,6 +182,7 @@ def refresh_once(runtime=DEFAULT_RUNTIME, *, source_dir=None, model_dir=None,
                         "published_at": utc_now(), "cell_count": len(features), "risk_records": len(risk),
                         "model_dir": str(model_dir), "weather_model": live["weather"]["model"],
                         "simulation": True, "previous_generation": previous.name if previous else None}
+            manifest["history_file"] = live.get("history_file", "history.parquet")
             write_json(work / "pipeline_manifest.json", manifest)
             # Staging duplicates the published files. Raw provider caches stay
             # with their generation for provenance and troubleshooting.
@@ -239,11 +269,14 @@ def main():
     parser.add_argument("--runtime-dir", type=Path, default=DEFAULT_RUNTIME)
     parser.add_argument("--source-dir", type=Path, default=ROOT / "data/demo/role_a_real/regional_40")
     parser.add_argument("--model-dir", type=Path, default=ROOT / "b_model/model_regional_40")
+    parser.add_argument("--portable-history", type=Path,
+                        help="Verified CSV bundle for LinuxONE; uses CSV runtime tables and frozen canonical models")
     parser.add_argument("--interval-seconds", type=float, default=3600)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8001)
     args = parser.parse_args()
-    options = {"source_dir": args.source_dir, "model_dir": args.model_dir}
+    options = {"source_dir": args.source_dir, "model_dir": args.model_dir,
+               "portable_history": args.portable_history}
     if args.once:
         try:
             print(json.dumps(refresh_once(args.runtime_dir, **options), indent=2))

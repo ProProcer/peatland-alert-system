@@ -51,6 +51,34 @@ Live modeled weather/NRT coverage and model quality remain provisional.
 
 ## Keep it running across sessions
 
+### LinuxONE with portable CSV history
+
+Where the installed s390x Parquet reader fails, use the verified transport bundle
+described in [README.md](README.md#portable-historical-training-inputs). With the
+team's persistent container/environment, first fetch the boundary and water LFS
+inputs on the host:
+
+```bash
+git lfs pull --include="data/demo/role_a_real/cache/*.geojson,data/demo/role_a_real/water_sources.geojson"
+docker exec --workdir /workspace/project peatland-dev /workspace/env/bin/python \
+  -u -m e_platform.live_service --once \
+  --portable-history /workspace/portable-history \
+  --runtime-dir /workspace/outputs/live-csv
+```
+
+The source CSV fingerprint must match the frozen handoff and original Parquet.
+The service writes separate `history.csv.gz` / `features.csv.gz` runtime tables
+with manifests containing types and file/value hashes. History is verified before
+publication and on restart. Runtime target columns use nullable numeric storage;
+new live targets remain null. The four JSON/GeoJSON dashboard feeds retain schema
+1.0; the original Parquet files and model artifacts are not modified.
+This option supports frozen models using canonical JSON features, rejecting
+models that require history-derived feature pipelines. It does not enable a
+Parquet reader or change the default deployment format. Use a separate runtime
+directory when switching formats. Omit `--once` to run the dashboard and hourly
+scheduler, adding `--port 8002` while the historical dashboard still occupies
+8001. Only a successful run on the VM establishes live LinuxONE operation.
+
 On Windows, register the current user's logon task:
 
 ```powershell

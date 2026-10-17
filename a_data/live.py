@@ -201,7 +201,8 @@ def _cells_from_geojson(path: Path) -> tuple[list[dict], dict]:
     return cells, payload
 
 
-def refresh_live(source_dir: Path, output_dir: Path, *, context_dir: Path | None = None, now=None) -> dict:
+def refresh_live(source_dir: Path, output_dir: Path, *, context_dir: Path | None = None, now=None,
+                 table_io=None) -> dict:
     """Fetch current weather and NRT detections, then atomically publish A's feed."""
     source_dir, output_dir = source_dir.resolve(), output_dir.resolve()
     if source_dir == output_dir or source_dir in output_dir.parents or output_dir in source_dir.parents:
@@ -218,8 +219,9 @@ def refresh_live(source_dir: Path, output_dir: Path, *, context_dir: Path | None
     source_features = json.loads((source_dir / "features.json").read_text(encoding="utf-8"))
     if {row["cell_id"] for row in source_features} != {cell["cell_id"] for cell in cells}:
         raise ValueError("Frozen features and geometry refer to different cells")
-    history_path = (Path(context_dir) if context_dir is not None else source_dir) / "history.parquet"
-    history = pd.read_parquet(history_path)
+    history_directory = Path(context_dir) if context_dir is not None else source_dir
+    history_path = history_directory / (table_io.history_name if table_io else "history.parquet")
+    history = table_io.read(history_directory) if table_io else pd.read_parquet(history_path)
     if set(history["cell_id"]) != {cell["cell_id"] for cell in cells} or history.duplicated(["cell_id", "ts"]).any():
         raise ValueError("Historical context does not match the frozen 40-cell bundle")
     per_cell_end = history.groupby("cell_id")["ts"].max()
@@ -244,7 +246,9 @@ def refresh_live(source_dir: Path, output_dir: Path, *, context_dir: Path | None
     if any(pd.isna(value) for value in latest_by_cell.values()):
         raise ValueError("At least one cell has no current or past hourly weather")
     snapshot = min(latest_by_cell.values())
-    frozen_end = pd.to_datetime(pd.read_parquet(source_dir / "history.parquet", columns=["ts"])["ts"], utc=True).max()
+    frozen = (table_io.read(source_dir, columns=["ts"]) if table_io else
+              pd.read_parquet(source_dir / "history.parquet", columns=["ts"]))
+    frozen_end = pd.to_datetime(frozen["ts"], utc=True).max()
     if snapshot <= frozen_end or snapshot < history_end:
         raise ValueError(f"Live weather is not newer than the training history (latest {snapshot.isoformat()})")
     # A second refresh in the same hour may contain revised weather/NRT data.
@@ -318,12 +322,18 @@ def refresh_live(source_dir: Path, output_dir: Path, *, context_dir: Path | None
     validate_file("features", staging / "features.json")
     validate_file("cells", source_dir / "cells.geojson")
     output_dir.mkdir(parents=True, exist_ok=True)
-    write_parquet(combined_history, staging / "history.parquet")
-    write_parquet(features, staging / "features.parquet")
+    if table_io:
+        table_files = table_io.write(combined_history, staging, "history")
+        table_files += table_io.write(features, staging, "features")
+    else:
+        write_parquet(combined_history, staging / "history.parquet")
+        write_parquet(features, staging / "features.parquet")
+        table_files = ["history.parquet", "features.parquet"]
     staged_cells = staging / "cells.geojson"
     staged_cells.write_text(json.dumps(cells_payload, ensure_ascii=False, allow_nan=False) + "\n", encoding="utf-8")
     manifest = {
         "generated_at": utc_now(), "is_mock": False, "mode": "live", "schema_version": "1.0",
+        "history_file": table_io.history_name if table_io else "history.parquet",
         "scope": "Frozen 40 peat-centered cells across Indonesian Kalimantan; eight per province",
         "cell_count": 40, "snapshot": snapshot.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "history_start": str(history["ts"].min()), "history_end_before_refresh": history_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -351,7 +361,7 @@ def refresh_live(source_dir: Path, output_dir: Path, *, context_dir: Path | None
     write_json(staging / "live_manifest.json", manifest)
     # Publish each validated artifact with atomic replacement. No historical
     # replay bundle is modified; consumers point to this separate directory.
-    for name in ("features.json", "features.parquet", "history.parquet", "cells.geojson", "live_manifest.json"):
+    for name in ("features.json", *table_files, "cells.geojson", "live_manifest.json"):
         target = output_dir / name
         temporary = target.with_suffix(target.suffix + ".tmp")
         temporary.write_bytes((staging / name).read_bytes())
