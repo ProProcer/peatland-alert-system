@@ -1,148 +1,423 @@
-# Peat Fire Early-Warning Agent
+# Peatland Fire Alert System
 
-## Automatic live dashboard
+**Kodang Koding Kiding · IBM Z Datathon 2026**
 
-The live pipeline can now run continuously: **Open-Meteo/FIRMS refresh → model
-inference → simulated responses → validated dashboard publication**, hourly by
-default. It covers the frozen 40-cell Kalimantan scope. Setup, Windows automatic
-startup, LinuxONE/systemd and Docker instructions are in
-[LIVE_OPERATIONS.md](e_platform/LIVE_OPERATIONS.md).
+An early-warning prototype that estimates surface-hotspot risk in Indonesian
+peatland grid cells over **24, 48, and 72 hours**, then turns those estimates into
+simulated, audience-specific responses. It combines weather, modeled soil
+moisture, satellite fire detections, and peatland maps in a shared dashboard.
 
-```powershell
-uv venv --python 3.12 .venv
-uv pip install --python .venv/Scripts/python.exe -r e_platform/requirements-live.txt
-# Configure FIRMS_MAP_KEY in the ignored .env file first.
-.venv/Scripts/python.exe -m e_platform.live_service
+The current regional scope is **40 cells across five Indonesian Kalimantan
+provinces**, eight per province. The selected prediction models are **three
+calibrated scikit-learn Logistic Regression classifiers**, one per horizon.
+The system supports a dated historical replay and an automatic live pipeline.
+All notifications and dispatches are simulated.
+
+## Problem and intended impact
+
+Peat fires can smolder beneath the surface before visible signs appear. Thermal
+satellite detections do not directly observe that underground activity. This
+project uses environmental conditions and recent hotspot activity to estimate
+future surface-hotspot occurrence and help people prioritize inspections,
+patrols, and preventive work.
+
+The dashboard serves fire crews (Manggala Agni), community fire volunteers
+(MPA), regional disaster agencies (BPBD), peatland restoration teams (the `brgm`
+audience key), and leadership. Each audience receives relevant information in
+Indonesian and English. Predictions support human review; operational warning
+reliability has not been established.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    W[Open-Meteo weather and modeled soil moisture] --> A[Data processing]
+    F[NASA FIRMS VIIRS hotspots] --> A
+    P[Indonesian peatland polygons] --> A
+    G[geoBoundaries province boundaries] --> A
+    A -->|features.json and history| B[Calibrated Logistic Regression: 24 / 48 / 72 h]
+    A -->|cells.geojson and features.json| D[Dashboard]
+    B -->|risk.json| C[Deterministic response policy]
+    O[OpenStreetMap water catalogue] --> C
+    C -->|dispatch.json: simulated responses| D
+    B -->|risk.json| D
 ```
 
-Open **http://127.0.0.1:8001**. The live page checks for complete new snapshots
-every minute. Keep the service running, or install its logon/boot service as
-documented. `make live` starts it; `make live-once` runs one complete refresh.
-Existing mock/historical commands remain available for offline demos.
+The automatic service runs ingestion → inference → simulated responses →
+cross-file validation. It publishes all four dashboard feeds together only
+after every stage succeeds. The browser checks for new generations every minute;
+the service refreshes at startup and each UTC clock hour. **Refresh live data**
+requests the same complete pipeline immediately. Training is separate.
 
-IBM Z Datathon 2026. Predict surface hotspot emergence in Indonesian peatland cells over 24, 48 and 72 hours, then simulate notifications and dispatches.
+## Quick start
 
-Read [TEAM_PLAYBOOK.md](TEAM_PLAYBOOK.md) first. The original [PDF](TEAM_PLAYBOOK.md.pdf) is retained. Shared interfaces are documented in [contracts/CONTRACTS.md](contracts/CONTRACTS.md).
-
-## Start here
-
-Requires Python 3.12 and Bash. Docker is optional. Run from the repository root:
-
-The raw FIRMS CSVs use [Git LFS](https://git-lfs.com/). Install Git LFS, then retrieve the source files before processing raw data:
+Run commands from the repository root. Use **Python 3.12**, Git, and Git LFS.
+Bash and Make are used by the convenience commands; Python entry points also
+work directly on Windows. Docker is optional. Node.js is needed only for the
+JavaScript checks, with no frontend package installation or build step.
 
 ```bash
+git clone https://github.com/ProProcer/peatland-alert-system.git
+cd peatland-alert-system
 git lfs install --local
 git lfs pull
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r e_platform/requirements-live.txt
+make validate
 ```
 
-See [data/raw/README.md](data/raw/README.md) for the source inventory and LFS usage.
+The live requirements include ingestion, modeling, and shared validation tools.
+They constrain scikit-learn to **1.6.1**, matching the saved artifacts, and
+pandas to version 2. Do not upgrade the artifact environment without validating
+compatibility or retraining.
+
+On Windows PowerShell, replace environment creation/activation with:
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r e_platform/requirements-live.txt
+python -m contracts.validate
+```
+
+Git LFS supplies historical Parquet, raw FIRMS exports, OSM inputs, and large
+cached source files. A small LFS pointer is not the dataset; retrieve the actual
+objects before using historical or live workflows.
+
+### View the historical dashboard
 
 ```bash
-# Install the shared tools and your role's dependencies (a, b, c, d, e, or all).
+python -m d_frontend.serve_demo
+```
+
+Open **http://127.0.0.1:8001**. This serves the 40-cell historical bundle at
+`2026-10-16T00:00:00Z`. Missing predictions or responses are shown as unavailable.
+The server can display the geometry and measurements without model inference.
+
+To generate matching regional predictions and simulated responses for this
+dashboard, run these commands before starting it, or reload after they finish:
+
+```bash
+python -m b_model.predict --config-name replay_regional paths.output=data/demo/role_a_real/regional_40/risk.json
+python -m c_agent.agent --data-dir data/demo/role_a_real/regional_40 --output data/demo/role_a_real/regional_40/dispatch.json --water-sources data/demo/role_a_real/water_sources.geojson
+python -m contracts.validate --data-dir data/demo/role_a_real/regional_40
+```
+
+These commands add model/response outputs to that demo bundle; they do not
+retrain models or modify its source features/history. The normal B-only replay
+command, `python -m b_model.predict --config-name replay_regional`, instead
+writes risk into B's evidence directory. Matching source/model paths and
+fingerprints are listed in [CURRENT_HANDOFF.json](b_model/CURRENT_HANDOFF.json).
+
+### Run the automatic live dashboard
+
+Copy `.env.example` to `.env` if it does not exist, then set your private
+`FIRMS_MAP_KEY`. The adapter also accepts the key from the process environment.
+Keep `.env` private.
+
+```bash
+python -m e_platform.live_service --port 8001
+```
+
+Open **http://127.0.0.1:8001** and leave the process running. Stop another server
+on that port first, or use `--port 8002`. A one-shot refresh is available with
+`python -m e_platform.live_service --once` or `make live-once`.
+
+Live data and incident state stay in ignored `data/runtime/live/`; historical
+data and model artifacts are preserved. The first page waits for a complete
+snapshot. A failed later refresh retains the last successful generation and
+shows its age/error; live mode never substitutes historical or synthetic data.
+Data older than three hours is marked stale. Inspect `/live/status` for freshness
+as well as service reachability.
+
+See [LIVE_OPERATIONS.md](e_platform/LIVE_OPERATIONS.md) for scheduling, restart
+behavior, Windows logon tasks, Linux systemd, and manual refresh details.
+
+### Validate synthetic handoffs without live services
+
+For a small development environment:
+
+```bash
 bash scripts/setup.sh e
 source .venv/bin/activate
-
-# Check every checked-in fixture and the existing processed JSON.
-make validate
-
-# Produce a separate, consistent mock handoff and open the starter UI.
-make demo
+make mock
 ```
 
-Visit `http://127.0.0.1:8000`. Stop the server with Ctrl+C. `make demo` needs only the shared tools; it makes no external API calls and sends no notifications. The frontend is a handoff viewer for development; Role D builds the command-center map and role views.
+This validates and replays the three-cell role fixtures into `data/demo/`,
+without provider calls or model inference. Synthetic risk values are interface
+fixtures, never evaluated performance. `make demo` is the legacy integration
+server wrapper on port 8000; use `d_frontend.serve_demo` for the regional
+dashboard or `e_platform.live_service` for automatic operation.
 
-The mock pipeline writes to `data/demo/` and leaves the existing `data/processed/` files and Role B artifacts intact. To view the existing processed data, run `make serve-live`; dispatch and cell geometry will appear after their owners produce them. Every panel falls back to a labeled static mock when its live file is unavailable.
+## Prediction model
 
-## Ownership and handoffs
+### Selected regional models
 
-| Role | Folder and guide | Inputs | Outputs owned by the role |
-| --- | --- | --- | --- |
-| A — Data engineer | [a_data/README.md](a_data/README.md) | Peat GeoJSON, Open-Meteo, FIRMS | `features.json`, `features.parquet`, `history.parquet`, `cells.geojson` |
-| B — ML lead | [b_model/README.md](b_model/README.md) | Features and history | `risk.json`, model artifacts, model card |
-| C — Agent engineer | [c_agent/README.md](c_agent/README.md) | Risk, features, cells | `dispatch.json`, decision policy, simulated logs |
-| D — Frontend / alerts | [d_frontend/README.md](d_frontend/README.md) | Cells, risk, dispatch, features | Web app and static fallback fixtures |
-| E — Platform / pitch | [e_platform/README.md](e_platform/README.md) | All role outputs | Contracts, integration, containers, deployment evidence, submission |
+| Property | Implementation |
+| --- | --- |
+| Algorithm | scikit-learn Logistic Regression, independently fitted per horizon |
+| Artifact directory | `b_model/model_regional_40/` |
+| Model version | `v1-regional40-20261017` |
+| Horizons | 24, 48, and 72 hours |
+| Input predictors | 27 canonical numeric features |
+| Preprocessing | Training-fitted median imputation and standardization |
+| Class imbalance | `class_weight="balanced"` |
+| Regularization | `C=0.001` for 24/48 h; `C=0.1` for 72 h |
+| Probability calibration | Sigmoid calibration on a separate chronological slice |
+| Export | One joblib bundle per horizon, with a shared artifact manifest |
+| Output | 120 risk records per complete 40-cell snapshot |
 
-Work in your own role folder. Shared output files have the owners listed above; request changes to another role's interface instead of renaming fields. Role E maintains root integration files and `contracts/`. Each role has a `mock_output.json`; D's mock is its risk-feed input, and E's mock is its dispatch integration fixture, since those roles have no additional JSON output contract.
+The target is at least one nominal/high-confidence FIRMS hotspot **anywhere in
+the cell** during `(t, t + horizon]`. It includes continuing or recurrent fire
+activity. A peat-centered cell can contain non-peat areas, so the target is not
+strictly peat-only ignition or a measurement of underground fire.
 
-```text
-contracts/           Frozen version 1.0 schemas, examples, validator
-a_data/              A: data adapter entry point, fixtures, tests
-b_model/             B: existing training/inference code and artifacts
-c_agent/             C: agent entry point, policy, fixtures, tests
-d_frontend/          D: starter handoff viewer, static mocks
-e_platform/          E: server, Dockerfiles, evidence and submission folders
-scripts/             Setup and pipeline commands (E)
-config/              Shared demo decisions (E)
-data/raw/            Peat source, FIRMS CSVs via Git LFS, API notes
-data/processed/      Existing/generated role outputs
-data/demo/           Separate mock pipeline outputs
+The feature groups are:
+
+| Group | Count | Examples |
+| --- | ---: | --- |
+| Peat | 2 | Peat fraction and area |
+| Weather / modeled soil | 14 | Temperature, precipitation, wind, five soil-moisture layers, VPD |
+| Derived drying signals | 7 | Trailing rainfall, days since rain, deep-soil moisture change |
+| Recent fire activity | 4 | Recent/nearby hotspots, summed fire radiative power, nearest distance |
+
+Exact fields, units, and null rules are in [CONTRACTS.md](contracts/CONTRACTS.md).
+`top_factors` contains signed directional heuristics based on standardized
+features and saved weights. These are not SHAP values or causal explanations.
+
+### Model selection and evaluation
+
+The regional comparison ran **36 fits**: three approaches × three horizons ×
+four chronological periods. It compared the 27-feature Logistic Regression,
+a 29-feature weighted XGBoost model, and a calibrated dryness baseline.
+Mean Average Precision across the first three development periods selected
+Logistic Regression for every horizon before final-period scoring. Training,
+calibration, and validation are separated by gaps of at least 72 hours.
+
+The supplied history contains 656,640 rows; 653,760 have all three targets known.
+The final training period ends August 31, 2026; calibration uses September 4–18;
+validation uses **September 22–October 13, 2026**, with 21,120 hourly cell rows.
+
+| Horizon | Accuracy at 0.50 | Precision at 0.50 | Recall at 0.50 | Average Precision | Brier score |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 24 h | 79.1% | 84.3% | 52.9% | 0.8480 | 0.1310 |
+| 48 h | 83.0% | 89.3% | 69.8% | 0.9024 | 0.1177 |
+| 72 h | 86.1% | 92.9% | 76.6% | 0.9273 | 0.1026 |
+
+These are recorded **retrospective regional results**, not synthetic metrics or
+prospective guarantees. The diagnostic classification cutoff 0.50 is separate
+from dashboard risk boundaries. Average Precision measures ranking, not accuracy;
+lower Brier scores indicate better probability error.
+
+For cells with no hotspot in the preceding 24 hours, recall at 0.50 is **9.4%,
+30.8%, and 40.1%** for the three horizons. This weaker early-warning subgroup,
+correlated forecast windows, unresolved archive/NRT source coverage, and the
+lack of an independent future/geographic test limit interpretation. The model
+passes its saved minimal candidate gate, which is not operational certification.
+
+See [REGIONAL_RESULTS.md](b_model/REGIONAL_RESULTS.md),
+[saved metrics](b_model/model_regional_40/metrics.json),
+[quality gate](b_model/model_regional_40/quality_gate.json), and
+[FINAL_HANDOFF.md](b_model/FINAL_HANDOFF.md) for evidence and limitations.
+
+### Other model implementations
+
+The repository retains XGBoost, histogram gradient boosting, optional IBM Snap
+ML boosting, older Logistic Regression models, and a separate recency-study
+candidate. The generic `b_model.train model=auto` path prefers Snap ML when
+available and otherwise uses XGBoost. That training default does not identify
+the selected regional inference model. Generic inference defaults to the
+separate uploaded `b_model/model/` artifacts; always specify `replay_regional`
+or the regional model directory for the main demo.
+
+The tree pipeline supports two additional causal indicators, cumulative dry
+days and soil-moisture momentum, for 29 predictors. Those indicators are not
+used by the selected 27-feature regional classifiers. The recency candidate
+has not been promoted. Snap ML acceleration and LinuxONE performance require
+hardware evidence; they are not implied by optional library support.
+
+To reproduce research, copy [backtest_regional.yaml](b_model/conf/backtest_regional.yaml)
+and choose fresh run/evidence directories, then run
+`python -m b_model.backtest --config <copy.yaml>`. Package to a fresh B-owned
+directory with `python -m b_model.regional_handoff --config <copy.yaml> --model-dir b_model/runs/new_regional_model`.
+Existing run/artifact directories are refused. Never train over published models.
+
+## Response agent and dashboard
+
+The current deterministic policy selects each cell's driving horizon by highest
+risk level, then score, then shortest horizon. **HIGH and CRITICAL both create
+simulated DISPATCH records for all five audiences**, with priority 2 and 1
+respectively. LOW and MODERATE do not trigger dispatch. CRITICAL cells within
+the configured distance are clustered; multi-cell incidents also receive a
+leadership brief. Persistent state handles deduplication, escalation, and the
+default six-hour cooldown. The default clustering/water-search radius is 15 km.
+
+Bilingual message templates work without an LLM. Optional `--llm` rewriting
+supports Gemini or Anthropic, with provider/key/model settings documented in
+[Role C's guide](c_agent/README.md). Rewrites are validated against structured
+facts and fall back to templates when invalid. The automatic live service
+explicitly disables LLM rewriting; it needs no LLM key. No LLM predicts risk or
+chooses actions, coordinates, priorities, or audiences.
+
+Mapped water candidates come from the OSM-derived catalogue, with 21,883
+candidates. Lookup uses the incident target; missing or out-of-radius sources
+remain `null`. A mapped source does not establish water availability, field
+access, suitability, or a travel route. Email and social-media outputs are
+simulation previews; nothing is sent externally.
+
+The browser interface provides a regional SVG map, 24/48/72-hour selectors,
+cell measurements and contributing factors, risk summaries, a watchlist,
+historical environmental analytics, and a simulated response workspace.
+OSM basemap tiles require internet access; vector data remains usable without
+tiles. Gray outside the supplied peat mask is not proof that peat is absent.
+
+## Data sources and provenance
+
+| Dataset / service | Use and attribution |
+| --- | --- |
+| [Open-Meteo Historical Forecast](https://open-meteo.com/en/docs/historical-forecast-api) and [Forecast API](https://open-meteo.com/en/docs) | Modeled weather/soil moisture; historical requests use `icon_global`, the current live request uses `dwd_icon_global`. Source metadata records the difference. See [API templates](data/raw/open-meteo_api.md). Weather attribution/license is recorded as CC BY 4.0. |
+| [NASA FIRMS VIIRS](https://firms.modaps.eosdis.nasa.gov/download/) | J1/J2 archive and NRT thermal detections; [live API](https://firms.modaps.eosdis.nasa.gov/api/) needs a private MAP_KEY. Nominal/high confidence feeds the agreed labels. Satellite coverage and delays remain relevant. |
+| Indonesian peat polygons, described in the playbook as [Global Forest Watch](https://www.globalforestwatch.org/) data | Bundled `data/raw/Indonesia_Peat_Lands.geojson`; exact original layer URL, survey date, and license are unverified. Preserve this provenance limitation. |
+| [geoBoundaries Indonesia ADM1](https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM1/) | Province filtering and map extent. Cached metadata attributes OSM/Wambacher, represented year 2017, ODbL. |
+| [Geofabrik Kalimantan](https://download.geofabrik.de/asia/indonesia/kalimantan.html) / [OpenStreetMap contributors](https://www.openstreetmap.org/copyright) | OSM water-feature catalogue and map tiles. Water extract: `kalimantan-261016.osm.pbf`; OSM data is ODbL. The map displays attribution. |
+
+All timestamps are UTC with `Z`. JSON coordinates use named `lat` and `lon`;
+GeoJSON uses `[lon, lat]`. Missing measurements/unknown future labels are `null`.
+Grid cells are 0.1° squares, about 11 km per side, with peat fraction at least
+0.05. The current sample is spread across provinces and is not complete or
+area-weighted regional coverage. No peat-depth feature is supplied.
+
+Processing, source fingerprints, feature definitions, and reproduction details
+are in [REGIONAL_HANDOFF.md](a_data/REGIONAL_HANDOFF.md). Earlier 33-cell
+`data/processed/` feeds remain a separate scope. Consume matching features,
+history, geometry, risk, and dispatch together; do not substitute one feed from
+another scope.
+
+## IBM LinuxONE and containers
+
+IBM LinuxONE / s390x is the deployment target. The repository includes Docker
+images, a systemd template, and portable historical-data tooling. Actual
+installation, inference timing, and hardware acceleration must be supported by
+evidence from the team's instance. Local timings or an x86 container build do
+not establish s390x compatibility.
+
+```bash
+# Synthetic integration container, port 8000.
+docker compose up --build demo
+
+# Live pipeline and dashboard, port 8001; configure .env and retrieve LFS first.
+docker compose --profile live up -d --build live
+
+# Optional separate model tooling image.
+docker compose --profile model build model
 ```
 
-## Commands
+The live container mounts historical data read-only and writes separate runtime
+storage. See [Role E's guide](e_platform/README.md) for images, environment trust,
+deployment evidence, and a verified CSV transport workaround for the observed
+s390x Parquet-reader failure. [Live operations](e_platform/LIVE_OPERATIONS.md)
+documents `--portable-history` for running the fixed canonical-feature models
+from that verified bundle without altering original Parquet/artifacts.
+
+## Contracts, commands, and verification
+
+Schema **1.0** is frozen. Changes to field meaning, names, or risk thresholds
+require a discussed and versioned contract change.
+
+| Risk score | Contract level |
+| --- | --- |
+| `< 0.35` | `LOW` |
+| `>= 0.35` and `< 0.60` | `MODERATE` |
+| `>= 0.60` and `< 0.80` | `HIGH` |
+| `>= 0.80` | `CRITICAL` |
+
+`features.json`, `risk.json`, and `dispatch.json` are arrays. `cells.geojson` is
+a FeatureCollection. Dispatch may be an empty array. Canonical definitions and
+examples are in [contracts/](contracts/CONTRACTS.md).
 
 | Command | Purpose |
 | --- | --- |
-| `make setup ROLE=a` | Create `.venv`, install shared tools and Role A dependencies |
-| `make setup` | Install all Python role dependencies |
-| `make validate` | Validate checked-in contracts, role mocks, frontend mocks, and existing outputs |
-| `make test` | Run integration and contract checks for the scaffold |
-| `make mock` | Build and validate `data/demo/` without external services |
-| `make demo PORT=8001` | Run the mock pipeline and start the handoff viewer |
-| `make serve-live` | Serve the frontend against `data/processed/` |
-| `make pipeline` | Run A refresh → B predict → C agent and validate each handoff |
-| `make model-test` | Run the existing Role B tests (install B dependencies first) |
-| `docker compose up --build` | Run the mock pipeline and viewer in a container |
+| `make setup ROLE=a` | Install a role environment (`a`, `b`, `c`, `d`, `e`, or `all`) |
+| `make validate` | Validate checked-in schemas, fixtures, and processed feeds |
+| `make mock` | Replay and validate isolated synthetic handoffs |
+| `make test` | Platform, integration, and contract-related tests |
+| `make model-test` | Model tests in a disposable copy that protects shared data |
+| `make pipeline` / `make live-once` | One complete live refresh/inference/response/publication |
+| `make live LIVE_PORT=8001` | Dashboard and automatic hourly refresh |
+| `python -m d_frontend.serve_demo --port 8001` | Historical regional dashboard |
+| `make serve-live` | Legacy server for existing `data/processed/`, without refresh |
 
-`make pipeline` runs the complete live pipeline once into separate runtime
-storage. It requires live dependencies and a private FIRMS key. It retains the
-last complete published snapshot on failure and never substitutes mocks for a
-failed live stage. Training remains separate from refresh and inference.
+Make defaults to `.venv/bin/python`; override `PYTHON` for another environment.
+Focused checks used by the repository include:
 
-## Shared decisions
+```bash
+make validate
+make test
+make model-test
+python -m b_model.quality b_model/model_regional_40/metrics.json
+python -m unittest discover -s c_agent/tests -v
+python -m unittest a_data.tests.test_live_continuity d_frontend.test_serve_demo -v
+node d_frontend/test_data.cjs
+node d_frontend/test_status.cjs
+node d_frontend/test_live_refresh.cjs
+```
 
-- Initial demo province: **Central Kalimantan**, matching the existing fixture coordinates. See [config/demo.json](config/demo.json). The bounding box is a working selection box, not a province boundary dataset.
-- Grid: 0.1° squares; `cell_id = "{lat_center:.2f}_{lon_center:.2f}"`; peat fraction at least 0.05; at most 300 demo cells.
-- UTC timestamps end in `Z`. JSON has `lat`/`lon`; GeoJSON positions use `[lon, lat]`. Missing measurements are `null`.
-- Schema version `1.0`; horizons 24/48/72; risk thresholds: LOW < 0.35, MODERATE < 0.60, HIGH < 0.80, otherwise CRITICAL.
-- C's dispatch mock uses `water_source: null`. A supplies a separate [synthetic water-source catalogue](a_data/WATER_HANDOFF.md) for integration; extraction from the downloaded Kalimantan OSM PBF is pending.
-- Alerts are simulated. Open-Meteo soil moisture is modeled data. FIRMS detects surface anomalies, not underground smoldering. Peat depth is absent from the supplied source format.
-- Treat the checked-in history, metrics and model artifacts as development inputs until B verifies their provenance and reproduces evaluation. Mock fixtures are synthetic and are not performance evidence.
+Optional artifact-repair tests require `b_model/requirements-repair.txt`.
+Software checks validate behavior and interfaces; model quality is assessed
+separately. CI configuration is in [.github/workflows/validate.yml](.github/workflows/validate.yml).
 
-## Dependencies and source attribution
+## Repository and ownership
 
-Keep this inventory current as dependencies or datasets are added. Suggested role-specific dependencies are installed by the setup script; optional integrations need their own attribution when introduced. `constraints.txt` pins scikit-learn to the version recorded in the checked-in model artifacts; coordinate any upgrade with B and retrain before using new artifacts.
+| Location | Responsibility |
+| --- | --- |
+| `a_data/` | Data ingestion, spatial processing, features/history/cell geometry |
+| `b_model/` | Training, inference, model artifacts, evaluation, risk feed |
+| `c_agent/` | Deterministic response policy, templates, incident state, dispatch feed |
+| `d_frontend/` | Browser dashboard, maps, analytics, simulated response views |
+| `e_platform/` | Integration server, automatic service, containers, deployment/submission |
+| `contracts/`, `config/`, `scripts/` | Shared schemas, configuration, integration commands; Role E owns these |
+| `data/raw/` | Source inventory, original downloads, request templates |
+| `data/processed/` | Preserved legacy processed scope |
+| `data/demo/role_a_real/regional_40/` | Current matching historical regional source bundle |
+| `data/runtime/live/` | Ignored live generations, status, request caches, and simulated state |
 
-| Library / tool | Use | Project link |
-| --- | --- | --- |
-| Python standard library | CLI, local server, mock workflow, integration tests | [Python](https://www.python.org/) |
-| Git LFS | Store large raw CSV and OSM PBF source files | [Git LFS](https://git-lfs.com/) |
-| NumPy | Numerical features and modeling | [NumPy](https://numpy.org/) |
-| pandas | Hourly data and model inputs | [pandas](https://pandas.pydata.org/) |
-| Apache Arrow / PyArrow | Parquet handoffs | [Apache Arrow](https://arrow.apache.org/) |
-| GeoPandas | Role A spatial joins and projected areas | [GeoPandas](https://geopandas.org/) |
-| Shapely | Role A geometry and spatial indexing | [Shapely](https://shapely.readthedocs.io/) |
-| Requests | Role A HTTP data retrieval | [Requests](https://requests.readthedocs.io/) |
-| scikit-learn | Existing baseline / gradient boosting | [scikit-learn](https://scikit-learn.org/) |
-| joblib | Existing model artifacts | [joblib](https://joblib.readthedocs.io/) |
-| jsonschema | Shared Draft 2020-12 contract validation | [jsonschema](https://python-jsonschema.readthedocs.io/) |
-| pytest | Existing Role B tests | [pytest](https://docs.pytest.org/) |
-| Docker / Compose | Optional local integration container | [Docker](https://docs.docker.com/) |
-| IBM Snap ML (optional) | Role B hardware acceleration, not installed by default | [Snap ML](https://www.zurich.ibm.com/snapml/) |
-| SHAP (optional) | Role B explainability, not installed by default | [SHAP](https://shap.readthedocs.io/) |
+Read [AGENTS.md](AGENTS.md), [TEAM_PLAYBOOK.md](TEAM_PLAYBOOK.md), the contracts,
+and the relevant role guide before implementation changes. Keep experiments in
+temporary directories or separate `data/demo/` paths and preserve published
+data/artifacts. Each role supplies a valid `mock_output.json` for integration.
 
-| Dataset / service | Use | Source link |
-| --- | --- | --- |
-| Open-Meteo | Modeled hourly weather / soil moisture and historical data | [Forecast API](https://open-meteo.com/en/docs), [historical API](https://open-meteo.com/en/docs/historical-weather-api) |
-| Global Forest Watch | Indonesian peat polygon source described in the playbook | [GFW data](https://www.globalforestwatch.org/) — A records the exact layer URL and license when downloaded |
-| NASA FIRMS | VIIRS thermal surface hotspots | [FIRMS](https://firms.modaps.eosdis.nasa.gov/), [API](https://firms.modaps.eosdis.nasa.gov/api/) |
-| OpenStreetMap / Geofabrik | Kalimantan water-feature source; raw PBF available, extraction pending | [Kalimantan extract](https://download.geofabrik.de/asia/indonesia/kalimantan.html), [OpenStreetMap attribution and licence](https://www.openstreetmap.org/copyright) |
+## Libraries and tools
 
-Store download timestamps, exact source URLs and licenses beside cached datasets. Do not commit a FIRMS MAP_KEY; copy `.env.example` to `.env` locally. The setup script creates that file if absent, but does not load credentials or contact a data provider. Live adapter configuration and authentication belong to A.
+| Library / tool | Purpose |
+| --- | --- |
+| [Python](https://www.python.org/), [Git LFS](https://git-lfs.com/) | Runtime, source/data distribution |
+| [NumPy](https://numpy.org/), [pandas](https://pandas.pydata.org/) | Numerical features and tabular processing |
+| [Apache Arrow / PyArrow](https://arrow.apache.org/docs/python/) | Parquet handoffs and historical tables |
+| [GeoPandas](https://geopandas.org/), [Shapely](https://shapely.readthedocs.io/), [PyProj](https://pyproj4.github.io/pyproj/) | Spatial processing, geometry, metric projections |
+| [Pyosmium](https://docs.osmcode.org/pyosmium/latest/) | Raw OSM PBF water extraction; loaded when extraction is needed |
+| [Requests](https://requests.readthedocs.io/) | Provider HTTP requests |
+| [scikit-learn](https://scikit-learn.org/), [joblib](https://joblib.readthedocs.io/) | Selected regional classifiers, calibration, saved bundles |
+| [Hydra](https://hydra.cc/), [OmegaConf](https://omegaconf.readthedocs.io/) | Model configuration and named inference profiles |
+| [XGBoost](https://xgboost.readthedocs.io/en/stable/) | Alternate tree-model training/inference and retained artifacts |
+| [IBM Snap ML](https://www.zurich.ibm.com/snapml/) | Optional boosting backend; runtime acceleration requires verification |
+| [SHAP](https://shap.readthedocs.io/) | Optional explainability tooling; selected dashboard factors use heuristics |
+| [jsonschema](https://python-jsonschema.readthedocs.io/), [pytest](https://docs.pytest.org/) | Contract validation and model checks |
+| [Matplotlib](https://matplotlib.org/) | Optional offline experiment figures |
+| [py-ubjson](https://github.com/Iotic-Labs/py-ubjson) | Optional trusted XGBoost artifact recovery/tests; not ordinary regional inference |
+| [Docker / Compose](https://docs.docker.com/) | Container packaging and optional service management |
 
-LinuxONE / `s390x` installation, model execution, screenshots and IBM lab completion still require verification on the team's instance. See [e_platform/README.md](e_platform/README.md) for the evidence and submission checklist.
+The frontend uses native HTML, CSS, JavaScript, and SVG. Install dependencies
+through the role requirements or live requirements rather than guessing model
+versions. Source licenses and attribution remain attached to their datasets;
+the repository currently has no top-level project license file.
 
-For the observed Parquet reader byte-order failure on the team's LinuxONE VM,
-Role E provides an [exact-value CSV transport and regional training runner](e_platform/README.md#portable-historical-training-inputs).
-It preserves the original Parquet and current model artifacts and requires
-destination value verification before training the frozen regional LR models.
+## Team
+
+| Member | Role |
+| --- | --- |
+| Abel Nathanael Hutapea | Data engineer |
+| Matthew Alexander Paudianto | ML lead |
+| Ivan Nathanael | ML lead |
+| Keisha Nalani Shielim | Agent engineer |
+| Gregorius Felix Caton Erawan | Frontend |
